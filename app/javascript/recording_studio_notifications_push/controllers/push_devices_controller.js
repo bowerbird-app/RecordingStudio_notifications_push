@@ -9,7 +9,8 @@ export default class extends Controller {
     unregisterUrlTemplate: String,
     vapidKey: String,
     firebaseConfig: Object,
-    firebaseReady: Boolean
+    firebaseReady: Boolean,
+    serviceWorkerPath: String
   }
 
   connect() {
@@ -75,7 +76,29 @@ export default class extends Controller {
 
     const app = initializeApp(config)
     const messaging = getMessaging(app)
-    return getToken(messaging, { vapidKey: this.vapidKeyValue })
+    const registration = await this.resolveServiceWorkerRegistration()
+
+    return getToken(messaging, {
+      vapidKey: this.vapidKeyValue,
+      serviceWorkerRegistration: registration
+    })
+  }
+
+  async resolveServiceWorkerRegistration() {
+    if (window.RecordingStudioPwa?.serviceWorkerReady) {
+      return window.RecordingStudioPwa.serviceWorkerReady
+    }
+
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("This browser does not support service workers.")
+    }
+
+    const existing = await navigator.serviceWorker.getRegistration()
+    if (existing) return existing
+
+    const path = this.hasServiceWorkerPathValue ? this.serviceWorkerPathValue : "/service-worker.js"
+    await navigator.serviceWorker.register(path)
+    return navigator.serviceWorker.ready
   }
 
   async registerInstallation(firebaseInstallationId, legacyFcmToken = null) {

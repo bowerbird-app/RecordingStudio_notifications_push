@@ -7,6 +7,7 @@ module RecordingStudioNotificationsPush
       @firebase_web_config = RecordingStudioNotificationsPush.configuration.firebase_web_config
       @vapid_public_key = RecordingStudioNotificationsPush.configuration.vapid_public_key
       @firebase_ready = firebase_ready?
+      @service_worker_path = service_worker_path if respond_to?(:service_worker_path, true)
     end
 
     def destroy
@@ -24,6 +25,12 @@ module RecordingStudioNotificationsPush
       required = %i[apiKey appId projectId messagingSenderId]
       required.all? { |key| config[key].present? || config[key.to_s].present? } &&
         @vapid_public_key.present?
+    end
+
+    def service_worker_path
+      return unless respond_to?(:pwa_service_worker_path, true)
+
+      pwa_service_worker_path(format: :js)
     end
   end
 end

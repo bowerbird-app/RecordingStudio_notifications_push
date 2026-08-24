@@ -66,11 +66,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert File.exist?(
       File.expand_path("../app/views/recording_studio_notifications_push/_service_worker_push.js.erb", __dir__)
     )
-    assert File.exist?(
+    push_devices_js = File.read(
       File.expand_path(
         "../app/javascript/recording_studio_notifications_push/controllers/push_devices_controller.js",
         __dir__
       )
     )
+    assert_includes push_devices_js, "serviceWorkerRegistration"
+    assert_includes push_devices_js, "resolveServiceWorkerRegistration"
   end
 end

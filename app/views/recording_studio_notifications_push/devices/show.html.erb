@@ -4,7 +4,10 @@
      data-recording-studio-notifications-push--push-devices-unregister-url-template-value="<%= installations_path %>/:id"
      data-recording-studio-notifications-push--push-devices-vapid-key-value="<%= @vapid_public_key.to_s %>"
      data-recording-studio-notifications-push--push-devices-firebase-config-value="<%= (@firebase_web_config || {}).to_json %>"
-     data-recording-studio-notifications-push--push-devices-firebase-ready-value="<%= @firebase_ready %>">
+     data-recording-studio-notifications-push--push-devices-firebase-ready-value="<%= @firebase_ready %>"
+     <% if @service_worker_path.present? %>
+       data-recording-studio-notifications-push--push-devices-service-worker-path-value="<%= @service_worker_path %>"
+     <% end %>>
 
   <%= render FlatPack::PageTitle::Component.new(
     title: "Push devices",
