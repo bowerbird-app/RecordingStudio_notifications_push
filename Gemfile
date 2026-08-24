@@ -14,17 +14,17 @@ gem "recording_studio_notifications",
 # Temporary vendored email channel with recording_studio ~> 4.2 until upstream
 # RecordingStudio_notifications_email bumps its gemspec off < 4. Override with
 # RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH if needed (see MIGRATION_NOTES.md).
-email_path = ENV["RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH"]
+email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 email_path = "vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?
 gem "recording_studio_notifications_email", path: email_path
 
-gem "recording_studio_pwa",
-    github: "bowerbird-app/RecordingStudio_PWA",
-    branch: "cursor/pwa-service-worker-seam-453c"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
     tag: "v0.7.0"
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
+gem "recording_studio_pwa",
+    github: "bowerbird-app/RecordingStudio_PWA",
+    branch: "cursor/pwa-service-worker-seam-453c"
 
 gem "devise"
 gem "puma"

@@ -29,6 +29,7 @@ class FcmAdapterTest < Minitest::Test
     end
 
     def disable!(reason: nil)
+      _ = reason
       @disabled_at = Time.now
       self
     end

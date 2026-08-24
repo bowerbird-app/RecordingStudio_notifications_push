@@ -8,7 +8,7 @@ gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
     branch: "main"
 
-email_path = ENV["RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH"]
+email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 email_path = "../../vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?
 gem "recording_studio_notifications_email", path: email_path
 

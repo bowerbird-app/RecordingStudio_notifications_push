@@ -20,23 +20,22 @@ module RecordingStudioNotificationsPush
       raise DeliveryError, "FCM token is required" if token.to_s.strip.blank?
       raise DeliveryError, "FIREBASE_PROJECT_ID is required to send push notifications" if project_id.blank?
 
-      payload = {
-        message: {
-          token: token.to_s,
-          notification: {
-            title: title.to_s,
-            body: body.to_s
-          }.compact,
-          data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
-          webpush: webpush_options(url)
-        }.compact
-      }
-
-      response = post_json(messages_uri, payload)
+      response = post_json(messages_uri, build_payload(token:, title:, body:, url:, data:))
       parse_response(response)
     end
 
     private
+
+    def build_payload(token:, title:, body:, url:, data:)
+      {
+        message: {
+          token: token.to_s,
+          notification: { title: title.to_s, body: body.to_s }.compact,
+          data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
+          webpush: webpush_options(url)
+        }.compact
+      }
+    end
 
     def project_id
       @configuration.firebase_project_id.to_s.strip.presence ||
@@ -49,15 +48,13 @@ module RecordingStudioNotificationsPush
     end
 
     def access_token
-      provider = @access_token_provider || default_access_token_provider
-      provider.fetch
+      (@access_token_provider || default_access_token_provider).fetch
     end
 
     def default_access_token_provider
       json = @configuration.firebase_service_account_json
       if json.to_s.strip.blank?
-        raise DeliveryError,
-              "FIREBASE_SERVICE_ACCOUNT_JSON is required to send push notifications"
+        raise DeliveryError, "FIREBASE_SERVICE_ACCOUNT_JSON is required to send push notifications"
       end
 
       @default_access_token_provider ||= GoogleAccessToken.new(
@@ -69,37 +66,40 @@ module RecordingStudioNotificationsPush
     end
 
     def post_json(uri, payload)
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request["Authorization"] = "Bearer #{access_token}"
+      request["Content-Type"] = "application/json; charset=utf-8"
+      request.body = JSON.generate(payload)
+      build_http(uri).request(request)
+    rescue Timeout::Error, Errno::ECONNREFUSED, Errno::ECONNRESET, SocketError => e
+      raise DeliveryError, "FCM network error: #{e.message}"
+    end
+
+    def build_http(uri)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.open_timeout = @configuration.open_timeout
       http.read_timeout = @configuration.read_timeout
       http.write_timeout = @configuration.write_timeout if http.respond_to?(:write_timeout=)
-
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request["Authorization"] = "Bearer #{access_token}"
-      request["Content-Type"] = "application/json; charset=utf-8"
-      request.body = JSON.generate(payload)
-
-      http.request(request)
-    rescue Timeout::Error, Errno::ECONNREFUSED, Errno::ECONNRESET, SocketError => error
-      raise DeliveryError, "FCM network error: #{error.message}"
+      http
     end
 
     def parse_response(response)
       body = parse_json_body(response.body)
-      ok = response.is_a?(Net::HTTPSuccess)
-      error_status = body.dig("error", "status").to_s
-      error_code = Array(body.dig("error", "details")).filter_map { |detail| detail["errorCode"] }.first
-      disable = %w[UNREGISTERED NOT_FOUND].include?(error_status) ||
-                %w[UNREGISTERED NOT_FOUND].include?(error_code.to_s)
-
       {
-        ok: ok,
+        ok: response.is_a?(Net::HTTPSuccess),
         status: response.code.to_i,
         body: body,
-        disable: disable,
+        disable: disable_token?(body),
         error_message: body.dig("error", "message")
       }
+    end
+
+    def disable_token?(body)
+      error_status = body.dig("error", "status").to_s
+      error_code = Array(body.dig("error", "details")).filter_map { |detail| detail["errorCode"] }.first
+      %w[UNREGISTERED NOT_FOUND].include?(error_status) ||
+        %w[UNREGISTERED NOT_FOUND].include?(error_code.to_s)
     end
 
     def parse_json_body(raw)
@@ -119,9 +119,7 @@ module RecordingStudioNotificationsPush
     def webpush_options(url)
       return if url.blank?
 
-      {
-        fcm_options: { link: url.to_s }
-      }
+      { fcm_options: { link: url.to_s } }
     end
   end
 end

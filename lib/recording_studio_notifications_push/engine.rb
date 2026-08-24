@@ -20,8 +20,8 @@ module RecordingStudioNotificationsPush
 
       options = app.config.x.recording_studio_notifications_push if app.config.respond_to?(:x)
       RecordingStudioNotificationsPush.configuration.merge!(options.to_h) if options.respond_to?(:to_h)
-    rescue StandardError => error
-      Rails.logger&.warn("[RecordingStudioNotificationsPush] configuration was not loaded: #{error.message}")
+    rescue StandardError => e
+      Rails.logger&.warn("[RecordingStudioNotificationsPush] configuration was not loaded: #{e.message}")
     end
 
     initializer "recording_studio_notifications_push.register_channel",

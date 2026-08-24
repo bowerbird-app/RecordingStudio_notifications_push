@@ -38,13 +38,7 @@ module RecordingStudioNotificationsPush
       return unless value
       return if unsafe_url_characters?(value)
 
-      if defined?(RecordingStudioNotifications::UrlSafety)
-        return value if RecordingStudioNotifications::UrlSafety.safe?(value)
-      elsif fallback_url_safe?(value)
-        return value
-      end
-
-      nil
+      safe_url(value)
     rescue URI::InvalidURIError
       nil
     end
@@ -60,8 +54,23 @@ module RecordingStudioNotificationsPush
 
     private
 
+    def safe_url(value)
+      if defined?(RecordingStudioNotifications::UrlSafety)
+        return value if RecordingStudioNotifications::UrlSafety.safe?(value)
+      elsif fallback_url_safe?(value)
+        return value
+      end
+
+      nil
+    end
+
     def attribute(name)
       return source.public_send(name) if source.respond_to?(name)
+
+      hash_attribute(name)
+    end
+
+    def hash_attribute(name)
       return source[name] if source.respond_to?(:key?) && source.key?(name)
 
       string_name = name.to_s
@@ -86,7 +95,10 @@ module RecordingStudioNotificationsPush
     def deep_freeze(value)
       case value
       when Hash
-        value.each { |key, nested| deep_freeze(key); deep_freeze(nested) }
+        value.each do |key, nested|
+          deep_freeze(key)
+          deep_freeze(nested)
+        end
       when Array
         value.each { |nested| deep_freeze(nested) }
       end

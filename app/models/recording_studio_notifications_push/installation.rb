@@ -17,6 +17,7 @@ module RecordingStudioNotificationsPush
       where(recipient_type: recipient.class.base_class.name, recipient_id: recipient.id)
     }
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
     def self.upsert!(recipient:, firebase_installation_id:, legacy_fcm_token: nil,
                      user_agent: nil, platform: nil, label: nil)
       raise ArgumentError, "recipient is required" if recipient.nil?
@@ -31,15 +32,21 @@ module RecordingStudioNotificationsPush
       )
 
       record.recipient = recipient
-      record.legacy_fcm_token = legacy_fcm_token.to_s.presence if !legacy_fcm_token.nil?
-      record.user_agent = user_agent.to_s.presence if !user_agent.nil?
-      record.platform = platform.to_s.presence if !platform.nil?
-      record.label = label.to_s.presence if !label.nil?
+      assign_optional_string!(record, :legacy_fcm_token, legacy_fcm_token)
+      assign_optional_string!(record, :user_agent, user_agent)
+      assign_optional_string!(record, :platform, platform)
+      assign_optional_string!(record, :label, label)
       record.disabled_at = nil
       record.last_seen_at = Time.current
       record.save!
       record
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+
+    def self.assign_optional_string!(record, attribute, value)
+      record.public_send("#{attribute}=", value.to_s.presence) unless value.nil?
+    end
+    private_class_method :assign_optional_string!
 
     def delivery_token
       firebase_installation_id.to_s.presence || legacy_fcm_token.to_s.presence
@@ -50,6 +57,7 @@ module RecordingStudioNotificationsPush
     end
 
     def disable!(reason: nil)
+      _ = reason # reserved for future disable-reason audit rows
       return self if disabled_at.present?
 
       update!(disabled_at: Time.current)

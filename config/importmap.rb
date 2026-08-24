@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 pin_all_from RecordingStudioNotificationsPush::Engine.root.join("app/javascript/recording_studio_notifications_push/controllers"),
              under: "controllers/recording_studio_notifications_push",
              to: "recording_studio_notifications_push/controllers",

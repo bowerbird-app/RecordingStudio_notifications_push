@@ -3,18 +3,10 @@
 module RecordingStudioNotificationsPush
   class InstallationsController < ApplicationController
     def create
-      installation = Installation.upsert!(
-        recipient: current_push_actor,
-        firebase_installation_id: installation_params[:firebase_installation_id],
-        legacy_fcm_token: installation_params[:legacy_fcm_token],
-        user_agent: installation_params[:user_agent].presence || request.user_agent,
-        platform: installation_params[:platform],
-        label: installation_params[:label]
-      )
-
+      installation = upsert_installation!
       render json: installation_json(installation), status: :created
-    rescue ArgumentError, ActiveRecord::RecordInvalid => error
-      render json: { error: error.message }, status: :unprocessable_entity
+    rescue ArgumentError, ActiveRecord::RecordInvalid => e
+      render json: { error: e.message }, status: :unprocessable_entity
     end
 
     def destroy
@@ -26,6 +18,17 @@ module RecordingStudioNotificationsPush
     end
 
     private
+
+    def upsert_installation!
+      Installation.upsert!(
+        recipient: current_push_actor,
+        firebase_installation_id: installation_params[:firebase_installation_id],
+        legacy_fcm_token: installation_params[:legacy_fcm_token],
+        user_agent: installation_params[:user_agent].presence || request.user_agent,
+        platform: installation_params[:platform],
+        label: installation_params[:label]
+      )
+    end
 
     def installation_params
       params.require(:installation).permit(

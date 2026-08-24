@@ -31,7 +31,7 @@ class GoogleAccessTokenTest < Minitest::Test
     fake_http.define_singleton_method(:read_timeout=) { |_| }
     fake_http.define_singleton_method(:write_timeout=) { |_| }
     fake_http.define_singleton_method(:request) do |request|
-      captured_assertion = request.body[%r{assertion=([^&]+)}, 1]
+      captured_assertion = request.body[/assertion=([^&]+)/, 1]
       response = Net::HTTPOK.new("1.1", "200", "OK")
       response.instance_variable_set(:@read, true)
       response.define_singleton_method(:body) do
@@ -54,7 +54,7 @@ class GoogleAccessTokenTest < Minitest::Test
 
     signing_input = "#{header_b64}.#{claims_b64}"
     signature = Base64.urlsafe_decode64(signature_b64)
-    assert @rsa.verify(OpenSSL::Digest::SHA256.new, signature, signing_input)
+    assert @rsa.verify(OpenSSL::Digest.new("SHA256"), signature, signing_input)
   end
 
   def test_rejects_invalid_service_account_json

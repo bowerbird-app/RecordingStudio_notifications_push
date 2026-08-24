@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 class CreateRecordingStudioNotificationsPushInstallations < ActiveRecord::Migration[8.1]
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def change
     enable_extension "pgcrypto" unless extension_enabled?("pgcrypto")
 
-    create_table :recording_studio_notifications_push_installations, id: :uuid, default: -> { "gen_random_uuid()" } do |t|
+    create_table :recording_studio_notifications_push_installations, id: :uuid, default: lambda {
+      "gen_random_uuid()"
+    } do |t|
       t.string :recipient_type, null: false
       t.uuid :recipient_id, null: false
       t.string :firebase_installation_id, null: false
@@ -32,4 +35,5 @@ class CreateRecordingStudioNotificationsPushInstallations < ActiveRecord::Migrat
               :disabled_at,
               name: "idx_rsnp_installations_disabled"
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end

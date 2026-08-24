@@ -34,7 +34,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
 
   def test_does_not_ship_template_capabilities_or_pages
     refute File.exist?(File.expand_path("../lib/recording_studio_notifications_push/capabilities/example.rb", __dir__))
-    refute File.exist?(File.expand_path("../app/controllers/recording_studio_notifications_push/home_controller.rb", __dir__))
+    refute File.exist?(File.expand_path("../app/controllers/recording_studio_notifications_push/home_controller.rb",
+                                        __dir__))
     pages = Dir[File.expand_path("../db/migrate/*pages*.rb", __dir__)]
     assert_empty pages
   end
