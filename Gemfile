@@ -11,18 +11,12 @@ gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
     branch: "main"
 
-# Upstream main still gemspecs recording_studio < 4, which conflicts with this
-# stack (recording_studio ~> 4.2 + recording_studio_pwa). Prefer github main once
-# that pin is bumped. Until then, set RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH
-# to a patched checkout (see MIGRATION_NOTES.md).
+# Temporary vendored email channel with recording_studio ~> 4.2 until upstream
+# RecordingStudio_notifications_email bumps its gemspec off < 4. Override with
+# RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH if needed (see MIGRATION_NOTES.md).
 email_path = ENV["RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH"]
-if email_path && Dir.exist?(email_path)
-  gem "recording_studio_notifications_email", path: email_path
-else
-  gem "recording_studio_notifications_email",
-      github: "bowerbird-app/RecordingStudio_notifications_email",
-      branch: "main"
-end
+email_path = "vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?
+gem "recording_studio_notifications_email", path: email_path
 
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",

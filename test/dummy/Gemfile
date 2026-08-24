@@ -9,13 +9,8 @@ gem "recording_studio_notifications",
     branch: "main"
 
 email_path = ENV["RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH"]
-if email_path && Dir.exist?(email_path)
-  gem "recording_studio_notifications_email", path: email_path
-else
-  gem "recording_studio_notifications_email",
-      github: "bowerbird-app/RecordingStudio_notifications_email",
-      branch: "main"
-end
+email_path = "../../vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?
+gem "recording_studio_notifications_email", path: email_path
 
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",

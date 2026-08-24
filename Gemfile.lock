@@ -57,7 +57,7 @@ PATH
       recording_studio_notifications (>= 0.2, < 1)
 
 PATH
-  remote: /tmp/rs-patched/RecordingStudio_notifications_email
+  remote: vendor/recording_studio_notifications_email
   specs:
     recording_studio_notifications_email (0.1.0)
       rails (~> 8.1.0)

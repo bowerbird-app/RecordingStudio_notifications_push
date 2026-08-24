@@ -28,12 +28,15 @@ are gone.
 
 Upstream `recording_studio_notifications_email` on `main` still gemspecs
 `recording_studio >= 3, < 4`, which conflicts with this gem's `~> 4.2` stack and
-`recording_studio_pwa`. Until that pin is bumped, set:
+`recording_studio_pwa`.
 
-```bash
-export RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH=/path/to/patched/email/checkout
-```
+This repo vendors a temporary compatibility checkout at
+`vendor/recording_studio_notifications_email` with:
 
-and patch that checkout's gemspec to `recording_studio ~> 4.2` (and ideally
-`recording_studio_notifications >= 0.2`). The Gemfiles fall back to github
-`main` when the ENV is unset.
+- `recording_studio ~> 4.2`
+- `recording_studio_notifications >= 0.2, < 1`
+
+Root and dummy Gemfiles point at that path by default. Override with
+`RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` when testing against another
+checkout. Remove the vendored copy once upstream publishes a 4.x-compatible
+gemspec.
