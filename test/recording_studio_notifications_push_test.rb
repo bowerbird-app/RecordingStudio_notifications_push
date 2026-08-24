@@ -2,17 +2,17 @@
 
 require "test_helper"
 
-class GemTemplateTest < Minitest::Test
+class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.0", ::GemTemplate::VERSION
+    assert_equal "0.2.0", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
-    assert_kind_of Class, ::GemTemplate::Engine
+    assert_kind_of Class, ::RecordingStudioNotificationsPush::Engine
   end
 
   def test_gemspec_pins_recording_studio_4_1
-    gemspec = File.read(File.expand_path("../gem_template.gemspec", __dir__))
+    gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
     assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.1"'
   end
@@ -30,13 +30,13 @@ class GemTemplateTest < Minitest::Test
   end
 
   def test_template_does_not_ship_copied_core_hooks_or_base_service
-    refute File.exist?(File.expand_path("../lib/gem_template/hooks.rb", __dir__))
-    refute File.exist?(File.expand_path("../lib/gem_template/services/base_service.rb", __dir__))
-    refute File.exist?(File.expand_path("../lib/gem_template/services/example_service.rb", __dir__))
+    refute File.exist?(File.expand_path("../lib/recording_studio_notifications_push/hooks.rb", __dir__))
+    refute File.exist?(File.expand_path("../lib/recording_studio_notifications_push/services/base_service.rb", __dir__))
+    refute File.exist?(File.expand_path("../lib/recording_studio_notifications_push/services/example_service.rb", __dir__))
   end
 
   def test_example_capability_wraps_include_for_and_is_not_enabled_globally
-    source = File.read(File.expand_path("../lib/gem_template/capabilities/example.rb", __dir__))
+    source = File.read(File.expand_path("../lib/recording_studio_notifications_push/capabilities/example.rb", __dir__))
 
     assert_includes source, "def self.to(**)"
     assert_includes source, "RecordingStudio::Capabilities.include_for(:example, **)"
@@ -172,7 +172,7 @@ class GemTemplateTest < Minitest::Test
   end
 
   def test_engine_does_not_ship_a_home_view
-    view_path = File.expand_path("../app/views/gem_template/home/index.html.erb", __dir__)
+    view_path = File.expand_path("../app/views/recording_studio_notifications_push/home/index.html.erb", __dir__)
 
     refute File.exist?(view_path)
   end
