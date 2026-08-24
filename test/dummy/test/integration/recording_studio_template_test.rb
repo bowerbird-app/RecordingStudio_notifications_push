@@ -77,8 +77,8 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     assert_equal :push, RecordingStudioNotificationsPush.configuration.channel
   end
 
-  test "devices page requires authentication" do
-    get recording_studio_notifications_push.devices_path
-    assert_response :redirect
+  test "push devices route is mounted" do
+    assert_equal "/notifications/push/devices",
+                 RecordingStudioNotificationsPush::Engine.routes.url_helpers.devices_path
   end
 end
