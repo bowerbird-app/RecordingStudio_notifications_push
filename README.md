@@ -1,160 +1,128 @@
 # RecordingStudioNotificationsPush
 
-Internal template for building Rails engine addons on top of Recording Studio 4.x.
+`recording_studio_notifications_push` is the Firebase Cloud Messaging (FCM)
+channel for
+[`recording_studio_notifications`](https://github.com/bowerbird-app/RecordingStudio_notifications).
+It is a standalone Rails engine under `RecordingStudioNotificationsPush`.
 
-## What's Included
+The parent notifications engine owns notification records, preferences,
+background delivery, retries, and delivery status. This gem:
 
-- **Recording Studio** 4.x gem pinned and configured
-- **Devise** authentication with a pre-seeded admin user
-- **Workspace**, **Folder**, and **Page** recordables seeded into the dummy host app
-- **FlatPack** UI component library for all views
-- **Dummy app** (`test/dummy/`) with a FlatPack sign-in screen, a home page on Recording Studio's default layout, mounted Recording Studio routes, and FlatPack's built-in rounded theme
+- registers a `:push` channel adapter
+- stores **device installations** in one ActiveRecord table (not a recordable)
+- sends FCM HTTP v1 messages with a service-account OAuth token
+- exposes a small Flatpack devices page and a PWA service-worker extension
 
-Authenticated dummy pages use Recording Studio's shared default layout (`RecordingStudio::UsesDefaultLayout`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.
+This channel does **not** implement rollups / `deliver_rollup`.
 
-## Quick Start
-
-### GitHub Codespaces (Recommended)
-
-1. Click **Code** → **Codespaces** → **Create codespace**
-2. Wait for setup to complete
-3. Run:
-   ```bash
-   cd test/dummy
-   bin/rails db:setup
-   bin/dev
-   ```
-4. Open port 3000 — you'll land on the dummy app home page and can sign in at `/users/sign_in`
-
-The dummy app is intended as a host-app validation surface for authentication, FlatPack rendering, Tailwind source scanning, and Recording Studio route wiring.
-
-### Login Credentials
-
-| Field    | Value             |
-|----------|-------------------|
-| Email    | admin@admin.com   |
-| Password | Password          |
-
-The login form is prefilled with these credentials for fast access.
-
-### Useful Routes
-
-- `/` — dummy app home page
-- `/users/sign_in` — Devise sign-in page
-- `/recording_studio` — redirect to `/` while the mounted Recording Studio engine remains data/API-focused
-- `/docs/install`, `/docs/config`, `/docs/recordable_types`, `/docs/recordings_tree`, `/docs/gem_views`, `/docs/methods` — dummy-only starter pages
-
-The home page in `test/dummy/app/views/home/index.html.erb` is a starting point for a minimal demo of the gem's primary behavior. Keep deeper explanations on the dummy docs pages, not in this README.
-
-## Architecture
-
-### Root Recording Pattern
-
-This template follows Recording Studio's root recording pattern:
-
-- **Workspace** is the top-level recordable
-- **Folder** and **Page** demonstrate nested recordables under the workspace root
-- Each configured recordable declares `recording_studio_recordable(...)`; strict declaration validation stays enabled
-- A root `RecordingStudio::Recording` wraps the Workspace
-- `Current.actor` is set from `current_user` (Devise) in `ApplicationController`
-
-### Extending Recording Studio
-
-To add new recordable types:
-
-1. Create your model (e.g., `Page`, `Comment`)
-2. Register it in `config/initializers/recording_studio.rb`:
-   ```ruby
-   RecordingStudio.configure do |config|
-     config.recordable_types = ["Workspace", "YourNewType"]
-   end
-   ```
-3. Declare whether the model can be a root and which parents may contain it:
-   ```ruby
-   class YourNewType < ApplicationRecord
-     recording_studio_recordable label: "Your new type",
-                                 root: false,
-                                 allowed_parent_types: ["Workspace", "Folder"]
-   end
-   ```
-4. Validate declarations and create recordings under the root:
-   ```ruby
-   RecordingStudio.validate_recordable_declarations!
-   root_recording = RecordingStudio.root_recording_for(workspace)
-   root_recording.record(YourNewType) do |record|
-     record.title = "Example"
-   end
-   ```
-
-### Recordable Declarations
-
-Every configured ActiveRecord recordable type must declare its hierarchy rules. Declarations are required; they are not version-specific.
-
-- `Workspace` declares `root: true`
-- `Folder` and `Page` declare `root: false, allowed_parent_types: ["Workspace", "Folder"]`
-- `config.require_recordable_declarations = true` remains enabled in the dummy app initializer
-
-Useful console checks:
+## Installation
 
 ```ruby
-RecordingStudio.validate_recordable_declarations!
-RecordingStudio.root_recordable_types
-RecordingStudio.allowed_parent_types_for("Page")
+gem "recording_studio_notifications"
+gem "recording_studio_notifications_push"
+# Optional but recommended for installable web apps:
+gem "recording_studio_pwa"
 ```
 
-### Capabilities
+```bash
+bundle install
+bin/rails generate recording_studio_notifications:install
+bin/rails generate recording_studio_notifications_push:install
+bin/rails generate recording_studio_notifications_push:migrations
+bin/rails db:migrate
+```
 
-Capability mixins are opt-in. Installing this gem does not enable mixins on host types.
-
-The dummy Workspace enables Accessible because that addon is bundled:
+Mount the engines:
 
 ```ruby
-RecordingStudio.enable_capability(:accessible, on: Workspace)
+mount RecordingStudioNotifications::Engine, at: "/notifications"
+mount RecordingStudioNotificationsPush::Engine, at: "/notifications/push"
+
+# Host PWA chrome (from recording_studio_pwa)
+get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 ```
 
-The template also ships one example mixin that uses core 4.2.0's `include_for` factory:
+During Rails preparation this engine registers:
 
 ```ruby
-include RecordingStudio::Capabilities::Example.to(label: "dummy workspace")
+RecordingStudioNotifications.register_channel(
+  :push,
+  RecordingStudioNotificationsPush.adapter
+)
 ```
 
-`.to` wraps `RecordingStudio::Capabilities.include_for`. It does not add a fourth verb and it does not call `enable_capability` / `set_capability_options` itself. Folder and Page stay without the example mixin.
+When `RecordingStudioPwa` is present it also registers the service-worker
+extension partial
+`recording_studio_notifications_push/service_worker_push`.
 
-Use core `RecordingStudio::Hooks` and `RecordingStudio::Services::BaseService`. Do not copy those classes into a new addon.
+## Configuration
 
-### FlatPack UI Components
+Web client values load from ENV by default:
 
-All views use FlatPack ViewComponents. Available components include:
+| ENV | Purpose |
+|---|---|
+| `FIREBASE_API_KEY` | Firebase web config |
+| `FIREBASE_APP_ID` | Firebase web config |
+| `FIREBASE_AUTH_DOMAIN` | Firebase web config |
+| `FIREBASE_MESSAGING_SENDER_ID` | Firebase web config |
+| `FIREBASE_PROJECT_ID` | Web config + FCM v1 project |
+| `FIREBASE_STORAGE_BUCKET` | Firebase web config |
+| `FIREBASE_VAPID_PUBLIC_KEY` | Web Push certificate key |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Server OAuth for FCM sends |
 
-- `FlatPack::Button::Component` — Buttons (`:primary`, `:secondary`, `:ghost`)
-- `FlatPack::Card::Component` — Cards (`:default`, `:elevated`, `:outlined`)
-- `FlatPack::Alert::Component` — Alerts (`:success`, `:error`, `:warning`, `:info`)
-- `FlatPack::Badge::Component` — Status badges
-- `FlatPack::Table::Component` — Data tables
-- `FlatPack::TextInput::Component`, `EmailInput`, `PasswordInput` — Form inputs
-- `FlatPack::PageNav::Component` — Default-layout page navigation
-- `FlatPack::PageTitle::Component` — Page titles
+```ruby
+RecordingStudioNotificationsPush.configure do |config|
+  config.channel = :push
+  # Optional overrides; ENV defaults are usually enough.
+  # config.firebase_service_account_json = Rails.application.credentials.dig(:firebase, :service_account_json)
+end
+```
 
-Use the live FlatPack demo app at [flatpack.bowerbird.io](https://flatpack.bowerbird.io/) as the approved UI reference for current shared patterns. Its component table is the fastest way to discover available FlatPack components before introducing new custom UI.
+`FIREBASE_SERVICE_ACCOUNT_JSON` may be unset while developing UI. Delivery
+raises `RecordingStudioNotificationsPush::DeliveryError` when a send is
+attempted without it.
 
-See the [FlatPack README](https://github.com/bowerbird-app/flatpack) for full documentation.
+## Parent notification setup
 
-## Tech Stack
+```ruby
+RecordingStudioNotifications.register_notification_type(
+  :page_comment,
+  label: "Page comment",
+  default_channels: %i[in_app push],
+  available_channels: %i[in_app email push]
+)
 
-| Component       | Version |
-|-----------------|---------|
-| Ruby            | 3.3+    |
-| Rails           | 8.1+    |
-| PostgreSQL      | 16      |
-| TailwindCSS     | 4       |
-| RecordingStudio | 4.x (`~> 4.1` in the gemspec; dummy GitHub tag `v4.2.0`) |
-| Accessible      | dummy GitHub tag `v0.6.0` |
-| Root Switchable | dummy GitHub tag `v0.5.0` |
-| FlatPack        | dummy GitHub tag `v0.1.133` |
-| Devise          | latest  |
+RecordingStudioNotifications.notify(
+  notification_type: :page_comment,
+  recipient: user,
+  title: "New comment",
+  body: "A collaborator commented on your page.",
+  url: page_url(page)
+)
+```
 
-The dummy Gemfile keeps `github:` sources so Bundler can fetch those gems. The gemspec still pins `recording_studio` to `~> 4.1` so copied addons declare the core dependency even when GitHub is the fetch source.
+## Device registration
 
-## Documentation
+Authenticated users visit `/notifications/push/devices` to enable the current
+browser. The Stimulus controller reads Firebase web config from the page,
+requests notification permission, obtains a token via Firebase Messaging
+(importmap pins), and POSTs an installation JSON record.
 
-The original gem template documentation is preserved in `docs/recording_studio_notifications_push/` as architectural reference material. Use it as background on the engine conventions; this README and the dummy app are the source of truth for the Recording Studio addon workflow.
+Installations are keyed by polymorphic recipient + `firebase_installation_id`
+(FID-first targeting). `legacy_fcm_token` is optional for older clients.
+
+## Development Gemfile pins
+
+Until parent gems are published:
+
+```ruby
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.0"
+gem "recording_studio_notifications", github: "bowerbird-app/RecordingStudio_notifications", branch: "main"
+gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch: "cursor/pwa-service-worker-seam-453c"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
+```
+
+## License
+
+MIT
