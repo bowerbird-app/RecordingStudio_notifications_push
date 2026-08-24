@@ -13,3 +13,9 @@
 
 /* Include the engine's views in the Tailwind build */
 @source "../../../../../app/views/**/*.erb";
+
+/* Bundler git/path installs under system Ruby (Cloud Agent and non-vendor installs) */
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/recording_studio_root_switchable-*/app/**/*.{rb,erb}";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_accessible-*/app/**/*.{rb,erb}";

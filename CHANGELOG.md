@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-24
+
+### Fixed
+- Dummy Tailwind `@source` paths now include system Ruby Bundler gem installs, so FlatPack and Recording Studio classes compile in Cloud Agent and other non-`vendor/bundle` environments
+- Dummy asset manifest now links the Tailwind build output and FlatPack stylesheets for precompilation
+
+### Upgrade notes
+- If a host app's Tailwind build looks unstyled outside Codespaces or `vendor/bundle`, add the system Ruby `@source` paths from `test/dummy/app/assets/tailwind/application.css` and run `bin/rails tailwindcss:build`
+
 ## [0.2.0] - 2026-08-21
 
 New addons copied from this template are born on Recording Studio 4.x.
