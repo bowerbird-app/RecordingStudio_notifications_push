@@ -1,15 +1,32 @@
 @import "tailwindcss";
 
-/* Include dummy app views for Tailwind CSS */
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-text: var(--color-primary-text);
+  --color-danger-background-color: var(--color-danger-background-color);
+  --color-danger-text-color: var(--color-danger-text-color);
+}
+
 @source "../../views/**/*.erb";
 
-/* Include RecordingStudio engine views for Tailwind CSS */
 @source "../../../vendor/bundle/**/recording_studio/app/views/**/*.erb";
-@source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/recordingstudio-*/app/views/**/*.erb";
+@source "../../../vendor/bundle/**/RecordingStudio*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio-*/app/views/**/*.erb";
 
-/* Scan FlatPack components for classes used by the bundled ViewComponents */
 @source "../../../vendor/bundle/**/flatpack/app/components/**/*.{rb,erb}";
-@source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
+@source "../../../vendor/bundle/**/flatpack*/app/components/**/*.{rb,erb}";
+@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
 
-/* Include the engine's views in the Tailwind build */
 @source "../../../../../app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio_notifications-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio_notifications_push-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio_PWA-*/app/views/**/*.erb";
+
+[id^="flat-pack-notification-"][id$="-popover"] .max-h-96 {
+  max-height: calc(100vh - 14rem);
+}
+
+[id^="flat-pack-notification-"][id$="-popover"]:not(.hidden) {
+  margin-top: -8px;
+}

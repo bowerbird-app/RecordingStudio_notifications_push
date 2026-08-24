@@ -1,7 +1,3 @@
-<%= render FlatPack::PageNav::Component.new(
-  anchor_url: (main_app.root_path rescue "/")
-) %>
-
 <div class="mx-auto flex w-full max-w-2xl flex-col gap-6"
      data-controller="recording-studio-notifications-push--push-devices"
      data-recording-studio-notifications-push--push-devices-register-url-value="<%= installations_path %>"
