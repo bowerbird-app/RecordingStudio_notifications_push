@@ -40,12 +40,12 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_empty pages
   end
 
-  def test_dummy_app_uses_recording_studio_default_layout
+  def test_dummy_app_uses_flatpack_sidebar_layout
     application_controller_path = File.expand_path("dummy/app/controllers/application_controller.rb", __dir__)
     controller_source = File.read(application_controller_path)
 
-    assert_includes controller_source, "include RecordingStudio::UsesDefaultLayout"
-    assert_includes controller_source, '"recording_studio/default_layout"'
+    assert_includes controller_source, "flat_pack_sidebar"
+    assert_includes controller_source, "RecordingStudio::UsesDefaultLayout"
   end
 
   def test_product_readme_describes_push_channel
