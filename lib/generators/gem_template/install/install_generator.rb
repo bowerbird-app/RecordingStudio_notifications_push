@@ -99,8 +99,10 @@ module GemTemplate
           '@source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/gem_template-*/app/views/**/*.erb";',
           '@source "../../vendor/bundle/**/flatpack/app/components/**/*.{rb,erb}";',
           '@source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";',
-          '@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";',
-          '@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/gem_template-*/app/views/**/*.erb";'
+          '@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/' \
+          'flatpack-*/app/components/**/*.{rb,erb}";',
+          '@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/' \
+          'gem_template-*/app/views/**/*.erb";'
         ]
       end
     end
