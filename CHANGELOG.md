@@ -2,8 +2,16 @@
 
 ## Unreleased
 
+### Added
+- Devices page has a **Not getting alerts?** section with two checks that isolate where a notification stops:
+  - **Show a local notification** calls `registration.showNotification` with no FCM, so an invisible result points at browser/OS notification settings
+  - **Send a test push** posts to `POST /installations/:id/test_push` and reports exactly what FCM answered
+- Devices page shows diagnostics: page origin, notification permission, service-worker state and scope, and push subscription host
+- `RecordingStudioNotificationsPush::TestPush` sends one diagnostic message to a single installation and returns an `accepted` / `status` / `error` result
+
 ### Changed
-- FCM web sends are **data-only** so the PWA service-worker extension always owns native Chrome `showNotification` (OS banner — not an in-page HTML toast)
+- FCM web sends include **both** `notification` and `data` so a browser whose service worker is stale still has a payload to display instead of dropping a data-only message
+- The PWA service-worker extension owns native Chrome `showNotification` (OS banner — not an in-page HTML toast)
 - Invalid FCM registration tokens (`INVALID_ARGUMENT` / "not a valid FCM registration token") disable that installation
 - Devices page uses a blank engine layout with FlatPack `PageNav` (same shape as notifications settings) — no host sidebar or top nav
 - Dummy home page adds a Turbo **Test notification** button that sends `:push_demo` (respects notification settings) and prepends results on the page

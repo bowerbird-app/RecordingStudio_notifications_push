@@ -17,6 +17,17 @@ module RecordingStudioNotificationsPush
       head :not_found
     end
 
+    # Sends one FCM message to a single installation and reports what FCM said.
+    # This separates "FCM refused the token" from "the browser never showed it".
+    def test_push
+      installation = Installation.active.for_recipient(current_push_actor).find(params[:id])
+      result = TestPush.new.call(installation: installation)
+
+      render json: result.to_h, status: result.accepted? ? :ok : :bad_gateway
+    rescue ActiveRecord::RecordNotFound
+      head :not_found
+    end
+
     private
 
     def upsert_installation!

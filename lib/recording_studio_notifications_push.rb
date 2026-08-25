@@ -17,6 +17,7 @@ require "recording_studio_notifications_push/event"
 require "recording_studio_notifications_push/google_access_token"
 require "recording_studio_notifications_push/fcm_client"
 require "recording_studio_notifications_push/fcm_adapter"
+require "recording_studio_notifications_push/test_push"
 require "recording_studio_notifications_push/engine"
 
 module RecordingStudioNotificationsPush

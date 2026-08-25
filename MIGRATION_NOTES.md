@@ -8,10 +8,12 @@
    service-worker extension.
 2. Hard-refresh browsers (or unregister the old service worker) so they load the
    SW that calls `registration.showNotification` for native Chrome banners.
-3. FCM web payloads are data-only. Native display is owned by the PWA
-   service-worker extension (`showNotification`), not an in-page HTML toast.
+3. Native display is owned by the PWA service-worker extension
+   (`showNotification`), not an in-page HTML toast.
 4. Enable push on **each** browser under `/notifications/push/devices` — FCM
    only reaches registered installations for that account.
+5. New route `POST /installations/:id/test_push` backs the devices-page
+   diagnostics. It is scoped to the current actor's own active installations.
 
 ## 0.1.0 (from gem template)
 

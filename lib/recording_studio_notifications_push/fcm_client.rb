@@ -26,14 +26,15 @@ module RecordingStudioNotificationsPush
 
     private
 
-    # Data-only web payloads so the host service-worker extension always runs
-    # showNotification (including when a tab is focused). Top-level FCM
-    # "notification" messages are browser-managed and often skip custom SW
-    # handlers / stay invisible while the page is open.
+    # Send both a `notification` block and `data`. The host service worker reads
+    # either shape, and keeping `notification` means a browser whose worker is
+    # stale or missing our push handler still has a payload to display instead
+    # of silently dropping a data-only message.
     def build_payload(token:, title:, body:, url:, data:)
       {
         message: {
           token: token.to_s,
+          notification: { title: title.to_s, body: body.to_s }.compact,
           data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
           webpush: webpush_options(url)
         }.compact

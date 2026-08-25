@@ -3,10 +3,11 @@ import { Controller } from "@hotwired/stimulus"
 // Registers this browser for FCM push, or accepts a manual FID when Firebase
 // ENV config is missing (dummy / local demos).
 export default class extends Controller {
-  static targets = ["status", "manualFid", "enablePanel", "disablePanel"]
+  static targets = ["status", "manualFid", "enablePanel", "disablePanel", "diagnostics"]
   static values = {
     registerUrl: String,
     unregisterUrlTemplate: String,
+    testPushUrlTemplate: String,
     vapidKey: String,
     firebaseConfig: Object,
     firebaseReady: Boolean,
@@ -29,10 +30,23 @@ export default class extends Controller {
       const disable = event.target.closest("[data-push-disable]")
       if (disable && this.element.contains(disable)) {
         this.disable(event)
+        return
+      }
+
+      const localTest = event.target.closest("[data-push-local-test]")
+      if (localTest && this.element.contains(localTest)) {
+        this.showLocalNotification(event)
+        return
+      }
+
+      const serverTest = event.target.closest("[data-push-server-test]")
+      if (serverTest && this.element.contains(serverTest)) {
+        this.sendTestPush(event)
       }
     }
     this.element.addEventListener("click", this._onPushClick)
     this.detectCurrentBrowser()
+    this.renderDiagnostics()
   }
 
   disconnect() {
@@ -120,6 +134,137 @@ export default class extends Controller {
       console.error("[push-devices] disable failed", error)
       this.setStatus(this.friendlyError(error) || "Could not disable push on this browser.")
     }
+  }
+
+  // Asks the service worker to show a notification with no FCM involved. If
+  // nothing appears here, the block is browser or OS notification settings.
+  async showLocalNotification(event) {
+    event?.preventDefault?.()
+    event?.stopPropagation?.()
+
+    try {
+      if (!("Notification" in window)) {
+        this.setStatus("This browser does not support notifications.")
+        return
+      }
+
+      if (Notification.permission !== "granted") {
+        const permission = await Notification.requestPermission()
+        if (permission !== "granted") {
+          this.setStatus("Notifications stay off until you allow them.")
+          return
+        }
+      }
+
+      const registration = await this.resolveServiceWorkerRegistration()
+      await registration.showNotification("Local test", {
+        body: "Shown by the service worker without FCM.",
+        icon: "/icon.png",
+        data: { url: "/" }
+      })
+      this.setStatus(
+        "Asked the service worker to show a notification. Nothing on screen means your browser or OS is hiding it (macOS: System Settings → Notifications → Chrome)."
+      )
+    } catch (error) {
+      console.error("[push-devices] local notification failed", error)
+      this.setStatus(this.friendlyError(error) || "Could not show a local notification.")
+    } finally {
+      this.renderDiagnostics()
+    }
+  }
+
+  // Sends a real FCM message to this installation and reports the response, so
+  // an accepted send with no visible notification is easy to tell apart.
+  async sendTestPush(event) {
+    event?.preventDefault?.()
+    event?.stopPropagation?.()
+
+    const installation = this.currentInstallation
+    if (!installation?.id) {
+      this.setStatus("Enable this browser first, then send a test push.")
+      return
+    }
+
+    const template = this.testPushUrlTemplateValue || ""
+    if (!template) {
+      this.setStatus("Test push is not available on this screen.")
+      return
+    }
+
+    this.setStatus("Asking FCM to push this browser…")
+
+    try {
+      const response = await fetch(template.replace(":id", installation.id), {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "X-CSRF-Token": this.csrfToken()
+        },
+        credentials: "same-origin"
+      })
+      const payload = await response.json().catch(() => ({}))
+
+      if (payload.accepted) {
+        this.setStatus(
+          "FCM accepted the push (HTTP " +
+            (payload.status || 200) +
+            "). If no notification appears, the browser or OS is hiding it — not the server."
+        )
+      } else {
+        this.setStatus("FCM refused this device: " + (payload.error || "unknown error"))
+      }
+    } catch (error) {
+      console.error("[push-devices] test push failed", error)
+      this.setStatus(this.friendlyError(error) || "Could not send a test push.")
+    }
+  }
+
+  async renderDiagnostics() {
+    if (!this.hasDiagnosticsTarget) return
+
+    const rows = []
+    rows.push(["Page origin", window.location.origin])
+    rows.push([
+      "Notification permission",
+      "Notification" in window ? Notification.permission : "unsupported"
+    ])
+
+    if (!("serviceWorker" in navigator)) {
+      rows.push(["Service worker", "unsupported"])
+    } else {
+      try {
+        const registration = await navigator.serviceWorker.getRegistration()
+        if (!registration) {
+          rows.push(["Service worker", "not registered on this origin"])
+        } else {
+          const state = registration.active
+            ? "active"
+            : registration.waiting
+              ? "waiting to activate"
+              : "installing"
+          rows.push(["Service worker", state + " (scope " + registration.scope + ")"])
+
+          const subscription = await registration.pushManager?.getSubscription?.()
+          rows.push([
+            "Push subscription",
+            subscription ? new URL(subscription.endpoint).host : "none"
+          ])
+        }
+      } catch (error) {
+        rows.push(["Service worker", "could not be read: " + (error?.message || error)])
+      }
+    }
+
+    this.diagnosticsTarget.innerHTML = ""
+    rows.forEach(([label, value]) => {
+      const row = document.createElement("p")
+      row.className = "text-xs text-(--surface-content-color)"
+      const strong = document.createElement("strong")
+      strong.textContent = label + ": "
+      row.appendChild(strong)
+      row.appendChild(document.createTextNode(String(value)))
+      this.diagnosticsTarget.appendChild(row)
+    })
   }
 
   async registerManualFid(event) {
