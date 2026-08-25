@@ -25,9 +25,13 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     get docs_install_path
     assert_response :success
     assert_select "h1", text: "Install"
-    assert_includes response.body, "Step 1"
-    assert_includes response.body, "Provide one section title for each step"
-    assert_includes response.body, "# Put the step instruction here."
+    assert_includes response.body, "Required companions"
+    assert_includes response.body, "recording_studio_notifications"
+    assert_includes response.body, "recording_studio_pwa"
+    assert_includes response.body, "recording_studio_notifications_push"
+    assert_includes response.body, "1. Add the gems"
+    assert_includes response.body, "pwa_service_worker"
+    assert_includes response.body, "FIREBASE_SERVICE_ACCOUNT_JSON"
   end
 
   test "config page renders successfully" do
