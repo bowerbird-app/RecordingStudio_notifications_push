@@ -39,7 +39,7 @@ export default class extends Controller {
       window.location.reload()
     } catch (error) {
       console.error(error)
-      this.setStatus(error.message || "Could not enable push on this browser.")
+      this.setStatus(this.friendlyError(error) || "Could not enable push on this browser.")
     }
   }
 
@@ -57,7 +57,7 @@ export default class extends Controller {
       window.location.reload()
     } catch (error) {
       console.error(error)
-      this.setStatus(error.message || "Could not register that id.")
+      this.setStatus(this.friendlyError(error) || "Could not register that id.")
     }
   }
 
