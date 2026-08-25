@@ -78,12 +78,16 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "resolveServiceWorkerRegistration"
     assert_includes push_devices_js, "not mounted"
     assert_includes push_devices_js, "data-push-enable"
-    assert_includes push_devices_js, "_onPushEnableClick"
+    assert_includes push_devices_js, "data-push-disable"
+    assert_includes push_devices_js, "detectCurrentBrowser"
+    assert_includes push_devices_js, "showDisable"
 
     devices_show = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)
     )
     assert_includes devices_show, "push_enable: true"
+    assert_includes devices_show, "push_disable: true"
+    assert_includes devices_show, "Disable on this browser"
   end
 
   def test_dummy_pwa_head_resolves_service_worker_via_main_app
