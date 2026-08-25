@@ -16,7 +16,9 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "flat-pack-sidebar-layout"
+    refute_includes response.body, "flat-pack-sidebar-layout"
+    assert_includes response.body, "flat-pack-page-nav"
+    assert_includes response.body, "Push devices"
     assert_includes response.body, "navigator.serviceWorker"
     assert_includes response.body, "/service-worker.js"
     refute_includes response.body, "PWA service worker route is not mounted"

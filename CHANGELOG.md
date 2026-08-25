@@ -2,9 +2,12 @@
 
 ## Unreleased
 
+### Changed
+- Devices page uses a blank engine layout with FlatPack `PageNav` (same shape as notifications settings) — no host sidebar or top nav
+
 ### Fixed
 - Resolve service-worker URL via `main_app.pwa_service_worker_path` so the devices page works inside the mounted engine
-- Prefer the host app layout (FlatPack sidebar) for push screens instead of forcing `UsesDefaultLayout`
+- Prefer the host app layout (FlatPack sidebar) for non-devices push screens instead of forcing `UsesDefaultLayout`
 - Dummy Tailwind `@source` paths cover system Ruby Bundler installs after merging main
 - Dummy PWA head hook resolves manifest/service-worker routes through `main_app` so mounted engine pages (e.g. `/notifications/push/devices`) register the worker instead of rejecting with "PWA service worker route is not mounted"
 - Push devices Stimulus controller falls back to an explicit `navigator.serviceWorker.register` when `RecordingStudioPwa.serviceWorkerReady` rejects for a missing host helper

@@ -9,6 +9,10 @@
        data-recording-studio-notifications-push--push-devices-service-worker-path-value="<%= @service_worker_path %>"
      <% end %>>
 
+  <%= render FlatPack::PageNav::Component.new(
+    anchor_url: main_app.root_path
+  ) %>
+
   <%= render FlatPack::PageTitle::Component.new(
     title: "Push devices",
     subtitle: "Turn on browser alerts for this account. You can silence a device anytime.",
