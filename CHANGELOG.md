@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Added
+- Dummy `/docs/install` walks through host setup and states that
+  `recording_studio_notifications` and `recording_studio_pwa` are required
 - Devices page has a **Not getting alerts?** section with two checks that isolate where a notification stops:
   - **Show a local notification** calls `registration.showNotification` with no FCM, so an invisible result points at browser/OS notification settings
   - **Send a test push** posts to `POST /installations/:id/test_push` and reports exactly what FCM answered
