@@ -12,16 +12,20 @@
 
 @source "../../../vendor/bundle/**/recording_studio/app/views/**/*.erb";
 @source "../../../vendor/bundle/**/RecordingStudio*/app/views/**/*.erb";
-@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/recordingstudio-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio-*/app/views/**/*.erb";
 
 @source "../../../vendor/bundle/**/flatpack/app/components/**/*.{rb,erb}";
 @source "../../../vendor/bundle/**/flatpack*/app/components/**/*.{rb,erb}";
-@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
+@source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
 
 @source "../../../../../app/views/**/*.erb";
-@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio_notifications-*/app/views/**/*.erb";
-@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio_notifications_push-*/app/views/**/*.erb";
-@source "../../../../../../usr/local/ruby-3.3.6/lib/ruby/gems/**/bundler/gems/RecordingStudio_PWA-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_notifications-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_notifications_push-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_PWA-*/app/views/**/*.erb";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/recording_studio_root_switchable-*/app/**/*.{rb,erb}";
+@source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_accessible-*/app/**/*.{rb,erb}";
 
 [id^="flat-pack-notification-"][id$="-popover"] .max-h-96 {
   max-height: calc(100vh - 14rem);

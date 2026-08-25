@@ -45,7 +45,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     controller_source = File.read(application_controller_path)
 
     assert_includes controller_source, "flat_pack_sidebar"
-    assert_includes controller_source, "RecordingStudio::UsesDefaultLayout"
+    refute_includes controller_source, "UsesDefaultLayout"
+    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack_sidebar.html.erb", __dir__))
+    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
   end
 
   def test_product_readme_describes_push_channel
