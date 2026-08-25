@@ -20,6 +20,9 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Test notification"
     assert_includes response.body, "test-notifications"
+    assert_includes response.body, "In-app inbox"
+    assert_includes response.body, "inbox-notifications"
+    assert_includes response.body, "recording-studio-notifications-push--push-foreground"
   end
 
   test "test notification creates inbox row and turbo streams results" do
@@ -32,6 +35,7 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "turbo-stream"
     assert_includes response.body, "Test ping"
     assert_includes response.body, "test-notifications"
+    assert_includes response.body, "inbox-notifications"
     assert_match(/in_app|push|email/, response.body)
 
     notification = RecordingStudioNotifications::Notification.order(created_at: :desc).first

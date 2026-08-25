@@ -2,6 +2,7 @@
 
 class HomeController < ApplicationController
   def index
+    @recent_inbox_notifications = recent_inbox_notifications
   end
 
   def create_test_notification
@@ -14,6 +15,7 @@ class HomeController < ApplicationController
       actor: current_user
     )
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
+    @recent_inbox_notifications = recent_inbox_notifications
     render_test_notification_success
   rescue ArgumentError => e
     @error_message = friendly_notify_error(e)
@@ -24,6 +26,14 @@ class HomeController < ApplicationController
   end
 
   private
+
+  def recent_inbox_notifications
+    RecordingStudioNotifications::Notification
+      .for_recipient(current_user)
+      .visible_in_inbox
+      .order(created_at: :desc)
+      .limit(8)
+  end
 
   def render_test_notification_success
     respond_to do |format|

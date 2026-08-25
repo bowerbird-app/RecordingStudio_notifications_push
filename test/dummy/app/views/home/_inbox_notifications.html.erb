@@ -1,0 +1,27 @@
+<% if notifications.blank? %>
+  <p id="inbox-notifications-empty" class="text-sm text-(--surface-content-color)">
+    Inbox is empty. Send a test ping with the in-app channel on.
+  </p>
+<% else %>
+  <% notifications.each do |notification| %>
+    <article class="flex flex-col gap-1 border-b border-(--surface-border-color) pb-3">
+      <div class="flex flex-wrap items-baseline justify-between gap-2">
+        <p class="text-sm font-medium text-(--surface-content-color)">
+          <%= notification.title %>
+          <% if notification.unread? %>
+            <span class="text-xs font-normal"> · unread</span>
+          <% end %>
+        </p>
+        <p class="text-xs text-(--surface-content-color)">
+          <%= time_ago_in_words(notification.created_at) %> ago
+        </p>
+      </div>
+      <% if notification.body.present? %>
+        <p class="text-sm text-(--surface-content-color)"><%= notification.body %></p>
+      <% end %>
+      <p class="text-xs text-(--surface-content-color)">
+        <%= link_to "Open inbox", "/notifications", class: "underline" %>
+      </p>
+    </article>
+  <% end %>
+<% end %>

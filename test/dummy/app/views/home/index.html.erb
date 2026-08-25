@@ -36,11 +36,11 @@
       ) %>
     <% end %>
     <p class="text-sm leading-6 text-(--surface-content-color)">
-      Sends a <strong>Push demo</strong> notice using whatever channels you left on in
+      Sends a <strong>Push demo</strong> notice on whichever channels you left on in
       <%= link_to "notification settings", "/notifications/settings", class: "underline" %>.
-      Enable this browser under
-      <%= link_to "push devices", "/notifications/push/devices", class: "underline" %>
-      to get a real push alert.
+      In-app rows show in the inbox list below. Browser push only reaches browsers you
+      <%= link_to "enabled under push devices", "/notifications/push/devices", class: "underline" %>
+      — enable <em>this</em> browser if you want a toast here.
     </p>
   </div>
 
@@ -48,8 +48,19 @@
 
   <section class="flex flex-col gap-3" aria-live="polite">
     <%= render FlatPack::PageTitle::Component.new(
+      title: "In-app inbox",
+      subtitle: "Same rows as /notifications — stay here to confirm in-app delivery.",
+      variant: :h3
+    ) %>
+    <div id="inbox-notifications" class="flex flex-col gap-3">
+      <%= render "home/inbox_notifications", notifications: @recent_inbox_notifications %>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3" aria-live="polite">
+    <%= render FlatPack::PageTitle::Component.new(
       title: "Test results",
-      subtitle: "Newest pings from this page show up here.",
+      subtitle: "Channel delivery status for pings from this page (clears on full reload).",
       variant: :h3
     ) %>
     <div id="test-notifications" class="flex flex-col gap-3">

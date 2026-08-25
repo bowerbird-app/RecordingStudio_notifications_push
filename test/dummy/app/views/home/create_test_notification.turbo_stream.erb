@@ -7,3 +7,7 @@
 <%= turbo_stream.prepend "test-notifications" do %>
   <%= render "test_notification" %>
 <% end %>
+
+<%= turbo_stream.update "inbox-notifications" do %>
+  <%= render "inbox_notifications", notifications: @recent_inbox_notifications %>
+<% end %>
