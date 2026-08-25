@@ -26,11 +26,14 @@ module RecordingStudioNotificationsPush
 
     private
 
+    # Data-only web payloads so the host service-worker extension always runs
+    # showNotification (including when a tab is focused). Top-level FCM
+    # "notification" messages are browser-managed and often skip custom SW
+    # handlers / stay invisible while the page is open.
     def build_payload(token:, title:, body:, url:, data:)
       {
         message: {
           token: token.to_s,
-          notification: { title: title.to_s, body: body.to_s }.compact,
           data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
           webpush: webpush_options(url)
         }.compact
@@ -98,8 +101,13 @@ module RecordingStudioNotificationsPush
     def disable_token?(body)
       error_status = body.dig("error", "status").to_s
       error_code = Array(body.dig("error", "details")).filter_map { |detail| detail["errorCode"] }.first
-      %w[UNREGISTERED NOT_FOUND].include?(error_status) ||
-        %w[UNREGISTERED NOT_FOUND].include?(error_code.to_s)
+      error_message = body.dig("error", "message").to_s
+
+      return true if %w[UNREGISTERED NOT_FOUND].include?(error_status)
+      return true if %w[UNREGISTERED NOT_FOUND].include?(error_code.to_s)
+      return true if error_status == "INVALID_ARGUMENT" && /not a valid fcm registration token/i.match?(error_message)
+
+      false
     end
 
     def parse_json_body(raw)
@@ -117,9 +125,12 @@ module RecordingStudioNotificationsPush
     end
 
     def webpush_options(url)
-      return if url.blank?
-
-      { fcm_options: { link: url.to_s } }
+      options = {
+        # Urgency helps some browsers deliver while a tab is focused.
+        headers: { Urgency: "high" }
+      }
+      options[:fcm_options] = { link: url.to_s } if url.present?
+      options
     end
   end
 end

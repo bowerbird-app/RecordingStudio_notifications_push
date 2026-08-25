@@ -1,5 +1,21 @@
 # Migration notes
 
+## 0.1.1
+
+### Host app steps
+
+1. Bump to `0.1.1` and restart so Propshaft digests pick up the new Stimulus
+   controller and the refreshed service-worker extension.
+2. Mount `data-controller="recording-studio-notifications-push--push-foreground"`
+   on layouts that should show focused-tab toasts, with a
+   `data-recording-studio-notifications-push--push-foreground-target="toast"`
+   container (dummy sidebar + push blank layouts already do this).
+3. Hard-refresh browsers (or unregister the old service worker) so they load the
+   SW that posts `rsnp:push` to open windows.
+4. FCM web payloads are now data-only. If you previously relied on browser
+   auto-display of top-level `notification` messages, use the SW / foreground
+   toast path instead.
+
 ## 0.1.0 (from gem template)
 
 This repository was renamed from the Recording Studio gem template to

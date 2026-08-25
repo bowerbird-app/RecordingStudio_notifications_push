@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.0", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.1", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -81,6 +81,20 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "data-push-disable"
     assert_includes push_devices_js, "detectCurrentBrowser"
     assert_includes push_devices_js, "showDisable"
+
+    foreground_js = File.read(
+      File.expand_path(
+        "../app/javascript/recording_studio_notifications_push/controllers/push_foreground_controller.js",
+        __dir__
+      )
+    )
+    assert_includes foreground_js, "rsnp:push"
+
+    sw_partial = File.read(
+      File.expand_path("../app/views/recording_studio_notifications_push/_service_worker_push.js.erb", __dir__)
+    )
+    assert_includes sw_partial, "rsnp:push"
+    assert_includes sw_partial, "postMessage"
 
     devices_show = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)

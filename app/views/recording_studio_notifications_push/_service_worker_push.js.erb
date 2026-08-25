@@ -1,7 +1,6 @@
 <%# Push handlers for the host service worker composition seam.
-    Hosts may also import Firebase messaging scripts for notification payloads
-    that require the Firebase SW SDK. This partial handles data messages with
-    showNotification and keeps secrets out of the worker. %>
+    FCM sends data-only web payloads; this partial owns showNotification and
+    also posts to open windows so focused tabs can show an in-page toast. %>
 self.addEventListener("push", (event) => {
   let payload = {};
   try {
@@ -16,14 +15,32 @@ self.addEventListener("push", (event) => {
 
   const data = payload.data || payload;
   const title = data.title || payload.notification?.title || "Notification";
+  const body = data.body || payload.notification?.body || "";
+  const url = data.url || payload.fcmOptions?.link || payload.notification?.click_action || "/";
   const options = {
-    body: data.body || payload.notification?.body || "",
-    data: {
-      url: data.url || payload.fcmOptions?.link || payload.notification?.click_action || "/"
-    }
+    body: body,
+    data: { url: url }
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  const notifyClients = self.clients
+    .matchAll({ type: "window", includeUncontrolled: true })
+    .then((clients) => {
+      clients.forEach((client) => {
+        client.postMessage({
+          type: "rsnp:push",
+          title: title,
+          body: body,
+          url: url
+        });
+      });
+    });
+
+  event.waitUntil(
+    Promise.all([
+      self.registration.showNotification(title, options),
+      notifyClients
+    ])
+  );
 });
 
 self.addEventListener("notificationclick", (event) => {

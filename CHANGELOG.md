@@ -3,8 +3,12 @@
 ## Unreleased
 
 ### Changed
+- FCM web sends are **data-only** so the PWA service-worker extension always owns `showNotification` (top-level `notification` payloads were easy to miss while a tab was focused)
+- Invalid FCM registration tokens (`INVALID_ARGUMENT` / "not a valid FCM registration token") disable that installation
+- Service worker posts `rsnp:push` to open windows; `push_foreground` Stimulus controller shows an in-page toast (and a page-level Notification when allowed)
 - Devices page uses a blank engine layout with FlatPack `PageNav` (same shape as notifications settings) — no host sidebar or top nav
 - Dummy home page adds a Turbo **Test notification** button that sends `:push_demo` (respects notification settings) and prepends results on the page
+- Dummy home also lists recent **in-app inbox** rows so inbox delivery is visible without opening `/notifications`
 - Dummy importmap loads `@hotwired/turbo-rails` so Turbo Stream updates work on the home page
 
 ### Fixed
@@ -17,6 +21,13 @@
 - Dummy Stimulus `controllers/index.js` only lazy-loads under `controllers` so push/FlatPack pins resolve (nested prefixes requested doubled paths and left Enable as a no-op)
 - Devices "Enable on this browser" binds via controller event delegation (`data-push-enable`) so the click runs when the Stimulus controller is connected
 - Devices page swaps to "Disable on this browser" when the current browser's FCM token matches an active installation
+
+## 0.1.1
+
+### Changed
+- Data-only FCM web payloads + service-worker client postMessage for focused-tab visibility
+- Disable installations on invalid FCM registration tokens
+- Foreground Stimulus toast controller for open pages
 
 ## 0.1.0
 

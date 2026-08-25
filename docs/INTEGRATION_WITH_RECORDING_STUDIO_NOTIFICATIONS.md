@@ -36,10 +36,15 @@ rollup channel.
    `legacy_fcm_token`).
 5. `FcmClient` exchanges `FIREBASE_SERVICE_ACCOUNT_JSON` for a Google OAuth
    token and POSTs to FCM HTTP v1.
-6. `UNREGISTERED` / `NOT_FOUND` responses disable that installation.
+6. `UNREGISTERED` / `NOT_FOUND` / invalid registration token responses disable
+   that installation.
 7. Delivery succeeds when **at least one** installation send succeeds.
 8. If no installations exist, or every send fails, the adapter raises
    `DeliveryError`.
+
+Web payloads are **data-only** (title/body/url in `data`). The PWA service-worker
+extension calls `showNotification` and posts `rsnp:push` to open windows so
+focused tabs can show an in-page toast via the `push_foreground` controller.
 
 ## PWA seam
 
@@ -52,9 +57,9 @@ RecordingStudioPwa.register_service_worker_extension(
 ```
 
 The partial adds `push` and `notificationclick` handlers that call
-`showNotification` from the payload. Hosts may additionally `importScripts`
-Firebase messaging workers if they need SDK-managed notification payloads.
-
+`showNotification` from the payload and notify open clients. Mount the
+`recording-studio-notifications-push--push-foreground` Stimulus controller on
+host layouts (with a `toast` target) so focused tabs show an in-page alert.
 ## Mount points
 
 Suggested host routes:

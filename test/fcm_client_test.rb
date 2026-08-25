@@ -44,8 +44,39 @@ class FcmClientTest < Minitest::Test
     assert_equal "Bearer ya29.test", captured["Authorization"]
     payload = JSON.parse(captured.body)
     assert_equal "fid-1", payload.dig("message", "token")
-    assert_equal "Hello", payload.dig("message", "notification", "title")
+    assert_nil payload.dig("message", "notification")
+    assert_equal "Hello", payload.dig("message", "data", "title")
+    assert_equal "World", payload.dig("message", "data", "body")
+    assert_equal "/x", payload.dig("message", "data", "url")
     assert_equal "/x", payload.dig("message", "webpush", "fcm_options", "link")
+    assert_equal "high", payload.dig("message", "webpush", "headers", "Urgency")
+  end
+
+  def test_invalid_registration_token_marks_disable
+    fake_http = Object.new
+    fake_http.define_singleton_method(:use_ssl=) { |_| }
+    fake_http.define_singleton_method(:open_timeout=) { |_| }
+    fake_http.define_singleton_method(:read_timeout=) { |_| }
+    fake_http.define_singleton_method(:write_timeout=) { |_| }
+    fake_http.define_singleton_method(:request) do |_request|
+      response = Net::HTTPBadRequest.new("1.1", "400", "Bad Request")
+      response.instance_variable_set(:@read, true)
+      response.define_singleton_method(:body) do
+        JSON.generate(
+          "error" => {
+            "status" => "INVALID_ARGUMENT",
+            "message" => "The registration token is not a valid FCM registration token"
+          }
+        )
+      end
+      response
+    end
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      result = @client.send_message(token: "test-fid-home-demo", title: "Hello")
+      refute result[:ok]
+      assert result[:disable]
+    end
   end
 
   def test_unregistered_marks_disable
