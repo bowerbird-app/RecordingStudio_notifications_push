@@ -21,7 +21,6 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Push devices"
     assert_includes response.body, "navigator.serviceWorker"
     assert_includes response.body, "/service-worker.js"
-    assert_includes response.body, "recording-studio-notifications-push--push-foreground"
     refute_includes response.body, "PWA service worker route is not mounted"
   end
 end

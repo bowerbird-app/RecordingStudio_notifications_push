@@ -43,8 +43,9 @@ rollup channel.
    `DeliveryError`.
 
 Web payloads are **data-only** (title/body/url in `data`). The PWA service-worker
-extension calls `showNotification` and posts `rsnp:push` to open windows so
-focused tabs can show an in-page toast via the `push_foreground` controller.
+extension calls `registration.showNotification`, which is the native Chrome OS
+banner (same class of UI as Chrome’s built-in web push toasts — not an in-page
+HTML alert).
 
 ## PWA seam
 
@@ -57,9 +58,7 @@ RecordingStudioPwa.register_service_worker_extension(
 ```
 
 The partial adds `push` and `notificationclick` handlers that call
-`showNotification` from the payload and notify open clients. Mount the
-`recording-studio-notifications-push--push-foreground` Stimulus controller on
-host layouts (with a `toast` target) so focused tabs show an in-page alert.
+`showNotification` from the payload (with `/icon.png` by default).
 ## Mount points
 
 Suggested host routes:

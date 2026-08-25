@@ -1,6 +1,6 @@
 <%# Push handlers for the host service worker composition seam.
-    FCM sends data-only web payloads; this partial owns showNotification and
-    also posts to open windows so focused tabs can show an in-page toast. %>
+    FCM sends data-only web payloads; this partial owns native Chrome
+    notifications via registration.showNotification (OS banner, not in-page UI). %>
 self.addEventListener("push", (event) => {
   let payload = {};
   try {
@@ -17,30 +17,15 @@ self.addEventListener("push", (event) => {
   const title = data.title || payload.notification?.title || "Notification";
   const body = data.body || payload.notification?.body || "";
   const url = data.url || payload.fcmOptions?.link || payload.notification?.click_action || "/";
+  const icon = data.icon || payload.notification?.icon || "/icon.png";
   const options = {
     body: body,
+    icon: icon,
+    badge: icon,
     data: { url: url }
   };
 
-  const notifyClients = self.clients
-    .matchAll({ type: "window", includeUncontrolled: true })
-    .then((clients) => {
-      clients.forEach((client) => {
-        client.postMessage({
-          type: "rsnp:push",
-          title: title,
-          body: body,
-          url: url
-        });
-      });
-    });
-
-  event.waitUntil(
-    Promise.all([
-      self.registration.showNotification(title, options),
-      notifyClients
-    ])
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
 self.addEventListener("notificationclick", (event) => {
