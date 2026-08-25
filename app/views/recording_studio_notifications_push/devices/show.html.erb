@@ -52,40 +52,6 @@
       <p class="text-sm text-(--surface-content-color)"
          data-recording-studio-notifications-push--push-devices-target="status"></p>
     </div>
-
-    <%= render FlatPack::PageTitle::Component.new(
-      title: "Not getting alerts?",
-      subtitle: "Run these two checks to find where the notification stops.",
-      variant: :h3
-    ) %>
-
-    <div class="flex flex-col gap-3">
-      <div class="flex flex-wrap items-center gap-3">
-        <%= render FlatPack::Button::Component.new(
-          text: "Show a local notification",
-          style: :secondary,
-          size: :sm,
-          type: "button",
-          data: { push_local_test: true }
-        ) %>
-        <%= render FlatPack::Button::Component.new(
-          text: "Send a test push",
-          style: :secondary,
-          size: :sm,
-          type: "button",
-          data: { push_server_test: true }
-        ) %>
-      </div>
-      <p class="text-sm leading-6 text-(--surface-content-color)">
-        <strong>Show a local notification</strong> skips Firebase — if that stays invisible, your
-        browser or operating system is hiding alerts (on macOS check
-        System Settings → Notifications → Chrome, and turn off Do Not Disturb).
-        <strong>Send a test push</strong> goes through Firebase to this device and tells you
-        exactly what Firebase said.
-      </p>
-      <div class="flex flex-col gap-1"
-           data-recording-studio-notifications-push--push-devices-target="diagnostics"></div>
-    </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
       style: :info,
@@ -111,6 +77,40 @@
          data-recording-studio-notifications-push--push-devices-target="status"></p>
     </div>
   <% end %>
+
+  <%= render FlatPack::PageTitle::Component.new(
+    title: "Not getting alerts?",
+    subtitle: "Run these two checks to find where the notification stops.",
+    variant: :h3
+  ) %>
+
+  <div class="flex flex-col gap-3">
+    <div class="flex flex-wrap items-center gap-3">
+      <%= render FlatPack::Button::Component.new(
+        text: "Show a local notification",
+        style: :secondary,
+        size: :sm,
+        type: "button",
+        data: { push_local_test: true }
+      ) %>
+      <%= render FlatPack::Button::Component.new(
+        text: "Send a test push",
+        style: :secondary,
+        size: :sm,
+        type: "button",
+        data: { push_server_test: true }
+      ) %>
+    </div>
+    <p class="text-sm leading-6 text-(--surface-content-color)">
+      <strong>Show a local notification</strong> skips Firebase — if that stays invisible, your
+      browser or operating system is hiding alerts (on macOS check
+      System Settings → Notifications → Chrome, and turn off Do Not Disturb).
+      <strong>Send a test push</strong> goes through Firebase to this device and tells you
+      exactly what Firebase said.
+    </p>
+    <div class="flex flex-col gap-1"
+         data-recording-studio-notifications-push--push-devices-target="diagnostics"></div>
+  </div>
 
   <% if @installations.any? %>
     <%= render FlatPack::PageTitle::Component.new(
