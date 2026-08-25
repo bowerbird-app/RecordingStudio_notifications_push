@@ -7,7 +7,7 @@ module RecordingStudioNotificationsPush
       @firebase_web_config = RecordingStudioNotificationsPush.configuration.firebase_web_config
       @vapid_public_key = RecordingStudioNotificationsPush.configuration.vapid_public_key
       @firebase_ready = firebase_ready?
-      @service_worker_path = service_worker_path if respond_to?(:service_worker_path, true)
+      @service_worker_path = service_worker_path
     end
 
     def destroy
@@ -28,9 +28,12 @@ module RecordingStudioNotificationsPush
     end
 
     def service_worker_path
-      return unless respond_to?(:pwa_service_worker_path, true)
+      return unless respond_to?(:main_app, true)
+      return unless main_app.respond_to?(:pwa_service_worker_path)
 
-      pwa_service_worker_path(format: :js)
+      main_app.pwa_service_worker_path(format: :js)
+    rescue ArgumentError, NoMethodError
+      nil
     end
   end
 end

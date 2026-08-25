@@ -4,15 +4,25 @@ module RecordingStudioNotificationsPush
   parent_controller = defined?(::ApplicationController) ? ::ApplicationController : ActionController::Base
 
   class ApplicationController < parent_controller
-    include ::RecordingStudio::UsesDefaultLayout if defined?(::RecordingStudio::UsesDefaultLayout)
-
     protect_from_forgery with: :exception
 
     before_action :require_push_actor!
 
     helper_method :current_push_actor
 
+    # Prefer the host app shell (e.g. FlatPack sidebar). Only fall back to the
+    # Recording Studio default layout when the host has not set one.
+    layout :push_application_layout
+
     private
+
+    def push_application_layout
+      if respond_to?(:application_layout, true)
+        application_layout
+      elsif defined?(::RecordingStudio::UsesDefaultLayout)
+        "recording_studio/default_layout"
+      end
+    end
 
     def current_push_actor
       @current_push_actor ||= begin
