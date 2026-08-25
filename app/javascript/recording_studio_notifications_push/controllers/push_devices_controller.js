@@ -149,6 +149,21 @@ export default class extends Controller {
     return document.querySelector("meta[name='csrf-token']")?.content || ""
   }
 
+  friendlyError(error) {
+    const message = String(error?.message || error || "")
+    const name = String(error?.name || "")
+
+    if (name === "NotAllowedError" || /permission|not allowed/i.test(message)) {
+      return "Notifications stay off until you allow them in the browser."
+    }
+
+    if (/push service not available|push service error/i.test(message) || name === "AbortError") {
+      return "This browser could not reach Chrome's push service. Try Google Chrome (not Brave/ungoogled), enable Google push services, or check network/VPN blocks to Google."
+    }
+
+    return message || null
+  }
+
   setStatus(message) {
     if (this.hasStatusTarget) {
       this.statusTarget.textContent = message

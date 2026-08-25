@@ -8,6 +8,7 @@
 - Dummy Tailwind `@source` paths cover system Ruby Bundler installs after merging main
 - Dummy PWA head hook resolves manifest/service-worker routes through `main_app` so mounted engine pages (e.g. `/notifications/push/devices`) register the worker instead of rejecting with "PWA service worker route is not mounted"
 - Push devices Stimulus controller falls back to an explicit `navigator.serviceWorker.register` when `RecordingStudioPwa.serviceWorkerReady` rejects for a missing host helper
+- Clearer devices-page errors when the browser cannot reach Chrome's push service (`Registration failed - push service not available`) — usually Brave/privacy settings or blocked Google push, not missing Firebase ENV
 
 ## 0.1.0
 
