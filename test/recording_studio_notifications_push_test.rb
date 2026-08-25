@@ -77,6 +77,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "serviceWorkerRegistration"
     assert_includes push_devices_js, "resolveServiceWorkerRegistration"
     assert_includes push_devices_js, "not mounted"
+    assert_includes push_devices_js, "data-push-enable"
+    assert_includes push_devices_js, "_onPushEnableClick"
+
+    devices_show = File.read(
+      File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)
+    )
+    assert_includes devices_show, "push_enable: true"
   end
 
   def test_dummy_pwa_head_resolves_service_worker_via_main_app

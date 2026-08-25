@@ -15,30 +15,54 @@ export default class extends Controller {
 
   connect() {
     this.setStatus("")
+    // Bind Enable via event delegation on the controller root. Prefer this over
+    // data-action on FlatPack::Button — long namespaced identifiers were a
+    // silent no-op in some host layouts even when the controller connected.
+    this._onPushEnableClick = (event) => {
+      const trigger = event.target.closest("[data-push-enable]")
+      if (!trigger || !this.element.contains(trigger)) return
+      this.enable(event)
+    }
+    this.element.addEventListener("click", this._onPushEnableClick)
+  }
+
+  disconnect() {
+    if (this._onPushEnableClick) {
+      this.element.removeEventListener("click", this._onPushEnableClick)
+      this._onPushEnableClick = null
+    }
   }
 
   async enable(event) {
     event?.preventDefault?.()
+    event?.stopPropagation?.()
     this.setStatus("Asking for permission…")
 
     try {
+      if (!("Notification" in window)) {
+        this.setStatus("This browser does not support notifications.")
+        return
+      }
+
       const permission = await Notification.requestPermission()
       if (permission !== "granted") {
         this.setStatus("Notifications stay off until you allow them.")
         return
       }
 
+      this.setStatus("Getting a Firebase token…")
       const token = await this.fetchFirebaseToken()
       if (!token) {
         this.setStatus("Could not get a Firebase token. Check the Firebase importmap pins.")
         return
       }
 
+      this.setStatus("Saving this browser…")
       await this.registerInstallation(token)
       this.setStatus("This browser is ready for push.")
       window.location.reload()
     } catch (error) {
-      console.error(error)
+      console.error("[push-devices] enable failed", error)
       this.setStatus(this.friendlyError(error) || "Could not enable push on this browser.")
     }
   }

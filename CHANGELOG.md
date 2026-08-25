@@ -10,6 +10,7 @@
 - Push devices Stimulus controller falls back to an explicit `navigator.serviceWorker.register` when `RecordingStudioPwa.serviceWorkerReady` rejects for a missing host helper
 - Clearer devices-page errors when the browser cannot reach Chrome's push service (`Registration failed - push service not available`) — usually Brave/privacy settings or blocked Google push, not missing Firebase ENV
 - Dummy Stimulus `controllers/index.js` only lazy-loads under `controllers` so push/FlatPack pins resolve (nested prefixes requested doubled paths and left Enable as a no-op)
+- Devices "Enable on this browser" binds via controller event delegation (`data-push-enable`) so the click runs when the Stimulus controller is connected
 
 ## 0.1.0
 
