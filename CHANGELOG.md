@@ -4,6 +4,8 @@
 
 ### Changed
 - Devices page uses a blank engine layout with FlatPack `PageNav` (same shape as notifications settings) — no host sidebar or top nav
+- Dummy home page adds a Turbo **Test notification** button that sends `:push_demo` (respects notification settings) and prepends results on the page
+- Dummy importmap loads `@hotwired/turbo-rails` so Turbo Stream updates work on the home page
 
 ### Fixed
 - Resolve service-worker URL via `main_app.pwa_service_worker_path` so the devices page works inside the mounted engine

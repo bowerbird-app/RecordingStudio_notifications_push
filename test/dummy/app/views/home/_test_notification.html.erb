@@ -1,0 +1,20 @@
+<%
+  channel_labels = @deliveries.map { |delivery|
+    status = delivery.status.to_s
+    "#{delivery.channel} (#{status})"
+  }
+%>
+<article class="flex flex-col gap-1 border-b border-(--surface-border-color) pb-3">
+  <div class="flex flex-wrap items-baseline justify-between gap-2">
+    <p class="text-sm font-medium text-(--surface-content-color)"><%= @notification.title %></p>
+    <p class="text-xs text-(--surface-content-color)">
+      <%= time_ago_in_words(@notification.created_at) %> ago
+    </p>
+  </div>
+  <% if @notification.body.present? %>
+    <p class="text-sm text-(--surface-content-color)"><%= @notification.body %></p>
+  <% end %>
+  <p class="text-xs text-(--surface-content-color)">
+    Channels: <%= channel_labels.presence&.join(", ") || "none" %>
+  </p>
+</article>
