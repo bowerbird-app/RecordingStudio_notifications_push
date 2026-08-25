@@ -76,5 +76,16 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     )
     assert_includes push_devices_js, "serviceWorkerRegistration"
     assert_includes push_devices_js, "resolveServiceWorkerRegistration"
+    assert_includes push_devices_js, "not mounted"
+  end
+
+  def test_dummy_pwa_head_resolves_service_worker_via_main_app
+    head = File.read(
+      File.expand_path("dummy/app/views/recording_studio/_default_layout_head.html.erb", __dir__)
+    )
+
+    assert_includes head, "main_app.pwa_service_worker_path"
+    assert_includes head, "main_app.pwa_manifest_path"
+    assert_includes head, "RecordingStudioPwa.serviceWorkerReady"
   end
 end

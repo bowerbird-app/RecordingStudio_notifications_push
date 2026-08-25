@@ -86,7 +86,15 @@ export default class extends Controller {
 
   async resolveServiceWorkerRegistration() {
     if (window.RecordingStudioPwa?.serviceWorkerReady) {
-      return window.RecordingStudioPwa.serviceWorkerReady
+      try {
+        return await window.RecordingStudioPwa.serviceWorkerReady
+      } catch (error) {
+        // Host head may reject when rendered from a mounted engine without
+        // main_app helpers. Fall through to an explicit register() below.
+        if (!String(error?.message || "").includes("not mounted")) {
+          throw error
+        }
+      }
     }
 
     if (!("serviceWorker" in navigator)) {
