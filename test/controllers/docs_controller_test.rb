@@ -38,10 +38,13 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     get docs_config_path
     assert_response :success
     assert_select "h1", text: "Config"
-    expected_placeholder = "Replace this placeholder with the configuration settings your generated gem exposes."
-
-    assert_includes response.body, expected_placeholder
-    assert_includes response.body, "# Add the config settings for the gem here."
+    assert_includes response.body, "Defaults from ENV"
+    assert_includes response.body, "RecordingStudioNotificationsPush.configure"
+    assert_includes response.body, "firebase_service_account_json"
+    assert_includes response.body, "FIREBASE_SERVICE_ACCOUNT_JSON"
+    assert_includes response.body, "vapid_public_key"
+    assert_includes response.body, "open_timeout"
+    assert_includes response.body, "configuration.to_h"
   end
 
   test "recordable types page renders configured recordables dynamically" do
