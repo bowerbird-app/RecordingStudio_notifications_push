@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-08-24
+
+### Added
+- Restored the dummy app's FlatPack sidebar shell (`flat_pack_sidebar`) with docs navigation, root switcher top nav, and sign-out in the sidebar footer — matching the Recording Studio notifications gem host-app pattern
+
+### Changed
+- Authenticated dummy pages no longer use `RecordingStudio::UsesDefaultLayout`; Devise sign-in still uses the centered `application` layout
+
+### Fixed
+- Dummy Tailwind `@source` paths now include system Ruby Bundler gem installs, so FlatPack and Recording Studio classes compile in Cloud Agent and other non-`vendor/bundle` environments
+- Dummy asset manifest now links the Tailwind build output and FlatPack stylesheets for precompilation
+
+### Upgrade notes
+- If a host app's Tailwind build looks unstyled outside Codespaces or `vendor/bundle`, add the system Ruby `@source` paths from `test/dummy/app/assets/tailwind/application.css` and run `bin/rails tailwindcss:build`
+- Host apps that moved to `recording_studio/default_layout` can copy the dummy sidebar files back when they want persistent docs navigation
+
 ## [0.2.0] - 2026-08-21
 
 New addons copied from this template are born on Recording Studio 4.x.

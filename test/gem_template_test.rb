@@ -4,7 +4,7 @@ require "test_helper"
 
 class GemTemplateTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.0", ::GemTemplate::VERSION
+    assert_equal "0.2.2", ::GemTemplate::VERSION
   end
 
   def test_engine_exists
@@ -47,16 +47,16 @@ class GemTemplateTest < Minitest::Test
     assert_empty RecordingStudio.configuration.enabled_recordable_types_for(:example)
   end
 
-  def test_dummy_app_uses_recording_studio_default_layout
+  def test_dummy_app_uses_flatpack_sidebar_layout
     application_controller_path = File.expand_path("dummy/app/controllers/application_controller.rb", __dir__)
     controller_source = File.read(application_controller_path)
 
-    assert_includes controller_source, "include RecordingStudio::UsesDefaultLayout"
-    assert_includes controller_source, '"recording_studio/default_layout"'
+    refute_includes controller_source, "UsesDefaultLayout"
+    assert_includes controller_source, '"flat_pack_sidebar"'
     assert_includes controller_source, "devise_controller? ? \"application\""
-    refute_includes controller_source, "flat_pack_sidebar"
-    refute File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack_sidebar.html.erb", __dir__))
-    refute File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
+    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack_sidebar.html.erb", __dir__))
+    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
+    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_top_nav.html.erb", __dir__))
   end
 
   def test_dummy_login_layout_keeps_flatpack_assets_without_tight_main_offset
@@ -100,7 +100,7 @@ class GemTemplateTest < Minitest::Test
     assert_includes readme_source, "This Rails app exists to validate the Recording Studio addon template"
     assert_includes readme_source, "/recording_studio"
     assert_includes readme_source, "redirects to `/`"
-    refute_includes readme_source, "flat_pack_sidebar"
+    assert_includes readme_source, "flat_pack_sidebar"
   end
 
   def test_product_readme_is_the_template_guide
@@ -122,7 +122,7 @@ class GemTemplateTest < Minitest::Test
     assert_includes view_source, 'title: "Template Demo"'
     assert_includes view_source, 'subtitle: "This dummy app is the browser-facing demo surface for the template."'
     assert_includes view_source, "FlatPack::Card::Component"
-    assert_includes view_source, "dummy_page_nav"
+    refute_includes view_source, "dummy_page_nav"
     refute_includes view_source, 'title: "Demo"'
     refute_includes view_source, "FlatPack::Breadcrumb::Component"
   end
@@ -136,7 +136,7 @@ class GemTemplateTest < Minitest::Test
     docs_view_paths.each do |view_path|
       view_source = File.read(view_path)
 
-      assert_includes view_source, "dummy_page_nav"
+      refute_includes view_source, "dummy_page_nav"
       assert_includes view_source, "FlatPack::PageTitle::Component"
       refute_includes view_source, "FlatPack::Card::Component"
       refute_includes view_source, "FlatPack::Breadcrumb::Component"

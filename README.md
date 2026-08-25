@@ -8,9 +8,9 @@ Internal template for building Rails engine addons on top of Recording Studio 4.
 - **Devise** authentication with a pre-seeded admin user
 - **Workspace**, **Folder**, and **Page** recordables seeded into the dummy host app
 - **FlatPack** UI component library for all views
-- **Dummy app** (`test/dummy/`) with a FlatPack sign-in screen, a home page on Recording Studio's default layout, mounted Recording Studio routes, and FlatPack's built-in rounded theme
+- **Dummy app** (`test/dummy/`) with a FlatPack sign-in screen, a FlatPack sidebar shell for authenticated pages, mounted Recording Studio routes, and FlatPack's built-in rounded theme
 
-Authenticated dummy pages use Recording Studio's shared default layout (`RecordingStudio::UsesDefaultLayout`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.
+Authenticated dummy pages use the FlatPack sidebar layout (`flat_pack_sidebar`) plus FlatPack CSS and JS. Devise keeps its own sign-in layout. Dummy `/docs/*` pages stay in the dummy app as a host-app sandbox; they are not the product README.
 
 ## Quick Start
 
