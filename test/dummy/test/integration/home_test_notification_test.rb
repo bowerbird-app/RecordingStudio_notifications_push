@@ -40,7 +40,6 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     notification = RecordingStudioNotifications::Notification.order(created_at: :desc).first
     assert_equal @user, notification.recipient
     assert_equal "push_demo", notification.notification_type
-    expected_show_path = RecordingStudioNotifications::Engine.routes.url_helpers.notification_path(notification)
-    assert_equal expected_show_path, notification.url
+    assert_equal demo_notification_path(notification), notification.url
   end
 end

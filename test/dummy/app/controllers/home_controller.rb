@@ -14,7 +14,7 @@ class HomeController < ApplicationController
       actor: current_user,
       deliver_later: true
     )
-    @notification.update!(url: notification_show_path(@notification))
+    @notification.update!(url: demo_notification_path(@notification))
     RecordingStudioNotifications::DeliveryJob.perform_now(@notification.id)
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
     @recent_inbox_notifications = recent_inbox_notifications
@@ -35,10 +35,6 @@ class HomeController < ApplicationController
       .visible_in_inbox
       .order(created_at: :desc)
       .limit(8)
-  end
-
-  def notification_show_path(notification)
-    RecordingStudioNotifications::Engine.routes.url_helpers.notification_path(notification)
   end
 
   def render_test_notification_success

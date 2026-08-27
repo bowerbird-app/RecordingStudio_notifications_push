@@ -20,7 +20,7 @@
         <p class="text-sm text-(--surface-content-color)"><%= notification.body %></p>
       <% end %>
       <p class="text-xs text-(--surface-content-color)">
-        <%= link_to "Open inbox", "/notifications", class: "underline" %>
+        <%= link_to "Open details", demo_notification_path(notification), class: "underline" %>
       </p>
     </article>
   <% end %>

@@ -1,0 +1,177 @@
+<%
+  status_label = if @notification.archived?
+    "Archived"
+  elsif @notification.unread?
+    "Unread"
+  else
+    "Read"
+  end
+  status_style = if @notification.archived?
+    :default
+  elsif @notification.unread?
+    :warning
+  else
+    :success
+  end
+  recipient_label = polymorphic_label(@notification.recipient)
+  actor_label = polymorphic_label(@notification.actor)
+  delivery_rows = @deliveries.map { |delivery|
+    {
+      channel: delivery.channel.to_s,
+      status: delivery.status.to_s,
+      delivered_at: delivery.delivered_at,
+      error_message: delivery.error_message.to_s.presence,
+      metadata: delivery.metadata.presence || {}
+    }
+  }
+  detail_rows = [
+    { label: "ID", value: @notification.id },
+    { label: "Type", value: @notification.notification_type },
+    { label: "Recipient", value: recipient_label },
+    { label: "Actor", value: actor_label.presence || "—" },
+    { label: "Created", value: l(@notification.created_at, format: :long) },
+    { label: "Updated", value: l(@notification.updated_at, format: :long) },
+    { label: "Read at", value: @notification.read_at.present? ? l(@notification.read_at, format: :long) : "—" },
+    { label: "Cleared at", value: @notification.cleared_at.present? ? l(@notification.cleared_at, format: :long) : "—" },
+    { label: "Archived at", value: @notification.archived_at.present? ? l(@notification.archived_at, format: :long) : "—" },
+    { label: "Click URL", value: @notification.url.presence || "—" },
+    { label: "Idempotency key", value: @notification.idempotency_key.presence || "—" },
+    { label: "Root recording", value: @notification.root_recording_id.presence || "—" },
+    { label: "Recording", value: @notification.recording_id.presence || "—" },
+    {
+      label: "Notifiable",
+      value: if @notification.notifiable_type.present?
+               "#{@notification.notifiable_type} ##{@notification.notifiable_id}"
+             else
+               "—"
+             end
+    }
+  ]
+%>
+
+<div class="flex w-full flex-col gap-8">
+  <%= render FlatPack::PageNav::Component.new(anchor_url: root_path) %>
+
+  <%= render FlatPack::PageTitle::Component.new(
+    title: @notification.title,
+    subtitle: "Dummy landing page for this push click — everything the host stored about the notice.",
+    variant: :h1
+  ) %>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <%= render FlatPack::Badge::Component.new(text: status_label, style: status_style) %>
+    <%= render FlatPack::Badge::Component.new(
+      text: @notification.notification_type.humanize,
+      style: :info
+    ) %>
+  </div>
+
+  <% if @notification.body.present? %>
+    <p class="text-sm leading-6 text-(--surface-content-color)"><%= @notification.body %></p>
+  <% end %>
+
+  <div class="flex flex-wrap gap-3">
+    <%= render FlatPack::Button::Component.new(
+      text: "Back home",
+      style: :secondary,
+      size: :md,
+      href: root_path
+    ) %>
+    <%= render FlatPack::Button::Component.new(
+      text: "Notification inbox",
+      style: :secondary,
+      size: :md,
+      href: "/notifications"
+    ) %>
+    <%= render FlatPack::Button::Component.new(
+      text: "Push devices",
+      style: :secondary,
+      size: :md,
+      href: "/notifications/push/devices"
+    ) %>
+  </div>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "Notification details",
+    subtitle: "Fields from the parent notifications gem."
+  ) %>
+
+  <%= render FlatPack::Table::Component.new(data: detail_rows, class: "text-sm") do |table| %>
+    <% table.column(title: "Field") { |row| row[:label] } %>
+    <% table.column(title: "Value") { |row| row[:value] } %>
+  <% end %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "Channel deliveries",
+    subtitle: "What each adapter reported for this notice."
+  ) %>
+
+  <% if delivery_rows.empty? %>
+    <%= render FlatPack::EmptyState::Component.new(
+      title: "No deliveries yet",
+      description: "Nothing was queued for this notice."
+    ) %>
+  <% else %>
+    <%= render FlatPack::Table::Component.new(data: delivery_rows, class: "text-sm") do |table| %>
+      <% table.column(title: "Channel") { |row| row[:channel] } %>
+      <% table.column(title: "Status") { |row| row[:status] } %>
+      <% table.column(title: "Delivered at") { |row|
+        row[:delivered_at].present? ? l(row[:delivered_at], format: :long) : "—"
+      } %>
+      <% table.column(title: "Error") { |row| row[:error_message] || "—" } %>
+    <% end %>
+
+    <% delivery_rows.each do |row| %>
+      <% next if row[:metadata].blank? %>
+      <%= render FlatPack::CodeBlock::Component.new(
+        title: "#{row[:channel]} metadata",
+        language: :json,
+        code: JSON.pretty_generate(row[:metadata])
+      ) %>
+    <% end %>
+  <% end %>
+
+  <% if @notification.metadata.present? %>
+    <%= render FlatPack::SectionTitle::Component.new(
+      title: "Notification metadata",
+      subtitle: "Extra payload stored on the notice itself."
+    ) %>
+    <%= render FlatPack::CodeBlock::Component.new(
+      title: "JSON",
+      language: :json,
+      code: JSON.pretty_generate(@notification.metadata)
+    ) %>
+  <% end %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "Push devices for this recipient",
+    subtitle: "Installations the push channel would fan out to."
+  ) %>
+
+  <% if @installations.empty? %>
+    <%= render FlatPack::EmptyState::Component.new(
+      title: "No devices registered",
+      description: "Enable a browser under push devices if you want FCM to try this account."
+    ) %>
+  <% else %>
+    <% installation_rows = @installations.map { |installation|
+      {
+        id: installation.id,
+        fid: installation.firebase_installation_id,
+        platform: installation.platform.presence || "—",
+        label: installation.label.presence || "—",
+        active: installation.active? ? "Active" : "Disabled",
+        last_seen: installation.last_seen_at.present? ? l(installation.last_seen_at, format: :long) : "—",
+        disabled_at: installation.disabled_at.present? ? l(installation.disabled_at, format: :long) : "—"
+      }
+    } %>
+    <%= render FlatPack::Table::Component.new(data: installation_rows, class: "text-sm") do |table| %>
+      <% table.column(title: "FID") { |row| row[:fid] } %>
+      <% table.column(title: "Platform") { |row| row[:platform] } %>
+      <% table.column(title: "Label") { |row| row[:label] } %>
+      <% table.column(title: "Status") { |row| row[:active] } %>
+      <% table.column(title: "Last seen") { |row| row[:last_seen] } %>
+      <% table.column(title: "Disabled") { |row| row[:disabled_at] } %>
+    <% end %>
+  <% end %>
+</div>
