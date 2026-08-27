@@ -38,9 +38,11 @@
     <p class="text-sm leading-6 text-(--surface-content-color)">
       Sends a <strong>Push demo</strong> notice on whichever channels you left on in
       <%= link_to "notification settings", "/notifications/settings", class: "underline" %>.
-      In-app rows show in the inbox list below. Browser push only reaches browsers you
-      <%= link_to "enabled under push devices", "/notifications/push/devices", class: "underline" %>
-      — enable <em>this</em> browser if you want a toast here.
+      In-app rows show in the inbox list below. Browser push opens the
+      <%= link_to "notification show page", "/notifications", class: "underline" %>
+      when you click the alert. Enable
+      <%= link_to "this browser under push devices", "/notifications/push/devices", class: "underline" %>
+      if you want a toast here.
     </p>
   </div>
 
