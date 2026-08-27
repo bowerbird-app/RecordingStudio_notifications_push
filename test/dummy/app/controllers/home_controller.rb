@@ -11,9 +11,11 @@ class HomeController < ApplicationController
       recipient: current_user,
       title: "Test ping",
       body: "Sent with your notification settings — inbox, email, and push as enabled.",
-      url: root_path,
-      actor: current_user
+      actor: current_user,
+      deliver_later: true
     )
+    @notification.update!(url: notification_show_path(@notification))
+    RecordingStudioNotifications::DeliveryJob.perform_now(@notification.id)
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
     @recent_inbox_notifications = recent_inbox_notifications
     render_test_notification_success
@@ -33,6 +35,10 @@ class HomeController < ApplicationController
       .visible_in_inbox
       .order(created_at: :desc)
       .limit(8)
+  end
+
+  def notification_show_path(notification)
+    RecordingStudioNotifications::Engine.routes.url_helpers.notification_path(notification)
   end
 
   def render_test_notification_success
