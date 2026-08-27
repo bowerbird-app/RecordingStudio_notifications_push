@@ -2,6 +2,8 @@
 
 module RecordingStudioNotificationsPush
   class DevicesController < ApplicationController
+    layout "recording_studio_notifications_push/blank"
+
     def show
       @installations = Installation.active.for_recipient(current_push_actor).order(last_seen_at: :desc)
       @firebase_web_config = RecordingStudioNotificationsPush.configuration.firebase_web_config

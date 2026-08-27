@@ -36,10 +36,29 @@ rollup channel.
    `legacy_fcm_token`).
 5. `FcmClient` exchanges `FIREBASE_SERVICE_ACCOUNT_JSON` for a Google OAuth
    token and POSTs to FCM HTTP v1.
-6. `UNREGISTERED` / `NOT_FOUND` responses disable that installation.
+6. `UNREGISTERED` / `NOT_FOUND` / invalid registration token responses disable
+   that installation.
 7. Delivery succeeds when **at least one** installation send succeeds.
 8. If no installations exist, or every send fails, the adapter raises
    `DeliveryError`.
+
+Web payloads carry **both** `notification` and `data` (title/body/url in each).
+The PWA service-worker extension calls `registration.showNotification`, which is
+the native Chrome OS banner — not an in-page HTML alert. Keeping `notification`
+means a browser whose worker is stale still has a payload to display.
+
+## Diagnosing a missing notification
+
+An FCM `200` only means FCM accepted the message. The devices page exposes two
+checks that separate the failure modes:
+
+| Check | Path exercised | What a silent result means |
+|---|---|---|
+| Show a local notification | service worker only, no FCM | browser or OS is hiding notifications |
+| Send a test push | `POST /installations/:id/test_push` → FCM → service worker | FCM reports its own verdict inline |
+
+`RecordingStudioNotificationsPush::TestPush` powers the second check and returns
+`accepted`, `status`, and `error`.
 
 ## PWA seam
 
@@ -52,9 +71,7 @@ RecordingStudioPwa.register_service_worker_extension(
 ```
 
 The partial adds `push` and `notificationclick` handlers that call
-`showNotification` from the payload. Hosts may additionally `importScripts`
-Firebase messaging workers if they need SDK-managed notification payloads.
-
+`showNotification` from the payload (with `/icon.png` by default).
 ## Mount points
 
 Suggested host routes:

@@ -10,8 +10,9 @@ module RecordingStudioNotificationsPush
 
     helper_method :current_push_actor
 
-    # Prefer the host app shell (e.g. FlatPack sidebar). Only fall back to the
-    # Recording Studio default layout when the host has not set one.
+    # HTML screens (e.g. devices) may override with an engine blank layout.
+    # Prefer the host app shell for everything else; fall back to Recording
+    # Studio default layout when the host has not set one.
     layout :push_application_layout
 
     private

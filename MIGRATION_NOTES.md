@@ -1,5 +1,20 @@
 # Migration notes
 
+## 0.1.1
+
+### Host app steps
+
+1. Bump to `0.1.1` and restart so Propshaft digests pick up the refreshed
+   service-worker extension.
+2. Hard-refresh browsers (or unregister the old service worker) so they load the
+   SW that calls `registration.showNotification` for native Chrome banners.
+3. Native display is owned by the PWA service-worker extension
+   (`showNotification`), not an in-page HTML toast.
+4. Enable push on **each** browser under `/notifications/push/devices` — FCM
+   only reaches registered installations for that account.
+5. New route `POST /installations/:id/test_push` backs the devices-page
+   diagnostics. It is scoped to the current actor's own active installations.
+
 ## 0.1.0 (from gem template)
 
 This repository was renamed from the Recording Studio gem template to

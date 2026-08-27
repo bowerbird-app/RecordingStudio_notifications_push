@@ -8,7 +8,7 @@
   <div class="flex flex-wrap gap-3">
     <%= render FlatPack::Button::Component.new(
       text: "Manage devices",
-      style: :primary,
+      style: :secondary,
       size: :md,
       href: "/notifications/push/devices"
     ) %>
@@ -18,11 +18,55 @@
       size: :md,
       href: "/notifications"
     ) %>
+    <%= render FlatPack::Button::Component.new(
+      text: "Notification settings",
+      style: :secondary,
+      size: :md,
+      href: "/notifications/settings"
+    ) %>
   </div>
 
-  <p class="text-sm leading-6 text-(--surface-content-color)">
-    Enable push on a browser, then send a demo notice from the console with
-    <code>RecordingStudioNotifications.notify</code> using type
-    <code>:push_demo</code>.
-  </p>
+  <div class="flex flex-col gap-3">
+    <%= form_with url: test_notifications_path(format: :turbo_stream), method: :post do %>
+      <%= render FlatPack::Button::Component.new(
+        text: "Test notification",
+        style: :primary,
+        size: :md,
+        type: "submit"
+      ) %>
+    <% end %>
+    <p class="text-sm leading-6 text-(--surface-content-color)">
+      Sends a <strong>Push demo</strong> notice on whichever channels you left on in
+      <%= link_to "notification settings", "/notifications/settings", class: "underline" %>.
+      In-app rows show in the inbox list below. Browser push only reaches browsers you
+      <%= link_to "enabled under push devices", "/notifications/push/devices", class: "underline" %>
+      — enable <em>this</em> browser if you want a toast here.
+    </p>
+  </div>
+
+  <div id="test-notification-flash"></div>
+
+  <section class="flex flex-col gap-3" aria-live="polite">
+    <%= render FlatPack::PageTitle::Component.new(
+      title: "In-app inbox",
+      subtitle: "Same rows as /notifications — stay here to confirm in-app delivery.",
+      variant: :h3
+    ) %>
+    <div id="inbox-notifications" class="flex flex-col gap-3">
+      <%= render "home/inbox_notifications", notifications: @recent_inbox_notifications %>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3" aria-live="polite">
+    <%= render FlatPack::PageTitle::Component.new(
+      title: "Test results",
+      subtitle: "Channel delivery status for pings from this page (clears on full reload).",
+      variant: :h3
+    ) %>
+    <div id="test-notifications" class="flex flex-col gap-3">
+      <p id="test-notifications-empty" class="text-sm text-(--surface-content-color)">
+        No test pings yet. Hit the button above.
+      </p>
+    </div>
+  </section>
 </div>

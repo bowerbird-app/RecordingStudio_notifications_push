@@ -1,0 +1,13 @@
+<% if @error_message.present? %>
+  <%= render FlatPack::Alert::Component.new(
+    style: :danger,
+    title: "Could not send",
+    description: @error_message
+  ) %>
+<% else %>
+  <%= render FlatPack::Alert::Component.new(
+    style: :success,
+    title: "Sent",
+    description: "Check the list below — and your browser if push is on."
+  ) %>
+<% end %>

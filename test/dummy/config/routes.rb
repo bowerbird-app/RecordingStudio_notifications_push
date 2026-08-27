@@ -23,5 +23,7 @@ Rails.application.routes.draw do
   get "docs/gem_views", to: "docs#gem_views", as: :docs_gem_views
   get "docs/methods", to: "docs#methods", as: :docs_methods
 
+  post "test_notifications", to: "home#create_test_notification", as: :test_notifications
+
   root "home#index"
 end

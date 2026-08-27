@@ -1,0 +1,49 @@
+<%# Host override of RecordingStudioPwa's head hook.
+    Mounted engine controllers (e.g. /notifications/push/devices) do not see
+    host route helpers directly — resolve via main_app when present. %>
+<%
+  pwa_manifest_href =
+    if respond_to?(:main_app) && main_app.respond_to?(:pwa_manifest_path)
+      main_app.pwa_manifest_path(format: :json)
+    elsif respond_to?(:pwa_manifest_path)
+      pwa_manifest_path(format: :json)
+    end
+
+  pwa_service_worker_href =
+    if respond_to?(:main_app) && main_app.respond_to?(:pwa_service_worker_path)
+      main_app.pwa_service_worker_path(format: :js)
+    elsif respond_to?(:pwa_service_worker_path)
+      pwa_service_worker_path(format: :js)
+    end
+%>
+<meta name="theme-color" content="<%= RecordingStudioPwa.theme_color %>">
+<meta name="application-name" content="<%= RecordingStudioPwa.web_app_name %>">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="<%= RecordingStudioPwa.web_app_name %>">
+<% if pwa_manifest_href.present? %>
+  <link rel="manifest" href="<%= pwa_manifest_href %>">
+<% end %>
+<% if pwa_service_worker_href.present? %>
+  <%= javascript_tag nonce: true do %>
+    document.documentElement.setAttribute("data-theme", "rounded");
+    window.RecordingStudioPwa = window.RecordingStudioPwa || {};
+    if ("serviceWorker" in navigator) {
+      window.RecordingStudioPwa.serviceWorkerReady = navigator.serviceWorker
+        .register("<%= pwa_service_worker_href %>")
+        .then(function () { return navigator.serviceWorker.ready; });
+    } else {
+      window.RecordingStudioPwa.serviceWorkerReady = Promise.reject(
+        new Error("Service workers are not supported")
+      );
+    }
+  <% end %>
+<% else %>
+  <%= javascript_tag nonce: true do %>
+    document.documentElement.setAttribute("data-theme", "rounded");
+    window.RecordingStudioPwa = window.RecordingStudioPwa || {};
+    window.RecordingStudioPwa.serviceWorkerReady = Promise.reject(
+      new Error("PWA service worker route is not mounted")
+    );
+  <% end %>
+<% end %>
