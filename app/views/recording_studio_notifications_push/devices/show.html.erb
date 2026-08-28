@@ -79,8 +79,7 @@
 
   <% if @installations.any? %>
     <%= render FlatPack::PageTitle::Component.new(
-      title: "This account",
-      subtitle: "Active browsers and devices.",
+      title: "Active browsers and devices",
       variant: :h3
     ) %>
 
@@ -92,9 +91,6 @@
             <p class="truncate text-sm font-medium text-(--surface-content-color)">
               <%= installation.label.presence || installation.platform.presence || "Browser" %>
               <span class="hidden text-xs font-normal" data-installation-current-label> · this browser</span>
-            </p>
-            <p class="mt-1 truncate text-xs text-(--surface-content-color)">
-              <%= installation.firebase_installation_id %>
             </p>
             <% if installation.last_seen_at.present? %>
               <p class="mt-1 text-xs text-(--surface-content-color)">
