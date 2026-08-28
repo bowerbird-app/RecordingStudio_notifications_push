@@ -26,14 +26,13 @@ module RecordingStudioNotificationsPush
 
     private
 
-    # Send both `notification` and `data`. The browser displays the notification
-    # block; the service worker reads `data` for click URLs and must not call
-    # showNotification again when a display payload is already present.
+    # Data-only web payloads. When a service worker handles `push`, Chrome does
+    # not auto-display an FCM `notification` block — the worker must call
+    # showNotification. Including both blocks duplicated banners before dedupe.
     def build_payload(token:, title:, body:, url:, data:)
       {
         message: {
           token: token.to_s,
-          notification: { title: title.to_s, body: body.to_s }.compact,
           data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
           webpush: webpush_options(url)
         }.compact

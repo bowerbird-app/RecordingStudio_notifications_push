@@ -14,7 +14,7 @@
 - `RecordingStudioNotificationsPush::TestPush` sends one diagnostic message to a single installation and returns an `accepted` / `status` / `error` result
 
 ### Changed
-- FCM web sends are **data-only** again so the service worker shows one OS banner (including both `notification` and `data` duplicated alerts when the worker was active) — **reverted in 0.1.3**; use notification+data with SW dedupe instead
+- FCM web sends are **data-only** again so the service worker shows one OS banner (including both `notification` and `data` duplicated alerts when the worker was active) — **reverted in 0.1.3**; use notification+data with SW dedupe instead — **fixed in 0.1.4**; data-only with SW always showing
 - Devices page no longer shows the **Not getting alerts?** troubleshooting section (local notification + test push checks). The `test_push` API endpoint remains for programmatic use.
 - FCM web sends include **both** `notification` and `data` so a browser whose service worker is stale still has a payload to display instead of dropping a data-only message
 - The PWA service-worker extension owns native Chrome `showNotification` (OS banner — not an in-page HTML toast)
@@ -34,6 +34,11 @@
 - Dummy Stimulus `controllers/index.js` only lazy-loads under `controllers` so push/FlatPack pins resolve (nested prefixes requested doubled paths and left Enable as a no-op)
 - Devices "Enable on this browser" binds via controller event delegation (`data-push-enable`) so the click runs when the Stimulus controller is connected
 - Devices page swaps to "Disable on this browser" when the current browser's FCM token matches an active installation
+
+## 0.1.4
+
+### Fixed
+- FCM web sends are **data-only** again; the service worker always calls `showNotification`. Skipping display when FCM included a `notification` block left Chrome with no banner because an active service worker must show it itself.
 
 ## 0.1.3
 

@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.3", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.4", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -85,7 +85,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     sw_partial = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/_service_worker_push.js.erb", __dir__)
     )
-    assert_includes sw_partial, "hasDisplayPayload"
+    refute_includes sw_partial, "hasDisplayPayload"
+    assert_includes sw_partial, "showNotification"
     assert_includes sw_partial, "/icon.png"
     refute_includes sw_partial, "rsnp:push"
 

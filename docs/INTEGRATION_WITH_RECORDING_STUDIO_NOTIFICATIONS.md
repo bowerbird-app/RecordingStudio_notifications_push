@@ -42,12 +42,9 @@ rollup channel.
 8. If no installations exist, or every send fails, the adapter raises
    `DeliveryError`.
 
-Web payloads carry **both** `notification` and `data` (title/body/url in each).
-The PWA service-worker extension calls `registration.showNotification` only for
-data-only messages; when FCM includes a display payload the browser shows one
-banner and the worker skips a second `showNotification`.
-the native Chrome OS banner — not an in-page HTML alert. Keeping `notification`
-means a browser whose worker is stale still has a payload to display.
+Web payloads are **data-only** (title, body, and url in `data`). The PWA
+service-worker extension always calls `registration.showNotification` for
+the native Chrome OS banner — not an in-page HTML alert.
 
 ## Diagnosing a missing notification
 

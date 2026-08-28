@@ -44,8 +44,7 @@ class FcmClientTest < Minitest::Test
     assert_equal "Bearer ya29.test", captured["Authorization"]
     payload = JSON.parse(captured.body)
     assert_equal "fid-1", payload.dig("message", "token")
-    assert_equal "Hello", payload.dig("message", "notification", "title")
-    assert_equal "World", payload.dig("message", "notification", "body")
+    refute payload.dig("message", "notification")
     assert_equal "Hello", payload.dig("message", "data", "title")
     assert_equal "World", payload.dig("message", "data", "body")
     assert_equal "/x", payload.dig("message", "data", "url")

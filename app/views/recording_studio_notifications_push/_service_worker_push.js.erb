@@ -19,13 +19,6 @@ self.addEventListener("push", (event) => {
   const url = data.url || payload.fcmOptions?.link || payload.notification?.click_action || "/";
   const icon = data.icon || payload.notification?.icon || "/icon.png";
 
-  // When FCM included a display payload, the browser already shows the banner.
-  // Only call showNotification for data-only messages (no notification title/body).
-  const hasDisplayPayload = Boolean(payload.notification?.title || payload.notification?.body);
-  if (hasDisplayPayload) {
-    return;
-  }
-
   const options = {
     body: body,
     icon: icon,
@@ -33,6 +26,7 @@ self.addEventListener("push", (event) => {
     data: { url: url }
   };
 
+  // FCM web sends are data-only; the service worker must show the OS banner.
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
