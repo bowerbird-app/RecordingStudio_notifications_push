@@ -18,12 +18,15 @@ class DemoNotificationsTest < ActionDispatch::IntegrationTest
       recipient: @user,
       title: "Demo detail ping",
       body: "Open me from a push click.",
-      url: "/demo/notifications/placeholder",
-      actor: @user,
-      deliver_later: true
+      url: demo_latest_notification_path,
+      actor: @user
     )
-    @notification.update!(url: demo_notification_path(@notification))
-    RecordingStudioNotifications::DeliveryJob.perform_now(@notification.id)
+  end
+
+  test "latest demo route redirects to the newest notification" do
+    get demo_latest_notification_path
+
+    assert_redirected_to demo_notification_path(@notification)
   end
 
   test "demo notification page shows full notification and delivery details" do
@@ -37,7 +40,7 @@ class DemoNotificationsTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Notification details"
     assert_includes response.body, "Channel deliveries"
     assert_includes response.body, "Push devices for this recipient"
-    assert_includes response.body, demo_notification_path(@notification)
+    assert_includes response.body, demo_latest_notification_path
   end
 
   test "demo notification page marks the notice read" do

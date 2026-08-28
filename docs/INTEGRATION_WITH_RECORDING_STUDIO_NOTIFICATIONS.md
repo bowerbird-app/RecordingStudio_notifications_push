@@ -42,8 +42,8 @@ rollup channel.
 8. If no installations exist, or every send fails, the adapter raises
    `DeliveryError`.
 
-Web payloads carry **both** `notification` and `data` (title/body/url in each).
-The PWA service-worker extension calls `registration.showNotification`, which is
+Web payloads are **data-only** (title/body/url in `data`). The PWA
+service-worker extension calls `registration.showNotification`, which is
 the native Chrome OS banner — not an in-page HTML alert. Keeping `notification`
 means a browser whose worker is stale still has a payload to display.
 

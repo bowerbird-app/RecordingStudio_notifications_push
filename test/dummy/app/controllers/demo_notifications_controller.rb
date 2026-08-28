@@ -3,7 +3,17 @@
 # Dummy-host landing page for push click-throughs. Not part of the push gem —
 # it exists so the demo can show a full notification dump after a browser alert.
 class DemoNotificationsController < ApplicationController
-  before_action :set_notification
+  def latest
+    notification = RecordingStudioNotifications::Notification
+      .for_recipient(current_user)
+      .order(created_at: :desc)
+      .first!
+    redirect_to demo_notification_path(notification)
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "We could not find that notification."
+  end
+
+  before_action :set_notification, only: :show
 
   def show
     @notification.mark_read! if @notification.unread?

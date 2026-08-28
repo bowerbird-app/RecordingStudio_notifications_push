@@ -26,15 +26,13 @@ module RecordingStudioNotificationsPush
 
     private
 
-    # Send both a `notification` block and `data`. The host service worker reads
-    # either shape, and keeping `notification` means a browser whose worker is
-    # stale or missing our push handler still has a payload to display instead
-    # of silently dropping a data-only message.
+    # Data-only web payloads: the PWA service worker owns display via
+    # showNotification. Including a notification block as well causes duplicate
+    # OS banners when the worker is active.
     def build_payload(token:, title:, body:, url:, data:)
       {
         message: {
           token: token.to_s,
-          notification: { title: title.to_s, body: body.to_s }.compact,
           data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
           webpush: webpush_options(url)
         }.compact

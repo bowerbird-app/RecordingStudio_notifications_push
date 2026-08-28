@@ -11,11 +11,9 @@ class HomeController < ApplicationController
       recipient: current_user,
       title: "Test ping",
       body: "Sent with your notification settings — inbox, email, and push as enabled.",
-      actor: current_user,
-      deliver_later: true
+      url: demo_latest_notification_path,
+      actor: current_user
     )
-    @notification.update!(url: demo_notification_path(@notification))
-    RecordingStudioNotifications::DeliveryJob.perform_now(@notification.id)
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
     @recent_inbox_notifications = recent_inbox_notifications
     render_test_notification_success

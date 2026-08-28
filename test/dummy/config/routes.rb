@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   post "test_notifications", to: "home#create_test_notification", as: :test_notifications
 
   # Dummy-only landing page for push click-throughs (not part of the push gem).
+  get "demo/notifications/latest", to: "demo_notifications#latest", as: :demo_latest_notification
   get "demo/notifications/:id", to: "demo_notifications#show", as: :demo_notification
 
   root "home#index"

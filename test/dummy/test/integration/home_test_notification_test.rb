@@ -40,6 +40,6 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     notification = RecordingStudioNotifications::Notification.order(created_at: :desc).first
     assert_equal @user, notification.recipient
     assert_equal "push_demo", notification.notification_type
-    assert_equal demo_notification_path(notification), notification.url
+    assert_equal demo_latest_notification_path, notification.url
   end
 end
