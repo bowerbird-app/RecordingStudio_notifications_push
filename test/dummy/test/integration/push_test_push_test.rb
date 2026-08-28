@@ -24,11 +24,19 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "Enable on this browser"
     assert_includes response.body, "Push devices"
+    assert_includes response.body, "Test browser"
+    assert_includes response.body, "fid-for-test-push"
     refute_includes response.body, "Not getting alerts?"
     refute_includes response.body, "Show a local notification"
     refute_includes response.body, "Send a test push"
+
+    if firebase_ready_for_browser?
+      assert_includes response.body, "Enable on this browser"
+    else
+      assert_includes response.body, "Firebase is not configured yet"
+      assert_includes response.body, "Register this id"
+    end
   end
 
   test "test push answers with a JSON verdict for this account's device" do
@@ -66,5 +74,16 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
          headers: { "Accept" => "application/json" }
 
     assert_response :not_found
+  end
+
+  private
+
+  def firebase_ready_for_browser?
+    config = RecordingStudioNotificationsPush.configuration
+    web = config.firebase_web_config || {}
+    required = %i[apiKey appId projectId messagingSenderId]
+
+    required.all? { |key| web[key].present? || web[key.to_s].present? } &&
+      config.vapid_public_key.present?
   end
 end
