@@ -36,8 +36,8 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Not getting alerts?"
     assert_includes response.body, "push-notification-help-modal"
-    assert_includes response.body, "Check your alerts"
-    assert_includes response.body, "helpDetected"
+    assert_includes response.body, "Not receiving push notifications?"
     assert_includes response.body, "helpOsSteps"
+    refute_includes response.body, "helpDetected"
   end
 end

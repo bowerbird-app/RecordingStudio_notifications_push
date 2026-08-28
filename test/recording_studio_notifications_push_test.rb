@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.13", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.14", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -100,7 +100,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "Use iOS or iPadOS 16.4 or later"
     assert_includes push_devices_js, "Add to Home Screen"
     assert_includes push_devices_js, "select this web app’s name"
-    assert_includes push_devices_js, "Website push cannot be set up directly"
     assert_includes push_devices_js, '["Firefox", "Opera"].includes(browser)'
     assert_includes push_devices_js, "Open this site in Safari, Chrome, or Edge"
     assert_includes push_devices_js, "Notifications from apps and other senders"
@@ -108,7 +107,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "`${index + 1}. ${step}`"
     assert_includes push_devices_js, "helpTarget"
     assert_includes push_devices_js, "requestAnimationFrame(() => this.fillNotificationHelp())"
-    refute_includes push_devices_js, "refreshNotificationHelp"
+    refute_includes push_devices_js, "sitePermissionHelp"
+    refute_includes push_devices_js, "Looks like"
     refute_includes push_devices_js, "Settings → Notifications → Safari"
     refute_includes push_devices_js, "Settings → Notifications → Chrome"
 
@@ -144,9 +144,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes devices_show, 'button_to "Remove"'
     assert_includes devices_show, "Not getting alerts?"
     assert_includes devices_show, "push-notification-help-modal"
-    assert_includes devices_show, "helpDetected"
+    assert_includes devices_show, "Not receiving push notifications?"
+    assert_includes devices_show, "helpSiteSteps"
     assert_includes devices_show, "Open this browser’s site settings for notifications"
     assert_includes devices_show, "Open your device notification settings"
+    refute_includes devices_show, "helpDetected"
+    refute_includes devices_show, "helpPermission"
+    refute_includes devices_show, "We can spot your browser and OS"
     refute_includes devices_show, "refreshNotificationHelp"
     refute_includes devices_show, "Checking your browser"
   end

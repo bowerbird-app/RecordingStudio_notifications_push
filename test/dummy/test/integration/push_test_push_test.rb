@@ -34,7 +34,7 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     refute_includes response.body, "No devices yet"
     assert_includes response.body, "Not getting alerts?"
     assert_includes response.body, "push-notification-help-modal"
-    assert_includes response.body, "Check your alerts"
+    assert_includes response.body, "Not receiving push notifications?"
     refute_includes response.body, "Show a local notification"
     refute_includes response.body, "Send a test push"
 

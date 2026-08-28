@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.1.14
+
+### Changed
+- Help modal title is now **Not receiving push notifications?**
+- Removed browser/OS detection line, permission status line, and system-toggle
+  disclaimer from the help modal — only the step lists remain
+
 ## 0.1.13
 
 ### Fixed

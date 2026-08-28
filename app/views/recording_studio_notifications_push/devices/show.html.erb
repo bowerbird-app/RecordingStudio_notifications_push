@@ -102,20 +102,11 @@
 
   <%= render FlatPack::Modal::Component.new(
     id: "push-notification-help-modal",
-    title: "Check your alerts",
+    title: "Not receiving push notifications?",
     size: :md
   ) do |modal| %>
     <% modal.body do %>
       <div class="flex flex-col gap-4">
-        <p data-recording-studio-notifications-push--push-devices-target="helpDetected"
-           class="text-sm text-(--surface-content-color)">
-          These steps update for your browser and OS once the page loads.
-        </p>
-        <p data-recording-studio-notifications-push--push-devices-target="helpPermission"
-           class="text-sm text-(--surface-muted-content-color)">
-          Tap Enable first, then use these steps if nothing shows up.
-        </p>
-
         <div>
           <p class="mb-2 text-sm font-medium text-(--surface-content-color)">In this browser</p>
           <ol data-recording-studio-notifications-push--push-devices-target="helpSiteSteps"
@@ -135,10 +126,6 @@
             <li>3. Allow notifications, then try a test alert</li>
           </ol>
         </div>
-
-        <p class="text-xs text-(--surface-muted-content-color)">
-          We can spot your browser and OS, but not the system toggle itself.
-        </p>
       </div>
     <% end %>
     <% modal.footer do %>

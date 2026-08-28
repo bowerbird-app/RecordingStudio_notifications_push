@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Registers this browser for FCM push, or accepts a manual FID when Firebase
 // ENV config is missing (dummy / local demos).
 export default class extends Controller {
-  static targets = ["manualFid", "enablePanel", "helpDetected", "helpPermission", "helpSiteSteps", "helpOsSteps"]
+  static targets = ["manualFid", "enablePanel", "helpSiteSteps", "helpOsSteps"]
   static values = {
     registerUrl: String,
     unregisterUrlTemplate: String,
@@ -207,16 +207,6 @@ export default class extends Controller {
     const client = this.detectClient()
     const guide = this.notificationHelpGuide(client)
 
-    const detectedElement = this.helpTarget("helpDetected")
-    if (detectedElement) {
-      detectedElement.textContent = `Looks like ${client.browser} on ${client.os}.`
-    }
-
-    const permissionElement = this.helpTarget("helpPermission")
-    if (permissionElement) {
-      permissionElement.textContent = this.sitePermissionHelp(client)
-    }
-
     this.replaceStepList(this.helpTarget("helpSiteSteps"), guide.site)
     this.replaceStepList(this.helpTarget("helpOsSteps"), guide.os)
   }
@@ -229,29 +219,6 @@ export default class extends Controller {
     return this.element.querySelector(
       `[data-recording-studio-notifications-push--push-devices-target="${name}"]`
     )
-  }
-
-  sitePermissionHelp({ browser, os }) {
-    if (["iPhone", "iPad"].includes(os) && !this.installedApp()) {
-      if (["Firefox", "Opera"].includes(browser)) {
-        return `Website push cannot be set up directly in ${browser} on iPhone or iPad. Open this site in Safari, Chrome, or Edge first.`
-      }
-
-      return "Web push works on iOS and iPadOS 16.4 or later only after this site is added to your Home Screen."
-    }
-
-    if (!("Notification" in window)) {
-      return "This browser does not support web notifications."
-    }
-
-    switch (Notification.permission) {
-      case "granted":
-        return "This site is allowed in the browser. If banners still fail, check system settings below."
-      case "denied":
-        return "This site is blocked in the browser. Allow it first, then try Enable again."
-      default:
-        return "This site has not been allowed yet. Tap Enable first, then use these steps if nothing shows up."
-    }
   }
 
   notificationHelpGuide({ browser, os }) {

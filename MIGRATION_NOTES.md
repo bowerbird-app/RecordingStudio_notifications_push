@@ -1,5 +1,11 @@
 # Migration notes
 
+## 0.1.14
+
+### Host app steps
+
+1. Bump to `0.1.14` and hard-refresh the push devices page.
+
 ## 0.1.13
 
 ### Host app steps
