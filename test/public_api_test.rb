@@ -41,7 +41,7 @@ class PublicApiTest < Minitest::Test
   end
 
   def test_version_and_engine_are_public
-    assert_equal "0.1.2", RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.3", RecordingStudioNotificationsPush::VERSION
     assert_kind_of Class, RecordingStudioNotificationsPush::Engine
   end
 

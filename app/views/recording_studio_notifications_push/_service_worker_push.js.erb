@@ -19,9 +19,10 @@ self.addEventListener("push", (event) => {
   const url = data.url || payload.fcmOptions?.link || payload.notification?.click_action || "/";
   const icon = data.icon || payload.notification?.icon || "/icon.png";
 
-  // Legacy payloads may still include a notification block. Let the browser
-  // display that once instead of doubling up with showNotification here.
-  if (payload.notification) {
+  // When FCM included a display payload, the browser already shows the banner.
+  // Only call showNotification for data-only messages (no notification title/body).
+  const hasDisplayPayload = Boolean(payload.notification?.title || payload.notification?.body);
+  if (hasDisplayPayload) {
     return;
   }
 

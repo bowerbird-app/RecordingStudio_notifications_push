@@ -44,12 +44,13 @@ class FcmClientTest < Minitest::Test
     assert_equal "Bearer ya29.test", captured["Authorization"]
     payload = JSON.parse(captured.body)
     assert_equal "fid-1", payload.dig("message", "token")
+    assert_equal "Hello", payload.dig("message", "notification", "title")
+    assert_equal "World", payload.dig("message", "notification", "body")
     assert_equal "Hello", payload.dig("message", "data", "title")
     assert_equal "World", payload.dig("message", "data", "body")
     assert_equal "/x", payload.dig("message", "data", "url")
     assert_equal "/x", payload.dig("message", "webpush", "fcm_options", "link")
     assert_equal "high", payload.dig("message", "webpush", "headers", "Urgency")
-    refute payload.dig("message", "notification")
   end
 
   def test_invalid_registration_token_marks_disable
