@@ -67,7 +67,8 @@ module RecordingStudioNotificationsPush
     def message_data(event, delivery)
       {
         "notification_id" => event.id,
-        "delivery_id" => delivery.respond_to?(:id) ? delivery.id : nil
+        "delivery_id" => delivery.respond_to?(:id) ? delivery.id : nil,
+        "icon" => event.icon
       }.compact
     end
 

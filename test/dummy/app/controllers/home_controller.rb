@@ -1,18 +1,28 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
+  TEST_NOTIFICATION_ICONS = {
+    "coral" => "/push-icon-coral.png",
+    "teal" => "/push-icon-teal.png"
+  }.freeze
+
   def index
     @recent_inbox_notifications = recent_inbox_notifications
   end
 
   def create_test_notification
+    icon_key = params[:icon].to_s
+    icon_path = TEST_NOTIFICATION_ICONS[icon_key]
+    title, body = test_notification_copy(icon_key)
+
     @notification = RecordingStudioNotifications.notify(
       notification_type: :push_demo,
       recipient: current_user,
-      title: "Test ping",
-      body: "Sent with your notification settings — inbox, email, and push as enabled.",
+      title: title,
+      body: body,
       url: demo_latest_notification_path,
-      actor: current_user
+      actor: current_user,
+      metadata: icon_path.present? ? { icon: icon_path } : {}
     )
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
     @recent_inbox_notifications = recent_inbox_notifications
@@ -26,6 +36,20 @@ class HomeController < ApplicationController
   end
 
   private
+
+  def test_notification_copy(icon_key)
+    case icon_key
+    when "coral"
+      ["Coral icon ping", "OS banner should show the coral thumbnail."]
+    when "teal"
+      ["Teal icon ping", "OS banner should show the teal thumbnail."]
+    else
+      [
+        "Test ping",
+        "Sent with your notification settings — inbox, email, and push as enabled."
+      ]
+    end
+  end
 
   def recent_inbox_notifications
     RecordingStudioNotifications::Notification

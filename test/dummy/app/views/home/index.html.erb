@@ -27,21 +27,34 @@
   </div>
 
   <div class="flex flex-col gap-3">
-    <%= form_with url: test_notifications_path(format: :turbo_stream), method: :post do %>
-      <%= render FlatPack::Button::Component.new(
-        text: "Test notification",
-        style: :primary,
-        size: :md,
-        type: "submit"
-      ) %>
-    <% end %>
+    <div class="flex flex-wrap gap-3">
+      <%= form_with url: test_notifications_path(format: :turbo_stream), method: :post do %>
+        <%= hidden_field_tag :icon, "coral" %>
+        <%= render FlatPack::Button::Component.new(
+          text: "Test coral icon",
+          style: :primary,
+          size: :md,
+          type: "submit"
+        ) %>
+      <% end %>
+      <%= form_with url: test_notifications_path(format: :turbo_stream), method: :post do %>
+        <%= hidden_field_tag :icon, "teal" %>
+        <%= render FlatPack::Button::Component.new(
+          text: "Test teal icon",
+          style: :default,
+          size: :md,
+          type: "submit"
+        ) %>
+      <% end %>
+    </div>
     <p class="text-sm leading-6 text-(--surface-content-color)">
-      Sends a <strong>Push demo</strong> notice on whichever channels you left on in
+      Each button sends a <strong>Push demo</strong> notice with a different OS banner
+      thumbnail (<code>/push-icon-coral.png</code> or <code>/push-icon-teal.png</code>).
+      Channels follow
       <%= link_to "notification settings", "/notifications/settings", class: "underline" %>.
-      In-app rows show in the inbox list below. Browser push opens a
-      <strong>dummy detail page</strong> for that notice when you click the alert. Enable
+      Enable
       <%= link_to "this browser under push devices", "/notifications/push/devices", class: "underline" %>
-      if you want a toast here.
+      first if you want the toast here.
     </p>
   </div>
 
@@ -66,7 +79,7 @@
     ) %>
     <div id="test-notifications" class="flex flex-col gap-3">
       <p id="test-notifications-empty" class="text-sm text-(--surface-content-color)">
-        No test pings yet. Hit the button above.
+        No test pings yet. Hit a button above.
       </p>
     </div>
   </section>

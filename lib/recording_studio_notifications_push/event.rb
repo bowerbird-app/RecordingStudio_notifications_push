@@ -48,6 +48,19 @@ module RecordingStudioNotificationsPush
       value.respond_to?(:to_h) ? deep_freeze(value.to_h.deep_dup) : {}.freeze
     end
 
+    # Optional OS banner thumbnail from notification metadata[:icon] / ["icon"].
+    # Same-origin paths and safe http(s) URLs only; falls back to SW default.
+    def icon
+      meta = metadata
+      value = (meta[:icon] || meta["icon"]).to_s.strip.presence
+      return unless value
+      return if unsafe_url_characters?(value)
+
+      safe_url(value)
+    rescue URI::InvalidURIError
+      nil
+    end
+
     def recipient
       attribute(:recipient)
     end

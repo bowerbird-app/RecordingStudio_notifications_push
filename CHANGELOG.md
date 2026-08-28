@@ -2,38 +2,13 @@
 
 ## Unreleased
 
+## 0.1.7
+
 ### Added
-- Dummy `/docs/install` walks through host setup and states that
-  `recording_studio_notifications` and `recording_studio_pwa` are required
-- Dummy `/docs/config` documents the push addon settings, ENV keys, timeouts,
-  and `configuration.to_h`
-- Devices page has a **Not getting alerts?** section with two checks that isolate where a notification stops:
-  - **Show a local notification** calls `registration.showNotification` with no FCM, so an invisible result points at browser/OS notification settings
-  - **Send a test push** posts to `POST /installations/:id/test_push` and reports exactly what FCM answered
-- Devices page shows diagnostics: page origin, notification permission, service-worker state and scope, and push subscription host
-- `RecordingStudioNotificationsPush::TestPush` sends one diagnostic message to a single installation and returns an `accepted` / `status` / `error` result
-
-### Changed
-- FCM web sends are **data-only** again so the service worker shows one OS banner (including both `notification` and `data` duplicated alerts when the worker was active) — **reverted in 0.1.3**; use notification+data with SW dedupe instead — **fixed in 0.1.4**; data-only with SW always showing
-- Devices page no longer shows the **Not getting alerts?** troubleshooting section (local notification + test push checks). The `test_push` API endpoint remains for programmatic use.
-- FCM web sends include **both** `notification` and `data` so a browser whose service worker is stale still has a payload to display instead of dropping a data-only message
-- The PWA service-worker extension owns native Chrome `showNotification` (OS banner — not an in-page HTML toast)
-- Invalid FCM registration tokens (`INVALID_ARGUMENT` / "not a valid FCM registration token") disable that installation
-- Devices page uses a blank engine layout with FlatPack `PageNav` (same shape as notifications settings) — no host sidebar or top nav
-- Dummy home page adds a Turbo **Test notification** button that sends `:push_demo` (respects notification settings) and prepends results on the page
-- Dummy home also lists recent **in-app inbox** rows so inbox delivery is visible without opening `/notifications`
-- Dummy importmap loads `@hotwired/turbo-rails` so Turbo Stream updates work on the home page
-
-### Fixed
-- Resolve service-worker URL via `main_app.pwa_service_worker_path` so the devices page works inside the mounted engine
-- Prefer the host app layout (FlatPack sidebar) for non-devices push screens instead of forcing `UsesDefaultLayout`
-- Dummy Tailwind `@source` paths cover system Ruby Bundler installs after merging main
-- Dummy PWA head hook resolves manifest/service-worker routes through `main_app` so mounted engine pages (e.g. `/notifications/push/devices`) register the worker instead of rejecting with "PWA service worker route is not mounted"
-- Push devices Stimulus controller falls back to an explicit `navigator.serviceWorker.register` when `RecordingStudioPwa.serviceWorkerReady` rejects for a missing host helper
-- Clearer devices-page errors when the browser cannot reach Chrome's push service (`Registration failed - push service not available`) — usually Brave/privacy settings or blocked Google push, not missing Firebase ENV
-- Dummy Stimulus `controllers/index.js` only lazy-loads under `controllers` so push/FlatPack pins resolve (nested prefixes requested doubled paths and left Enable as a no-op)
-- Devices "Enable on this browser" binds via controller event delegation (`data-push-enable`) so the click runs when the Stimulus controller is connected
-- Devices page swaps to "Disable on this browser" when the current browser's FCM token matches an active installation
+- Push payloads include `data.icon` from notification `metadata[:icon]` so the
+  service worker can show a custom OS banner thumbnail (falls back to `/icon.png`)
+- Dummy home has **Test coral icon** and **Test teal icon** buttons that send
+  push demos with `/push-icon-coral.png` and `/push-icon-teal.png`
 
 ## 0.1.6
 

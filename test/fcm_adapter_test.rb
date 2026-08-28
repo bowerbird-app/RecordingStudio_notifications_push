@@ -11,7 +11,7 @@ class FcmAdapterTest < Minitest::Test
     end
   end
 
-  Notification = Struct.new(:id, :title, :body, :url, :recipient, keyword_init: true)
+  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, keyword_init: true)
   Delivery = Struct.new(:id)
 
   class FakeInstallation
@@ -105,8 +105,34 @@ class FcmAdapterTest < Minitest::Test
 
     assert_equal 2, client.calls.size
     assert_equal "fid-1", client.calls.first[:token]
+    assert_equal "n1", client.calls.first.dig(:data, "notification_id")
+    assert_nil client.calls.first.dig(:data, "icon")
     assert installations.first.disabled_at
     assert installations.last.seen
+  end
+
+  def test_includes_icon_from_notification_metadata
+    installations = [FakeInstallation.new(fid: "fid-1")]
+    client = FakeClient.new([{ ok: true, status: 200, disable: false }])
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: client,
+      installation_class: FakeInstallationClass.new(installations)
+    )
+
+    assert adapter.deliver(
+      notification: Notification.new(
+        id: "n-icon",
+        title: "Coral",
+        body: "Banner",
+        url: "/pages/1",
+        recipient: FakeRecipient.new(id: "user-1"),
+        metadata: { icon: "/push-icon-coral.png" }
+      ),
+      delivery: Delivery.new("d-icon")
+    )
+
+    assert_equal "/push-icon-coral.png", client.calls.first.dig(:data, "icon")
   end
 
   def test_raises_when_no_installations

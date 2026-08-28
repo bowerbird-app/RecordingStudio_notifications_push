@@ -71,6 +71,17 @@ RecordingStudioPwa.register_service_worker_extension(
 
 The partial adds `push` and `notificationclick` handlers that call
 `showNotification` from the payload (with `/icon.png` by default).
+
+Pass a custom thumbnail with notification metadata:
+
+```ruby
+RecordingStudioNotifications.notify(
+  ...,
+  metadata: { icon: "/push-icon-coral.png" }
+)
+```
+
+The FCM adapter copies `metadata[:icon]` into the data-only payload as `icon`.
 ## Mount points
 
 Suggested host routes:

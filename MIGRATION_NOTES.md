@@ -1,5 +1,15 @@
 # Migration notes
 
+## 0.1.7
+
+### Host app steps
+
+1. Bump to `0.1.7`.
+2. To customize the OS banner thumbnail per notification, pass
+   `metadata: { icon: "/your-icon.png" }` (or an https URL) into
+   `RecordingStudioNotifications.notify`. The service worker still falls back
+   to `/icon.png` when `icon` is omitted.
+
 ## 0.1.6
 
 ### Host app steps
