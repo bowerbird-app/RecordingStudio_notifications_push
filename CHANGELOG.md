@@ -14,6 +14,7 @@
 - `RecordingStudioNotificationsPush::TestPush` sends one diagnostic message to a single installation and returns an `accepted` / `status` / `error` result
 
 ### Changed
+- Devices page no longer shows the **Not getting alerts?** troubleshooting section (local notification + test push checks). The `test_push` API endpoint remains for programmatic use.
 - FCM web sends include **both** `notification` and `data` so a browser whose service worker is stale still has a payload to display instead of dropping a data-only message
 - The PWA service-worker extension owns native Chrome `showNotification` (OS banner — not an in-page HTML toast)
 - Invalid FCM registration tokens (`INVALID_ARGUMENT` / "not a valid FCM registration token") disable that installation

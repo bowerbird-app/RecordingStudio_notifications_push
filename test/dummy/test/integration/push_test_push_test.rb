@@ -20,15 +20,15 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     )
   end
 
-  test "devices page offers the local and server notification checks" do
+  test "devices page focuses on enable and registered devices" do
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "Show a local notification"
-    assert_includes response.body, "Send a test push"
-    assert_includes response.body, "data-push-local-test"
-    assert_includes response.body, "data-push-server-test"
-    assert_includes response.body, "test_push"
+    assert_includes response.body, "Enable on this browser"
+    assert_includes response.body, "Push devices"
+    refute_includes response.body, "Not getting alerts?"
+    refute_includes response.body, "Show a local notification"
+    refute_includes response.body, "Send a test push"
   end
 
   test "test push answers with a JSON verdict for this account's device" do
