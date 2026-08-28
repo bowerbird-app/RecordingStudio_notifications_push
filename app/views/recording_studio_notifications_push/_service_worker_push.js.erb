@@ -17,7 +17,8 @@ self.addEventListener("push", (event) => {
   const title = data.title || payload.notification?.title || "Notification";
   const body = data.body || payload.notification?.body || "";
   const url = data.url || payload.fcmOptions?.link || payload.notification?.click_action || "/";
-  const icon = data.icon || payload.notification?.icon || "/icon.png";
+  const icon = absoluteAssetUrl(data.icon || payload.notification?.icon || "/icon.png");
+  const image = absoluteAssetUrl(data.image || data.icon || payload.notification?.image || "");
 
   const options = {
     body: body,
@@ -25,6 +26,9 @@ self.addEventListener("push", (event) => {
     badge: icon,
     data: { url: url }
   };
+  if (image) {
+    options.image = image;
+  }
 
   // FCM web sends are data-only; the service worker must show the OS banner.
   event.waitUntil(self.registration.showNotification(title, options));
@@ -49,3 +53,16 @@ self.addEventListener("notificationclick", (event) => {
     })
   );
 });
+
+function absoluteAssetUrl(pathOrUrl) {
+  const value = (pathOrUrl || "").toString().trim();
+  if (!value) {
+    return "";
+  }
+
+  try {
+    return new URL(value, self.location.origin).href;
+  } catch (_error) {
+    return value;
+  }
+}

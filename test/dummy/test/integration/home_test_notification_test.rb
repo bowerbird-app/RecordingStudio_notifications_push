@@ -48,7 +48,8 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     assert_equal @user, notification.recipient
     assert_equal "push_demo", notification.notification_type
     assert_equal demo_latest_notification_path, notification.url
-    assert_equal "/push-icon-coral.png", notification.metadata["icon"]
+    assert_match(%r{\Ahttps?://[^/]+/push-icon-coral\.png\z}, notification.metadata["icon"])
+    assert_equal notification.metadata["icon"], notification.metadata["image"]
   end
 
   test "teal icon notification stores the teal thumbnail path" do
@@ -59,6 +60,6 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     assert_response :success
     notification = RecordingStudioNotifications::Notification.order(created_at: :desc).first
     assert_equal "Teal icon ping", notification.title
-    assert_equal "/push-icon-teal.png", notification.metadata["icon"]
+    assert_match(%r{\Ahttps?://[^/]+/push-icon-teal\.png\z}, notification.metadata["icon"])
   end
 end

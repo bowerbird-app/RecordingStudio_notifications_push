@@ -40,4 +40,20 @@ class EventTest < Minitest::Test
 
     assert_nil event.icon
   end
+
+  def test_allows_absolute_http_icons_without_host_allowlist
+    event = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(
+        id: "1",
+        title: "T",
+        metadata: {
+          icon: "http://127.0.0.1:3000/push-icon-teal.png",
+          image: "http://127.0.0.1:3000/push-icon-teal.png"
+        }
+      )
+    )
+
+    assert_equal "http://127.0.0.1:3000/push-icon-teal.png", event.icon
+    assert_equal "http://127.0.0.1:3000/push-icon-teal.png", event.image
+  end
 end

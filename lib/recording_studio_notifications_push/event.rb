@@ -51,14 +51,12 @@ module RecordingStudioNotificationsPush
     # Optional OS banner thumbnail from notification metadata[:icon] / ["icon"].
     # Same-origin paths and safe http(s) URLs only; falls back to SW default.
     def icon
-      meta = metadata
-      value = (meta[:icon] || meta["icon"]).to_s.strip.presence
-      return unless value
-      return if unsafe_url_characters?(value)
+      meta_asset(:icon)
+    end
 
-      safe_url(value)
-    rescue URI::InvalidURIError
-      nil
+    # Optional wide banner image (Windows/Android). Same safety rules as +icon+.
+    def image
+      meta_asset(:image) || icon
     end
 
     def recipient
@@ -66,6 +64,22 @@ module RecordingStudioNotificationsPush
     end
 
     private
+
+    def meta_asset(key)
+      meta = metadata
+      value = (meta[key] || meta[key.to_s]).to_s.strip.presence
+      return unless value
+      return if unsafe_url_characters?(value)
+
+      # Icons may be absolute (any http/https host) or same-origin paths.
+      # Do not reuse notification URL host allowlists — banner assets are not navigation.
+      return value if value.start_with?("/") && !value.start_with?("//")
+      return value if fallback_url_safe?(value)
+
+      nil
+    rescue URI::InvalidURIError
+      nil
+    end
 
     def safe_url(value)
       if defined?(RecordingStudioNotifications::UrlSafety)

@@ -133,6 +133,7 @@ class FcmAdapterTest < Minitest::Test
     )
 
     assert_equal "/push-icon-coral.png", client.calls.first.dig(:data, "icon")
+    assert_equal "/push-icon-coral.png", client.calls.first.dig(:data, "image")
   end
 
   def test_raises_when_no_installations

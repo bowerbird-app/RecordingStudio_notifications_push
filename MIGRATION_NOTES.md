@@ -1,5 +1,18 @@
 # Migration notes
 
+## 0.1.8
+
+### Host app steps
+
+1. Bump to `0.1.8` and hard-refresh / re-register the service worker so it picks
+   up absolute icon URL resolution.
+2. Prefer absolute `https://…` icon URLs in `metadata[:icon]` when the host is
+   not same-origin with the worker (path-only values still work and are
+   absolutized in the worker).
+3. **macOS Chrome:** the left OS badge is the Chrome app icon. Custom
+   `icon` / `image` values show on Windows and Android; macOS may only show a
+   small secondary thumbnail, or none.
+
 ## 0.1.7
 
 ### Host app steps

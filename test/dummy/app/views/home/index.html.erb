@@ -48,13 +48,15 @@
       <% end %>
     </div>
     <p class="text-sm leading-6 text-(--surface-content-color)">
-      Each button sends a <strong>Push demo</strong> notice with a different OS banner
+      Each button sends a <strong>Push demo</strong> notice with a different banner
       thumbnail (<code>/push-icon-coral.png</code> or <code>/push-icon-teal.png</code>).
       Channels follow
       <%= link_to "notification settings", "/notifications/settings", class: "underline" %>.
       Enable
       <%= link_to "this browser under push devices", "/notifications/push/devices", class: "underline" %>
       first if you want the toast here.
+      On <strong>macOS Chrome</strong>, the left badge stays the Chrome app icon — custom
+      thumbnails show on Windows/Android (and sometimes as a small right-side image on macOS).
     </p>
   </div>
 

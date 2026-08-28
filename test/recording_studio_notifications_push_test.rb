@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.7", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.8", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -90,6 +90,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes sw_partial, "hasDisplayPayload"
     assert_includes sw_partial, "showNotification"
     assert_includes sw_partial, "/icon.png"
+    assert_includes sw_partial, "absoluteAssetUrl"
+    assert_includes sw_partial, "options.image"
     refute_includes sw_partial, "rsnp:push"
 
     devices_show = File.read(

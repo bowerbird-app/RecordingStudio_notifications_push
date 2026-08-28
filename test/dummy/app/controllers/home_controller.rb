@@ -22,7 +22,7 @@ class HomeController < ApplicationController
       body: body,
       url: demo_latest_notification_path,
       actor: current_user,
-      metadata: icon_path.present? ? { icon: icon_path } : {}
+      metadata: icon_metadata(icon_path)
     )
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
     @recent_inbox_notifications = recent_inbox_notifications
@@ -36,6 +36,13 @@ class HomeController < ApplicationController
   end
 
   private
+
+  def icon_metadata(icon_path)
+    return {} if icon_path.blank?
+
+    absolute = "#{request.base_url}#{icon_path}"
+    { icon: absolute, image: absolute }
+  end
 
   def test_notification_copy(icon_key)
     case icon_key

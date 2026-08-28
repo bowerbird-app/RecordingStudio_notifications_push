@@ -68,7 +68,8 @@ module RecordingStudioNotificationsPush
       {
         "notification_id" => event.id,
         "delivery_id" => delivery.respond_to?(:id) ? delivery.id : nil,
-        "icon" => event.icon
+        "icon" => event.icon,
+        "image" => event.image
       }.compact
     end
 

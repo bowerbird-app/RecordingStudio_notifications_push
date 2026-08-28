@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 0.1.8
+
+### Fixed
+- Service worker resolves notification `icon` / `image` to absolute URLs before
+  `showNotification` (relative paths were easy to miss on forwarded origins)
+- Push `metadata[:icon]` / `[:image]` accept absolute http(s) URLs without the
+  notification URL host allowlist (banner assets are not navigation targets)
+
+### Changed
+- Dummy icon test sends store absolute icon+image URLs and preview the thumbnail
+  in the home inbox / test results
+- Dummy copy notes that macOS Chrome keeps the Chrome app badge on the left
+
 ## 0.1.7
 
 ### Added
