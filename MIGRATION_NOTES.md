@@ -1,5 +1,13 @@
 # Migration notes
 
+## 0.1.9
+
+### Host app steps
+
+1. Bump to `0.1.9` and refresh the devices page.
+2. Enable and Manage notifications now share one row. After this browser is
+   enabled, only Manage notifications stays visible.
+
 ## 0.1.8
 
 ### Host app steps

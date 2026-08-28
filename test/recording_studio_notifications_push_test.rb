@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.8", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.9", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -102,6 +102,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes devices_show, "Get notifications on your devices"
     assert_includes devices_show, "Manage notifications"
     assert_includes devices_show, "@notifications_settings_path"
+    assert_includes devices_show, 'flex flex-wrap items-center gap-3'
+    assert_includes devices_show, "enablePanel"
+    refute_includes devices_show, "page_title.slot"
     assert_includes devices_show, "FlatPack::List::Component"
     assert_includes devices_show, "installation.list_icon"
     assert_includes devices_show, 'icon: "trash"'

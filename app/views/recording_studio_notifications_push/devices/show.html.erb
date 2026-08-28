@@ -26,9 +26,20 @@
     title: "Push Notifications",
     subtitle: "Get notifications on your devices",
     variant: :h1
-  ) do |page_title| %>
-    <% if @notifications_settings_path.present? %>
-      <% page_title.slot do %>
+  ) %>
+
+  <% if @firebase_ready %>
+    <div class="flex flex-wrap items-center gap-3">
+      <div data-recording-studio-notifications-push--push-devices-target="enablePanel">
+        <%= render FlatPack::Button::Component.new(
+          text: "Enable on this browser",
+          style: :primary,
+          size: :md,
+          type: "button",
+          data: { push_enable: true }
+        ) %>
+      </div>
+      <% if @notifications_settings_path.present? %>
         <%= render FlatPack::Button::Component.new(
           text: "Manage notifications",
           style: :default,
@@ -36,18 +47,6 @@
           href: @notifications_settings_path
         ) %>
       <% end %>
-    <% end %>
-  <% end %>
-
-  <% if @firebase_ready %>
-    <div data-recording-studio-notifications-push--push-devices-target="enablePanel">
-      <%= render FlatPack::Button::Component.new(
-        text: "Enable on this browser",
-        style: :primary,
-        size: :md,
-        type: "button",
-        data: { push_enable: true }
-      ) %>
     </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
@@ -63,13 +62,23 @@
         placeholder: "Paste a FID for local testing",
         data: { recording_studio_notifications_push__push_devices_target: "manualFid" }
       ) %>
-      <%= render FlatPack::Button::Component.new(
-        text: "Register this id",
-        style: :primary,
-        size: :md,
-        type: "button",
-        data: { action: "recording-studio-notifications-push--push-devices#registerManualFid" }
-      ) %>
+      <div class="flex flex-wrap items-center gap-3">
+        <%= render FlatPack::Button::Component.new(
+          text: "Register this id",
+          style: :primary,
+          size: :md,
+          type: "button",
+          data: { action: "recording-studio-notifications-push--push-devices#registerManualFid" }
+        ) %>
+        <% if @notifications_settings_path.present? %>
+          <%= render FlatPack::Button::Component.new(
+            text: "Manage notifications",
+            style: :default,
+            size: :md,
+            href: @notifications_settings_path
+          ) %>
+        <% end %>
+      </div>
     </div>
   <% end %>
 

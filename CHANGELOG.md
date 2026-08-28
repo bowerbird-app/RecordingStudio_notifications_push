@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.1.9
+
+### Changed
+- Devices page puts **Enable** and **Manage notifications** side by side; when
+  this browser is already registered, only **Manage notifications** remains
+
+### Fixed
+- RuboCop cyclomatic complexity on Event `#meta_asset`
+
 ## 0.1.8
 
 ### Fixed

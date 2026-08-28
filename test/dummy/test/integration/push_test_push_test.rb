@@ -38,6 +38,9 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
 
     if firebase_ready_for_browser?
       assert_includes response.body, "Enable on this browser"
+      assert_includes response.body, "flex flex-wrap items-center gap-3"
+      # Enable and Manage share one row; enablePanel can hide when this browser is already registered.
+      assert_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="enablePanel"'
     else
       assert_includes response.body, "Firebase is not configured yet"
       assert_includes response.body, "Register this id"
