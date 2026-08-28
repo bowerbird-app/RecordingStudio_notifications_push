@@ -99,9 +99,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes devices_show, "Push Notifications"
     assert_includes devices_show, "Get notifications on your devices"
     assert_includes devices_show, "FlatPack::List::Component"
+    assert_includes devices_show, "installation.list_icon"
+    assert_includes devices_show, 'icon: "trash"'
+    assert_includes devices_show, "icon_only: true"
     refute_includes devices_show, "Active browsers and devices"
     refute_includes devices_show, "No devices yet"
     refute_includes devices_show, "push_disable"
+    refute_includes devices_show, 'button_to "Remove"'
   end
 
   def test_dummy_pwa_head_resolves_service_worker_via_main_app

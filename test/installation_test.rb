@@ -67,6 +67,34 @@ class InstallationTest < Minitest::Test
     refute RecordingStudioNotificationsPush::Installation.user_agent_like?("Chrome on Mac")
   end
 
+  def test_mobile_device_detects_phones_and_tablets
+    assert RecordingStudioNotificationsPush::Installation.mobile_device?(
+      user_agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)"
+    )
+    assert RecordingStudioNotificationsPush::Installation.mobile_device?(
+      platform: "ios",
+      label: "Safari on iPhone"
+    )
+    assert RecordingStudioNotificationsPush::Installation.mobile_device?(
+      user_agent: "Mozilla/5.0 (Linux; Android 14)"
+    )
+    refute RecordingStudioNotificationsPush::Installation.mobile_device?(
+      user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+      label: "Chrome on Mac"
+    )
+  end
+
+  def test_list_icon_helpers_are_declared
+    source = File.read(
+      File.expand_path("../app/models/recording_studio_notifications_push/installation.rb", __dir__)
+    )
+
+    assert_includes source, "def mobile?"
+    assert_includes source, "def list_icon"
+    assert_includes source, ":device_phone_mobile"
+    assert_includes source, ":computer_desktop"
+  end
+
   def test_installations_migration_exists
     migrations = Dir[File.expand_path("../db/migrate/*installations*.rb", __dir__)]
     assert_equal 1, migrations.size

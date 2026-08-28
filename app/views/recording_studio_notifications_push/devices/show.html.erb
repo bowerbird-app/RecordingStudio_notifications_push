@@ -65,26 +65,33 @@
   <% if @installations.any? %>
     <%= render FlatPack::List::Component.new(divider: true) do %>
       <% @installations.each do |installation| %>
-        <%= render FlatPack::List::Item.new do %>
-          <div class="flex w-full items-start justify-between gap-4"
-               data-installation-id="<%= installation.id %>">
-            <div class="min-w-0">
-              <p class="truncate text-sm font-medium text-(--surface-content-color)">
-                <%= installation.display_label %>
-                <span class="hidden text-xs font-normal text-(--surface-muted-content-color)"
-                      data-installation-current-label> · this device</span>
+        <% remove_button = capture do %>
+          <%= render FlatPack::Button::Component.new(
+            icon: "trash",
+            icon_only: true,
+            style: :ghost,
+            size: :sm,
+            href: device_path(installation),
+            method: :delete,
+            aria: { label: "Remove device" },
+            data: { turbo_confirm: "Stop push alerts on this device?" }
+          ) %>
+        <% end %>
+        <%= render FlatPack::List::Item.new(
+          icon: installation.list_icon,
+          trailing: remove_button
+        ) do %>
+          <div data-installation-id="<%= installation.id %>">
+            <p class="truncate text-sm font-medium text-(--surface-content-color)">
+              <%= installation.display_label %>
+              <span class="hidden text-xs font-normal text-(--surface-muted-content-color)"
+                    data-installation-current-label> · this device</span>
+            </p>
+            <% if installation.last_seen_at.present? %>
+              <p class="mt-1 text-xs text-(--surface-muted-content-color)">
+                Last seen <%= time_ago_in_words(installation.last_seen_at) %> ago
               </p>
-              <% if installation.last_seen_at.present? %>
-                <p class="mt-1 text-xs text-(--surface-muted-content-color)">
-                  Last seen <%= time_ago_in_words(installation.last_seen_at) %> ago
-                </p>
-              <% end %>
-            </div>
-            <%= button_to "Remove",
-                          device_path(installation),
-                          method: :delete,
-                          form: { data: { turbo_confirm: "Stop push alerts on this device?" } },
-                          class: "shrink-0 text-sm underline" %>
+            <% end %>
           </div>
         <% end %>
       <% end %>

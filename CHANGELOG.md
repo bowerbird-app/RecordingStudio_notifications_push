@@ -40,7 +40,9 @@
 ### Changed
 - Push devices page title is **Push Notifications** with subtitle **Get notifications on your devices**
 - Enable button reads **Enable on this device** in an installed PWA and **Enable on this browser** in a normal tab
-- Device list uses FlatPack `List`; empty-state copy and inline enable status text removed
+- Device list uses FlatPack `List` with mobile (`device_phone_mobile`) or desktop (`computer_desktop`) leading icons
+- Remove uses a FlatPack ghost icon button (`trash`) instead of a text link
+- Empty-state copy and inline enable status text removed
 - When push is already enabled on this browser/device, the enable button is hidden (use **Remove** on the list row to turn off)
 
 ## 0.1.4

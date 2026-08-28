@@ -75,6 +75,14 @@ module RecordingStudioNotificationsPush
       self.class.label_from_user_agent(user_agent) || platform.presence || "Browser"
     end
 
+    def mobile?
+      self.class.mobile_device?(user_agent: user_agent, platform: platform, label: label)
+    end
+
+    def list_icon
+      mobile? ? :device_phone_mobile : :computer_desktop
+    end
+
     def self.user_agent_like?(value)
       value.start_with?("Mozilla/") || value.length > 48
     end
@@ -88,6 +96,14 @@ module RecordingStudioNotificationsPush
       return unless browser && os
 
       "#{browser} on #{os}"
+    end
+
+    def self.mobile_device?(user_agent: nil, platform: nil, label: nil)
+      haystack = [user_agent, platform, label].map { |value| value.to_s.downcase }.join(" ")
+      return true if haystack.match?(/\b(iphone|ipod|ipad|android|ios|mobile)\b/)
+      return true if haystack.match?(/\bon (iphone|ipad|android)\b/)
+
+      false
     end
 
     def self.browser_name_from_user_agent(user_agent)
