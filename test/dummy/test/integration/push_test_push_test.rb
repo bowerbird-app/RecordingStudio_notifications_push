@@ -24,9 +24,11 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "Push devices"
+    assert_includes response.body, "Push Notifications"
+    assert_includes response.body, "Get notifications on your devices"
     assert_includes response.body, "Test browser"
-    assert_includes response.body, "Active browsers and devices"
+    refute_includes response.body, "Active browsers and devices"
+    refute_includes response.body, "No devices yet"
     refute_includes response.body, "Not getting alerts?"
     refute_includes response.body, "Show a local notification"
     refute_includes response.body, "Send a test push"

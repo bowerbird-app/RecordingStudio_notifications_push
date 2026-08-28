@@ -35,6 +35,14 @@
 - Devices "Enable on this browser" binds via controller event delegation (`data-push-enable`) so the click runs when the Stimulus controller is connected
 - Devices page swaps to "Disable on this browser" when the current browser's FCM token matches an active installation
 
+## 0.1.5
+
+### Changed
+- Push devices page title is **Push Notifications** with subtitle **Get notifications on your devices**
+- Enable button reads **Enable on this device** in an installed PWA and **Enable on this browser** in a normal tab
+- Device list uses FlatPack `List`; empty-state copy and inline enable status text removed
+- When push is already enabled on this browser/device, the enable button is hidden (use **Remove** on the list row to turn off)
+
 ## 0.1.4
 
 ### Fixed

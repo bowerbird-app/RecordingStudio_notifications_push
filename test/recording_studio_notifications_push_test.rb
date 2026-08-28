@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.4", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.5", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -78,9 +78,11 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "resolveServiceWorkerRegistration"
     assert_includes push_devices_js, "not mounted"
     assert_includes push_devices_js, "data-push-enable"
-    assert_includes push_devices_js, "data-push-disable"
     assert_includes push_devices_js, "detectCurrentBrowser"
-    assert_includes push_devices_js, "showDisable"
+    assert_includes push_devices_js, "installedApp"
+    assert_includes push_devices_js, "hideEnablePanel"
+    assert_includes push_devices_js, "Enable on this device"
+    assert_includes push_devices_js, "Enable on this browser"
 
     sw_partial = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/_service_worker_push.js.erb", __dir__)
@@ -94,8 +96,12 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
       File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)
     )
     assert_includes devices_show, "push_enable: true"
-    assert_includes devices_show, "push_disable: true"
-    assert_includes devices_show, "Disable on this browser"
+    assert_includes devices_show, "Push Notifications"
+    assert_includes devices_show, "Get notifications on your devices"
+    assert_includes devices_show, "FlatPack::List::Component"
+    refute_includes devices_show, "Active browsers and devices"
+    refute_includes devices_show, "No devices yet"
+    refute_includes devices_show, "push_disable"
   end
 
   def test_dummy_pwa_head_resolves_service_worker_via_main_app

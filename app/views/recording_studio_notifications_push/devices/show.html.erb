@@ -23,33 +23,20 @@
   ) %>
 
   <%= render FlatPack::PageTitle::Component.new(
-    title: "Push devices",
-    subtitle: "Turn on browser alerts for this account. You can silence a device anytime.",
+    title: "Push Notifications",
+    subtitle: "Get notifications on your devices",
     variant: :h1
   ) %>
 
   <% if @firebase_ready %>
-    <div class="flex flex-wrap items-center gap-3">
-      <div data-recording-studio-notifications-push--push-devices-target="enablePanel">
-        <%= render FlatPack::Button::Component.new(
-          text: "Enable on this browser",
-          style: :primary,
-          size: :md,
-          type: "button",
-          data: { push_enable: true }
-        ) %>
-      </div>
-      <div class="hidden" data-recording-studio-notifications-push--push-devices-target="disablePanel">
-        <%= render FlatPack::Button::Component.new(
-          text: "Disable on this browser",
-          style: :secondary,
-          size: :md,
-          type: "button",
-          data: { push_disable: true }
-        ) %>
-      </div>
-      <p class="text-sm text-(--surface-content-color)"
-         data-recording-studio-notifications-push--push-devices-target="status"></p>
+    <div data-recording-studio-notifications-push--push-devices-target="enablePanel">
+      <%= render FlatPack::Button::Component.new(
+        text: "Enable on this browser",
+        style: :primary,
+        size: :md,
+        type: "button",
+        data: { push_enable: true }
+      ) %>
     </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
@@ -72,41 +59,35 @@
         type: "button",
         data: { action: "recording-studio-notifications-push--push-devices#registerManualFid" }
       ) %>
-      <p class="text-sm text-(--surface-content-color)"
-         data-recording-studio-notifications-push--push-devices-target="status"></p>
     </div>
   <% end %>
 
   <% if @installations.any? %>
-    <%= render FlatPack::PageTitle::Component.new(
-      title: "Active browsers and devices",
-      variant: :h3
-    ) %>
-
-    <ul class="flex flex-col gap-3">
+    <%= render FlatPack::List::Component.new(divider: true) do %>
       <% @installations.each do |installation| %>
-        <li class="flex items-start justify-between gap-4 border-b border-(--surface-border-color) pb-3"
-            data-installation-id="<%= installation.id %>">
-          <div class="min-w-0">
-            <p class="truncate text-sm font-medium text-(--surface-content-color)">
-              <%= installation.display_label %>
-              <span class="hidden text-xs font-normal" data-installation-current-label> · this browser</span>
-            </p>
-            <% if installation.last_seen_at.present? %>
-              <p class="mt-1 text-xs text-(--surface-content-color)">
-                Last seen <%= time_ago_in_words(installation.last_seen_at) %> ago
+        <%= render FlatPack::List::Item.new do %>
+          <div class="flex w-full items-start justify-between gap-4"
+               data-installation-id="<%= installation.id %>">
+            <div class="min-w-0">
+              <p class="truncate text-sm font-medium text-(--surface-content-color)">
+                <%= installation.display_label %>
+                <span class="hidden text-xs font-normal text-(--surface-muted-content-color)"
+                      data-installation-current-label> · this device</span>
               </p>
-            <% end %>
+              <% if installation.last_seen_at.present? %>
+                <p class="mt-1 text-xs text-(--surface-muted-content-color)">
+                  Last seen <%= time_ago_in_words(installation.last_seen_at) %> ago
+                </p>
+              <% end %>
+            </div>
+            <%= button_to "Remove",
+                          device_path(installation),
+                          method: :delete,
+                          form: { data: { turbo_confirm: "Stop push alerts on this device?" } },
+                          class: "shrink-0 text-sm underline" %>
           </div>
-          <%= button_to "Remove",
-                        device_path(installation),
-                        method: :delete,
-                        form: { data: { turbo_confirm: "Stop push alerts on this device?" } },
-                        class: "text-sm underline" %>
-        </li>
+        <% end %>
       <% end %>
-    </ul>
-  <% else %>
-    <p class="text-sm text-(--surface-content-color)">No devices yet. Enable push on a browser to get started.</p>
+    <% end %>
   <% end %>
 </div>
