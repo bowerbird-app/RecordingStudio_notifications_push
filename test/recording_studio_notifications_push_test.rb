@@ -82,7 +82,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "installedApp"
     assert_includes push_devices_js, "hideEnablePanel"
     assert_includes push_devices_js, "Enable on this device"
-    assert_includes push_devices_js, "Not getting alerts?"
+    assert_includes push_devices_js, "Enable on this browser"
     assert_includes push_devices_js, "chrome://settings/"
     assert_includes push_devices_js, "Sites can ask to send notifications"
     assert_includes push_devices_js, "siteByOsBrowser"
