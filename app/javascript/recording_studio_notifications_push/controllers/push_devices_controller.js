@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Registers this browser for FCM push, or accepts a manual FID when Firebase
 // ENV config is missing (dummy / local demos).
 export default class extends Controller {
-  static targets = ["manualFid", "enablePanel"]
+  static targets = ["manualFid", "enablePanel", "helpDetected", "helpPermission", "helpSiteSteps", "helpOsSteps"]
   static values = {
     registerUrl: String,
     unregisterUrlTemplate: String,
@@ -19,6 +19,7 @@ export default class extends Controller {
     this.currentInstallation = null
     this.updateEnableLabel()
     this.showEnable()
+    this.fillNotificationHelp()
 
     this._onPushClick = (event) => {
       const enable = event.target.closest("[data-push-enable]")
@@ -163,23 +164,242 @@ export default class extends Controller {
   }
 
   browserLabel() {
+    const { browser, os } = this.detectClient()
+    return `${browser} on ${os}`
+  }
+
+  detectClient() {
     const ua = navigator.userAgent || ""
+    const platformHint = navigator.userAgentData?.platform || ""
 
     let browser = "Browser"
-    if (/Edg\//.test(ua)) browser = "Edge"
-    else if (/Chrome\//.test(ua)) browser = "Chrome"
-    else if (/Firefox\//.test(ua)) browser = "Firefox"
+    if (/Edg\/|EdgiOS\//.test(ua)) browser = "Edge"
+    else if (/OPR\/|OPiOS\//.test(ua)) browser = "Opera"
+    else if (/CriOS\/|Chrome\//.test(ua)) browser = "Chrome"
+    else if (/FxiOS\/|Firefox\//.test(ua)) browser = "Firefox"
     else if (/Safari\//.test(ua)) browser = "Safari"
 
-    let os = "device"
-    if (/iPad/.test(ua)) os = "iPad"
-    else if (/iPhone|iPod/.test(ua)) os = "iPhone"
-    else if (/Mac OS X|Macintosh/.test(ua)) os = "Mac"
-    else if (/Windows/.test(ua)) os = "Windows"
-    else if (/Android/.test(ua)) os = "Android"
-    else if (/Linux/.test(ua)) os = "Linux"
+    let os = "this device"
+    if (/iPad|Macintosh/.test(ua) && navigator.maxTouchPoints > 1) os = "iPad"
+    else if (/iPhone|iPod|iOS/.test(ua) || /iPhone|iPad|iOS/i.test(platformHint)) {
+      os = /iPad/.test(ua) ? "iPad" : "iPhone"
+    } else if (/Mac OS X|Macintosh|macOS/i.test(ua) || /macOS|Mac/i.test(platformHint)) os = "Mac"
+    else if (/Windows|Win32|Win64/i.test(ua) || /Windows/i.test(platformHint)) os = "Windows"
+    else if (/Android/i.test(ua) || /Android/i.test(platformHint)) os = "Android"
+    else if (/Linux/i.test(ua) || /Linux/i.test(platformHint)) os = "Linux"
 
-    return `${browser} on ${os}`
+    return { browser, os }
+  }
+
+  fillNotificationHelp() {
+    const client = this.detectClient()
+    const guide = this.notificationHelpGuide(client)
+
+    if (this.hasHelpDetectedTarget) {
+      this.helpDetectedTarget.textContent = `Looks like ${client.browser} on ${client.os}.`
+    }
+
+    if (this.hasHelpPermissionTarget) {
+      this.helpPermissionTarget.textContent = this.sitePermissionHelp()
+    }
+
+    this.replaceStepList(this.hasHelpSiteStepsTarget ? this.helpSiteStepsTarget : null, guide.site)
+    this.replaceStepList(this.hasHelpOsStepsTarget ? this.helpOsStepsTarget : null, guide.os)
+  }
+
+  sitePermissionHelp() {
+    if (!("Notification" in window)) {
+      return "This browser does not support web notifications."
+    }
+
+    switch (Notification.permission) {
+      case "granted":
+        return "This site is allowed in the browser. If banners still fail, check system settings below."
+      case "denied":
+        return "This site is blocked in the browser. Allow it first, then try Enable again."
+      default:
+        return "This site has not been allowed yet. Tap Enable first, then use these steps if nothing shows up."
+    }
+  }
+
+  notificationHelpGuide({ browser, os }) {
+    const siteByBrowser = {
+      Chrome: [
+        "Click the lock or tune icon in the address bar",
+        "Open Site settings → Notifications",
+        "Choose Allow"
+      ],
+      Edge: [
+        "Click the lock icon in the address bar",
+        "Open Permissions for this site → Notifications",
+        "Choose Allow"
+      ],
+      Firefox: [
+        "Click the lock icon in the address bar",
+        "Open Permissions → Notifications",
+        "Choose Allow"
+      ],
+      Safari: [
+        "Safari → Settings → Websites → Notifications",
+        "Find this site and choose Allow"
+      ],
+      Opera: [
+        "Click the lock icon in the address bar",
+        "Open Site settings → Notifications",
+        "Choose Allow"
+      ]
+    }
+
+    const osByBrowser = {
+      Mac: {
+        Chrome: [
+          "Open System Settings → Notifications",
+          "Select Google Chrome",
+          "Turn notifications on"
+        ],
+        Edge: [
+          "Open System Settings → Notifications",
+          "Select Microsoft Edge",
+          "Turn notifications on"
+        ],
+        Firefox: [
+          "Open System Settings → Notifications",
+          "Select Firefox",
+          "Turn notifications on"
+        ],
+        Safari: [
+          "Open System Settings → Notifications",
+          "Select Safari",
+          "Turn notifications on"
+        ],
+        Opera: [
+          "Open System Settings → Notifications",
+          "Select Opera",
+          "Turn notifications on"
+        ]
+      },
+      Windows: {
+        Chrome: [
+          "Open Settings → System → Notifications",
+          "Make sure notifications are on",
+          "Allow Google Chrome"
+        ],
+        Edge: [
+          "Open Settings → System → Notifications",
+          "Make sure notifications are on",
+          "Allow Microsoft Edge"
+        ],
+        Firefox: [
+          "Open Settings → System → Notifications",
+          "Make sure notifications are on",
+          "Allow Firefox"
+        ],
+        Opera: [
+          "Open Settings → System → Notifications",
+          "Make sure notifications are on",
+          "Allow Opera"
+        ]
+      },
+      iPhone: {
+        Safari: [
+          "Open Settings → Notifications → Safari",
+          "Allow Notifications"
+        ],
+        Chrome: [
+          "Open Settings → Notifications → Chrome",
+          "Allow Notifications"
+        ],
+        Edge: [
+          "Open Settings → Notifications → Edge",
+          "Allow Notifications"
+        ],
+        Firefox: [
+          "Open Settings → Notifications → Firefox",
+          "Allow Notifications"
+        ]
+      },
+      iPad: {
+        Safari: [
+          "Open Settings → Notifications → Safari",
+          "Allow Notifications"
+        ],
+        Chrome: [
+          "Open Settings → Notifications → Chrome",
+          "Allow Notifications"
+        ],
+        Edge: [
+          "Open Settings → Notifications → Edge",
+          "Allow Notifications"
+        ],
+        Firefox: [
+          "Open Settings → Notifications → Firefox",
+          "Allow Notifications"
+        ]
+      },
+      Android: {
+        Chrome: [
+          "Open Settings → Apps → Chrome → Notifications",
+          "Allow notifications"
+        ],
+        Edge: [
+          "Open Settings → Apps → Edge → Notifications",
+          "Allow notifications"
+        ],
+        Firefox: [
+          "Open Settings → Apps → Firefox → Notifications",
+          "Allow notifications"
+        ],
+        Opera: [
+          "Open Settings → Apps → Opera → Notifications",
+          "Allow notifications"
+        ]
+      },
+      Linux: {
+        Chrome: [
+          "Open your desktop notification settings",
+          "Allow Google Chrome (or Chromium)"
+        ],
+        Firefox: [
+          "Open your desktop notification settings",
+          "Allow Firefox"
+        ],
+        Edge: [
+          "Open your desktop notification settings",
+          "Allow Microsoft Edge"
+        ],
+        Opera: [
+          "Open your desktop notification settings",
+          "Allow Opera"
+        ]
+      }
+    }
+
+    const site = siteByBrowser[browser] || [
+      "Open this browser’s site settings for notifications",
+      "Allow this site"
+    ]
+
+    const osSteps =
+      osByBrowser[os]?.[browser] ||
+      osByBrowser[os]?.Safari ||
+      [
+        "Open your device notification settings",
+        `Allow ${browser}`,
+        "Then try a test alert again"
+      ]
+
+    return { site, os: osSteps }
+  }
+
+  replaceStepList(listElement, steps) {
+    if (!listElement) return
+
+    listElement.replaceChildren()
+    steps.forEach((step) => {
+      const item = document.createElement("li")
+      item.textContent = step
+      listElement.appendChild(item)
+    })
   }
 
   async registerInstallation(firebaseInstallationId, legacyFcmToken = null) {

@@ -1,5 +1,12 @@
 # Migration notes
 
+## 0.1.10
+
+### Host app steps
+
+1. Bump to `0.1.10` and refresh the devices page so the help modal and client
+   detection script load.
+
 ## 0.1.9
 
 ### Host app steps

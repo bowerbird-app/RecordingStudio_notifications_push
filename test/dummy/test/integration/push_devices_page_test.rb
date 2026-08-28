@@ -23,4 +23,21 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "/service-worker.js"
     refute_includes response.body, "PWA service worker route is not mounted"
   end
+
+  test "push devices page includes notification help modal for browser and OS steps" do
+    user = User.find_or_create_by!(email: "push-help-test@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+    sign_in user
+
+    get "/notifications/push/devices"
+
+    assert_response :success
+    assert_includes response.body, "Not getting alerts?"
+    assert_includes response.body, "push-notification-help-modal"
+    assert_includes response.body, "Check your alerts"
+    assert_includes response.body, "helpDetected"
+    assert_includes response.body, "helpOsSteps"
+  end
 end

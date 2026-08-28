@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.1.10
+
+### Added
+- Devices page **Not getting alerts?** opens a help modal with steps tailored to
+  the detected browser and OS (site permission + system notification settings)
+
 ## 0.1.9
 
 ### Changed

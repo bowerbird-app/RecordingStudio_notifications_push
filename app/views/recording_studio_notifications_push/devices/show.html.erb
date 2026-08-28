@@ -47,6 +47,16 @@
           href: @notifications_settings_path
         ) %>
       <% end %>
+      <%= render FlatPack::Button::Component.new(
+        text: "Not getting alerts?",
+        style: :ghost,
+        size: :md,
+        type: "button",
+        data: {
+          action: "click->flat-pack--modal#open",
+          modal_id: "push-notification-help-modal"
+        }
+      ) %>
     </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
@@ -78,8 +88,63 @@
             href: @notifications_settings_path
           ) %>
         <% end %>
+        <%= render FlatPack::Button::Component.new(
+          text: "Not getting alerts?",
+          style: :ghost,
+          size: :md,
+          type: "button",
+          data: {
+            action: "click->flat-pack--modal#open",
+            modal_id: "push-notification-help-modal"
+          }
+        ) %>
       </div>
     </div>
+  <% end %>
+
+  <%= render FlatPack::Modal::Component.new(
+    id: "push-notification-help-modal",
+    title: "Check your alerts",
+    size: :md
+  ) do |modal| %>
+    <% modal.body do %>
+      <div class="flex flex-col gap-4">
+        <p data-recording-studio-notifications-push--push-devices-target="helpDetected"
+           class="text-sm text-(--surface-content-color)">
+          Checking your browser…
+        </p>
+        <p data-recording-studio-notifications-push--push-devices-target="helpPermission"
+           class="text-sm text-(--surface-muted-content-color)">
+        </p>
+
+        <div>
+          <p class="mb-2 text-sm font-medium text-(--surface-content-color)">In this browser</p>
+          <ol data-recording-studio-notifications-push--push-devices-target="helpSiteSteps"
+              class="list-decimal space-y-1 pl-5 text-sm text-(--surface-muted-content-color)">
+          </ol>
+        </div>
+
+        <div>
+          <p class="mb-2 text-sm font-medium text-(--surface-content-color)">On this device</p>
+          <ol data-recording-studio-notifications-push--push-devices-target="helpOsSteps"
+              class="list-decimal space-y-1 pl-5 text-sm text-(--surface-muted-content-color)">
+          </ol>
+        </div>
+
+        <p class="text-xs text-(--surface-muted-content-color)">
+          We can spot your browser and OS, but not the system toggle itself.
+        </p>
+      </div>
+    <% end %>
+    <% modal.footer do %>
+      <%= render FlatPack::Button::Component.new(
+        text: "Got it",
+        style: :primary,
+        size: :md,
+        type: "button",
+        data: { action: "flat-pack--modal#close" }
+      ) %>
+    <% end %>
   <% end %>
 
   <% if @installations.any? %>
