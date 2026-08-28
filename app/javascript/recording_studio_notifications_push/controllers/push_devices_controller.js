@@ -347,13 +347,33 @@ export default class extends Controller {
     return navigator.serviceWorker.ready
   }
 
+  browserLabel() {
+    const ua = navigator.userAgent || ""
+
+    let browser = "Browser"
+    if (/Edg\//.test(ua)) browser = "Edge"
+    else if (/Chrome\//.test(ua)) browser = "Chrome"
+    else if (/Firefox\//.test(ua)) browser = "Firefox"
+    else if (/Safari\//.test(ua)) browser = "Safari"
+
+    let os = "device"
+    if (/iPad/.test(ua)) os = "iPad"
+    else if (/iPhone|iPod/.test(ua)) os = "iPhone"
+    else if (/Mac OS X|Macintosh/.test(ua)) os = "Mac"
+    else if (/Windows/.test(ua)) os = "Windows"
+    else if (/Android/.test(ua)) os = "Android"
+    else if (/Linux/.test(ua)) os = "Linux"
+
+    return `${browser} on ${os}`
+  }
+
   async registerInstallation(firebaseInstallationId, legacyFcmToken = null) {
     const body = {
       installation: {
         firebase_installation_id: firebaseInstallationId,
         legacy_fcm_token: legacyFcmToken,
         platform: "web",
-        label: navigator.userAgent?.slice(0, 120) || "Browser",
+        label: this.browserLabel(),
         user_agent: navigator.userAgent
       }
     }

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "active_record"
+require_relative "../app/models/recording_studio_notifications_push/application_record"
+require_relative "../app/models/recording_studio_notifications_push/installation"
 
 class InstallationTest < Minitest::Test
   class FakeInstallation
@@ -40,9 +43,24 @@ class InstallationTest < Minitest::Test
     assert_includes source, "scope :active"
     assert_includes source, "def self.upsert!"
     assert_includes source, "def disable!"
+    assert_includes source, "def display_label"
     assert_includes source, "firebase_installation_id"
     assert_includes source, "legacy_fcm_token"
     refute_includes source, "include RecordingStudio::Recordable"
+  end
+
+  def test_label_from_user_agent_builds_short_browser_names
+    ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+    assert_equal "Chrome on Mac",
+                 RecordingStudioNotificationsPush::Installation.label_from_user_agent(ua)
+  end
+
+  def test_user_agent_like_detects_raw_user_agent_labels
+    assert RecordingStudioNotificationsPush::Installation.user_agent_like?(
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+    )
+    refute RecordingStudioNotificationsPush::Installation.user_agent_like?("Chrome on Mac")
   end
 
   def test_installations_migration_exists

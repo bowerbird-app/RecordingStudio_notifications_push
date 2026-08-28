@@ -45,6 +45,28 @@ ensure
   Current.actor = previous_actor
 end
 
+if defined?(RecordingStudioNotificationsPush::Installation) &&
+   RecordingStudioNotificationsPush::Installation.table_exists?
+  seed_push_devices = [
+    { fid: "seed-push-chrome-mac", label: "Chrome on Mac", platform: "web", seen: 2.hours.ago },
+    { fid: "seed-push-safari-iphone", label: "Safari on iPhone", platform: "ios", seen: 1.day.ago },
+    { fid: "seed-push-firefox-windows", label: "Firefox on Windows", platform: "web", seen: 3.days.ago }
+  ]
+
+  seed_push_devices.each do |device|
+    installation = RecordingStudioNotificationsPush::Installation.upsert!(
+      recipient: user,
+      firebase_installation_id: device[:fid],
+      label: device[:label],
+      platform: device[:platform],
+      user_agent: "Seeded demo device"
+    )
+    installation.update_columns(last_seen_at: device[:seen], updated_at: device[:seen])
+  end
+
+  puts "Seeded: #{seed_push_devices.size} push devices for #{user.email}"
+end
+
 puts "Seeded: admin@admin.com / Password"
 puts "Seeded: Workspace '#{workspace.name}' with root recording ##{root_recording.id}"
 puts "Seeded: Workspace '#{accessible_workspace.name}' with root recording ##{accessible_root_recording.id}"

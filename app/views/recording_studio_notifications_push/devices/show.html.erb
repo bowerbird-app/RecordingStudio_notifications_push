@@ -89,7 +89,7 @@
             data-installation-id="<%= installation.id %>">
           <div class="min-w-0">
             <p class="truncate text-sm font-medium text-(--surface-content-color)">
-              <%= installation.label.presence || installation.platform.presence || "Browser" %>
+              <%= installation.display_label %>
               <span class="hidden text-xs font-normal" data-installation-current-label> · this browser</span>
             </p>
             <% if installation.last_seen_at.present? %>

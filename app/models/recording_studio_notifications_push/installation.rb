@@ -67,5 +67,47 @@ module RecordingStudioNotificationsPush
     def touch_seen!
       update_columns(last_seen_at: Time.current, updated_at: Time.current)
     end
+
+    def display_label
+      candidate = label.to_s.strip
+      return candidate if candidate.present? && !self.class.user_agent_like?(candidate)
+
+      self.class.label_from_user_agent(user_agent) || platform.presence || "Browser"
+    end
+
+    def self.user_agent_like?(value)
+      value.start_with?("Mozilla/") || value.length > 48
+    end
+
+    def self.label_from_user_agent(user_agent)
+      ua = user_agent.to_s
+      return if ua.blank?
+
+      browser = browser_name_from_user_agent(ua)
+      os = os_name_from_user_agent(ua)
+      return unless browser && os
+
+      "#{browser} on #{os}"
+    end
+
+    def self.browser_name_from_user_agent(ua)
+      return "Edge" if ua.match?(/Edg\//)
+      return "Chrome" if ua.match?(/Chrome\//)
+      return "Firefox" if ua.match?(/Firefox\//)
+      return "Safari" if ua.match?(/Safari\//) && !ua.match?(/Chrome\//)
+
+      "Browser"
+    end
+
+    def self.os_name_from_user_agent(ua)
+      return "iPad" if ua.match?(/iPad/)
+      return "iPhone" if ua.match?(/iPhone|iPod/)
+      return "Mac" if ua.match?(/Mac OS X|Macintosh/)
+      return "Windows" if ua.match?(/Windows/)
+      return "Android" if ua.match?(/Android/)
+      return "Linux" if ua.match?(/Linux/)
+
+      "device"
+    end
   end
 end

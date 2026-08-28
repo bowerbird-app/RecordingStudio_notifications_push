@@ -26,7 +26,7 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Push devices"
     assert_includes response.body, "Test browser"
-    assert_includes response.body, "fid-for-test-push"
+    assert_includes response.body, "Active browsers and devices"
     refute_includes response.body, "Not getting alerts?"
     refute_includes response.body, "Show a local notification"
     refute_includes response.body, "Send a test push"
