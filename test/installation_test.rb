@@ -50,10 +50,14 @@ class InstallationTest < Minitest::Test
   end
 
   def test_label_from_user_agent_builds_short_browser_names
-    ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    user_agent = [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+      "AppleWebKit/537.36 (KHTML, like Gecko)",
+      "Chrome/120.0.0.0 Safari/537.36"
+    ].join(" ")
 
     assert_equal "Chrome on Mac",
-                 RecordingStudioNotificationsPush::Installation.label_from_user_agent(ua)
+                 RecordingStudioNotificationsPush::Installation.label_from_user_agent(user_agent)
   end
 
   def test_user_agent_like_detects_raw_user_agent_labels

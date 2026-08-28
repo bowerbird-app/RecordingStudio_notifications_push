@@ -80,32 +80,32 @@ module RecordingStudioNotificationsPush
     end
 
     def self.label_from_user_agent(user_agent)
-      ua = user_agent.to_s
-      return if ua.blank?
+      agent = user_agent.to_s
+      return if agent.blank?
 
-      browser = browser_name_from_user_agent(ua)
-      os = os_name_from_user_agent(ua)
+      browser = browser_name_from_user_agent(agent)
+      os = os_name_from_user_agent(agent)
       return unless browser && os
 
       "#{browser} on #{os}"
     end
 
-    def self.browser_name_from_user_agent(ua)
-      return "Edge" if ua.match?(/Edg\//)
-      return "Chrome" if ua.match?(/Chrome\//)
-      return "Firefox" if ua.match?(/Firefox\//)
-      return "Safari" if ua.match?(/Safari\//) && !ua.match?(/Chrome\//)
+    def self.browser_name_from_user_agent(user_agent)
+      return "Edge" if user_agent.match?(%r{Edg/})
+      return "Chrome" if user_agent.match?(%r{Chrome/})
+      return "Firefox" if user_agent.match?(%r{Firefox/})
+      return "Safari" if user_agent.match?(%r{Safari/}) && !user_agent.match?(%r{Chrome/})
 
       "Browser"
     end
 
-    def self.os_name_from_user_agent(ua)
-      return "iPad" if ua.match?(/iPad/)
-      return "iPhone" if ua.match?(/iPhone|iPod/)
-      return "Mac" if ua.match?(/Mac OS X|Macintosh/)
-      return "Windows" if ua.match?(/Windows/)
-      return "Android" if ua.match?(/Android/)
-      return "Linux" if ua.match?(/Linux/)
+    def self.os_name_from_user_agent(user_agent)
+      return "iPad" if user_agent.match?(/iPad/)
+      return "iPhone" if user_agent.match?(/iPhone|iPod/)
+      return "Mac" if user_agent.match?(/Mac OS X|Macintosh/)
+      return "Windows" if user_agent.match?(/Windows/)
+      return "Android" if user_agent.match?(/Android/)
+      return "Linux" if user_agent.match?(/Linux/)
 
       "device"
     end
