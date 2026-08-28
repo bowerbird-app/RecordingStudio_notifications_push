@@ -35,6 +35,16 @@
 - Devices "Enable on this browser" binds via controller event delegation (`data-push-enable`) so the click runs when the Stimulus controller is connected
 - Devices page swaps to "Disable on this browser" when the current browser's FCM token matches an active installation
 
+## 0.1.6
+
+### Added
+- Devices page **Manage notifications** default button under the subtitle links to
+  the parent notifications settings screen
+
+### Fixed
+- Devices trash button uses `data-turbo-method="delete"` so remove redirects back
+  to `/notifications/push/devices` instead of a GET routing error
+
 ## 0.1.5
 
 ### Changed

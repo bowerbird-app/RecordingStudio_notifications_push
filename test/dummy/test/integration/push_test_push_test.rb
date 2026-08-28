@@ -26,7 +26,10 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, "Push Notifications"
     assert_includes response.body, "Get notifications on your devices"
+    assert_includes response.body, "Manage notifications"
+    assert_includes response.body, 'href="/notifications/settings"'
     assert_includes response.body, "Test browser"
+    assert_includes response.body, 'data-turbo-method="delete"'
     refute_includes response.body, "Active browsers and devices"
     refute_includes response.body, "No devices yet"
     refute_includes response.body, "Not getting alerts?"
@@ -39,6 +42,16 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
       assert_includes response.body, "Firebase is not configured yet"
       assert_includes response.body, "Register this id"
     end
+  end
+
+  test "removing a device redirects back to the devices page" do
+    delete "/notifications/push/devices/#{@installation.id}"
+
+    assert_redirected_to "/notifications/push/devices"
+    follow_redirect!
+    assert_response :success
+    refute_includes response.body, "Test browser"
+    assert @installation.reload.disabled_at.present?
   end
 
   test "test push answers with a JSON verdict for this account's device" do

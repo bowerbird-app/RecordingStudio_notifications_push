@@ -1,5 +1,14 @@
 # Migration notes
 
+## 0.1.6
+
+### Host app steps
+
+1. Bump to `0.1.6` and refresh the devices page.
+2. Removing a device uses Turbo `DELETE` and returns you to the devices list.
+3. **Manage notifications** on the devices page opens the parent gem settings at
+   `/notifications/settings` (or wherever that engine is mounted).
+
 ## 0.1.1
 
 ### Host app steps

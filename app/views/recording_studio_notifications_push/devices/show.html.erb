@@ -26,7 +26,18 @@
     title: "Push Notifications",
     subtitle: "Get notifications on your devices",
     variant: :h1
-  ) %>
+  ) do |page_title| %>
+    <% if @notifications_settings_path.present? %>
+      <% page_title.slot do %>
+        <%= render FlatPack::Button::Component.new(
+          text: "Manage notifications",
+          style: :default,
+          size: :md,
+          href: @notifications_settings_path
+        ) %>
+      <% end %>
+    <% end %>
+  <% end %>
 
   <% if @firebase_ready %>
     <div data-recording-studio-notifications-push--push-devices-target="enablePanel">
@@ -72,9 +83,11 @@
             style: :ghost,
             size: :sm,
             href: device_path(installation),
-            method: :delete,
             aria: { label: "Remove device" },
-            data: { turbo_confirm: "Stop push alerts on this device?" }
+            data: {
+              turbo_method: :delete,
+              turbo_confirm: "Stop push alerts on this device?"
+            }
           ) %>
         <% end %>
         <%= render FlatPack::List::Item.new(
