@@ -66,19 +66,25 @@ module RecordingStudioNotificationsPush
     private
 
     def meta_asset(key)
-      meta = metadata
-      value = (meta[key] || meta[key.to_s]).to_s.strip.presence
+      value = metadata_string(key)
       return unless value
       return if unsafe_url_characters?(value)
-
-      # Icons may be absolute (any http/https host) or same-origin paths.
-      # Do not reuse notification URL host allowlists — banner assets are not navigation.
-      return value if value.start_with?("/") && !value.start_with?("//")
+      return value if same_origin_path?(value)
       return value if fallback_url_safe?(value)
 
       nil
     rescue URI::InvalidURIError
       nil
+    end
+
+    def metadata_string(key)
+      meta = metadata
+      (meta[key] || meta[key.to_s]).to_s.strip.presence
+    end
+
+    # Same-origin path only (not protocol-relative //host/...).
+    def same_origin_path?(value)
+      value.start_with?("/") && !value.start_with?("//")
     end
 
     def safe_url(value)
