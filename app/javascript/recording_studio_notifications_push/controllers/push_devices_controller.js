@@ -389,9 +389,9 @@ export default class extends Controller {
     if (!listElement) return
 
     listElement.replaceChildren()
-    steps.forEach((step) => {
+    steps.forEach((step, index) => {
       const item = document.createElement("li")
-      item.textContent = step
+      item.textContent = `${index + 1}. ${step}`
       listElement.appendChild(item)
     })
   }

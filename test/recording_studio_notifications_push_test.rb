@@ -95,6 +95,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "select this web app’s name"
     assert_includes push_devices_js, "Notifications from apps and other senders"
     assert_includes push_devices_js, "Settings → Notifications → App notifications"
+    assert_includes push_devices_js, "`${index + 1}. ${step}`"
     refute_includes push_devices_js, "Settings → Notifications → Safari"
     refute_includes push_devices_js, "Settings → Notifications → Chrome"
 
