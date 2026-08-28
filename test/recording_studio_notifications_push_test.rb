@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.11", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.12", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -85,7 +85,18 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "Enable on this browser"
     assert_includes push_devices_js, "chrome://settings/"
     assert_includes push_devices_js, "Sites can ask to send notifications"
-    assert_includes push_devices_js, "siteByOsBrowser"
+    assert_includes push_devices_js, "Privacy, search, and services"
+    assert_includes push_devices_js, "Site permissions → All sites"
+    assert_includes push_devices_js, "Privacy & Security → Permissions"
+    assert_includes push_devices_js, "Open Websites → Notifications"
+    assert_includes push_devices_js, "Privacy & security → Site settings → Notifications"
+    assert_includes push_devices_js, "Use iOS or iPadOS 16.4 or later"
+    assert_includes push_devices_js, "Add to Home Screen"
+    assert_includes push_devices_js, "select this web app’s name"
+    assert_includes push_devices_js, "Notifications from apps and other senders"
+    assert_includes push_devices_js, "Settings → Notifications → App notifications"
+    refute_includes push_devices_js, "Settings → Notifications → Safari"
+    refute_includes push_devices_js, "Settings → Notifications → Chrome"
 
     sw_partial = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/_service_worker_push.js.erb", __dir__)

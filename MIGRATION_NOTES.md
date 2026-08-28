@@ -1,5 +1,15 @@
 # Migration notes
 
+## 0.1.12
+
+### Host app steps
+
+1. Bump to `0.1.12` and refresh the devices page for the fact-checked browser
+   and OS help.
+2. On iPhone and iPad, make sure the PWA manifest has a clear app name. Users
+   find that Home Screen web app name—not Safari or Chrome—in Settings →
+   Notifications.
+
 ## 0.1.11
 
 ### Host app steps

@@ -200,14 +200,18 @@ export default class extends Controller {
     }
 
     if (this.hasHelpPermissionTarget) {
-      this.helpPermissionTarget.textContent = this.sitePermissionHelp()
+      this.helpPermissionTarget.textContent = this.sitePermissionHelp(client)
     }
 
     this.replaceStepList(this.hasHelpSiteStepsTarget ? this.helpSiteStepsTarget : null, guide.site)
     this.replaceStepList(this.hasHelpOsStepsTarget ? this.helpOsStepsTarget : null, guide.os)
   }
 
-  sitePermissionHelp() {
+  sitePermissionHelp({ os }) {
+    if (["iPhone", "iPad"].includes(os) && !this.installedApp()) {
+      return "Web push works on iOS and iPadOS 16.4 or later only after this site is added to your Home Screen."
+    }
+
     if (!("Notification" in window)) {
       return "This browser does not support web notifications."
     }
@@ -223,184 +227,162 @@ export default class extends Controller {
   }
 
   notificationHelpGuide({ browser, os }) {
-    const siteByOsBrowser = {
-      Mac: {
-        Chrome: [
-          "Click the lock or info icon in the address bar, or open chrome://settings/",
-          "Open Privacy and security → Site settings → Notifications",
-          "Choose Sites can ask to send notifications"
-        ]
-      }
+    // Paths are kept in step with vendor guidance:
+    // Chrome: support.google.com/chrome/answer/3220216
+    // Edge: support.microsoft.com/edge/manage-website-notifications-in-microsoft-edge
+    // Firefox: support.mozilla.org/kb/push-notifications-firefox
+    // Safari: support.apple.com/guide/safari/customize-website-notifications-sfri40734/mac
+    // iPhone/iPad: webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/
+    if (["iPhone", "iPad"].includes(os)) {
+      return this.appleMobileHelpGuide()
     }
 
-    const siteByBrowser = {
+    const desktopSiteSteps = {
       Chrome: [
-        "Click the lock or tune icon in the address bar",
-        "Open Site settings → Notifications",
-        "Choose Allow"
+        "Click the lock or info icon in the address bar, or open chrome://settings/",
+        "Open Privacy and security → Site settings → Notifications",
+        "Choose Sites can ask to send notifications, then allow this site if it is blocked"
       ],
       Edge: [
-        "Click the lock icon in the address bar",
-        "Open Permissions for this site → Notifications",
-        "Choose Allow"
+        "Open Edge → Settings",
+        "Open Privacy, search, and services → Site permissions → All sites",
+        "Select this site, then set Notifications to Allow"
       ],
       Firefox: [
-        "Click the lock icon in the address bar",
-        "Open Permissions → Notifications",
-        "Choose Allow"
+        "Open Firefox → Settings",
+        "Under Privacy & Security → Permissions, open Notifications → Settings",
+        "Find this site, choose Allow, then save changes"
       ],
       Safari: [
-        "Safari → Settings → Websites → Notifications",
+        "Open Safari → Settings",
+        "Open Websites → Notifications",
         "Find this site and choose Allow"
       ],
       Opera: [
-        "Click the lock icon in the address bar",
-        "Open Site settings → Notifications",
-        "Choose Allow"
+        "Open Opera → Settings",
+        "Open Privacy & security → Site settings → Notifications",
+        "Turn on Ask before sending and allow this site"
       ]
     }
 
-    const osByBrowser = {
-      Mac: {
-        Chrome: [
-          "Open System Settings → Notifications",
-          "Select Google Chrome",
-          "Turn notifications on"
-        ],
-        Edge: [
-          "Open System Settings → Notifications",
-          "Select Microsoft Edge",
-          "Turn notifications on"
-        ],
-        Firefox: [
-          "Open System Settings → Notifications",
-          "Select Firefox",
-          "Turn notifications on"
-        ],
-        Safari: [
-          "Open System Settings → Notifications",
-          "Select Safari",
-          "Turn notifications on"
-        ],
-        Opera: [
-          "Open System Settings → Notifications",
-          "Select Opera",
-          "Turn notifications on"
-        ]
-      },
-      Windows: {
-        Chrome: [
-          "Open Settings → System → Notifications",
-          "Make sure notifications are on",
-          "Allow Google Chrome"
-        ],
-        Edge: [
-          "Open Settings → System → Notifications",
-          "Make sure notifications are on",
-          "Allow Microsoft Edge"
-        ],
-        Firefox: [
-          "Open Settings → System → Notifications",
-          "Make sure notifications are on",
-          "Allow Firefox"
-        ],
-        Opera: [
-          "Open Settings → System → Notifications",
-          "Make sure notifications are on",
-          "Allow Opera"
-        ]
-      },
-      iPhone: {
-        Safari: [
-          "Open Settings → Notifications → Safari",
-          "Allow Notifications"
-        ],
-        Chrome: [
-          "Open Settings → Notifications → Chrome",
-          "Allow Notifications"
-        ],
-        Edge: [
-          "Open Settings → Notifications → Edge",
-          "Allow Notifications"
-        ],
-        Firefox: [
-          "Open Settings → Notifications → Firefox",
-          "Allow Notifications"
-        ]
-      },
-      iPad: {
-        Safari: [
-          "Open Settings → Notifications → Safari",
-          "Allow Notifications"
-        ],
-        Chrome: [
-          "Open Settings → Notifications → Chrome",
-          "Allow Notifications"
-        ],
-        Edge: [
-          "Open Settings → Notifications → Edge",
-          "Allow Notifications"
-        ],
-        Firefox: [
-          "Open Settings → Notifications → Firefox",
-          "Allow Notifications"
-        ]
-      },
-      Android: {
-        Chrome: [
-          "Open Settings → Apps → Chrome → Notifications",
-          "Allow notifications"
-        ],
-        Edge: [
-          "Open Settings → Apps → Edge → Notifications",
-          "Allow notifications"
-        ],
-        Firefox: [
-          "Open Settings → Apps → Firefox → Notifications",
-          "Allow notifications"
-        ],
-        Opera: [
-          "Open Settings → Apps → Opera → Notifications",
-          "Allow notifications"
-        ]
-      },
-      Linux: {
-        Chrome: [
-          "Open your desktop notification settings",
-          "Allow Google Chrome (or Chromium)"
-        ],
-        Firefox: [
-          "Open your desktop notification settings",
-          "Allow Firefox"
-        ],
-        Edge: [
-          "Open your desktop notification settings",
-          "Allow Microsoft Edge"
-        ],
-        Opera: [
-          "Open your desktop notification settings",
-          "Allow Opera"
-        ]
-      }
-    }
-
-    const site =
-      siteByOsBrowser[os]?.[browser] ||
-      siteByBrowser[browser] || [
+    const site = os === "Android"
+      ? this.androidSiteSteps(browser)
+      : desktopSiteSteps[browser] || [
         "Open this browser’s site settings for notifications",
-        "Allow this site"
+        "Find this site in the notification permissions",
+        "Choose Allow, then tap Enable again"
       ]
 
-    const osSteps =
-      osByBrowser[os]?.[browser] ||
-      osByBrowser[os]?.Safari ||
-      [
-        "Open your device notification settings",
-        `Allow ${browser}`,
-        "Then try a test alert again"
-      ]
+    return { site, os: this.deviceNotificationSteps(browser, os) }
+  }
 
-    return { site, os: osSteps }
+  appleMobileHelpGuide() {
+    const site = this.installedApp()
+      ? [
+          "Open this app from its Home Screen icon",
+          "Tap Enable and choose Allow when prompted",
+          "If notifications were blocked, use the device steps below"
+        ]
+      : [
+          "Use iOS or iPadOS 16.4 or later",
+          "Tap Share → Add to Home Screen, then open the new icon",
+          "Open Push devices in the Home Screen app and tap Enable"
+        ]
+
+    return {
+      site,
+      os: [
+        "Open the Settings app",
+        "Open Notifications and select this web app’s name",
+        "Turn on Allow Notifications"
+      ]
+    }
+  }
+
+  androidSiteSteps(browser) {
+    const appSteps = {
+      Chrome: [
+        "On this site, tap Page info beside the address bar",
+        "Open Permissions → Notifications",
+        "Choose Allow, then tap Enable again"
+      ],
+      Edge: [
+        "Open Edge Settings → Site permissions",
+        "Open Notifications and find this site",
+        "Choose Allow, then tap Enable again"
+      ],
+      Firefox: [
+        "Open this site’s permissions from the address bar",
+        "Open Notifications for this site",
+        "Choose Allow, then tap Enable again"
+      ],
+      Opera: [
+        "Open the Opera menu → Notifications",
+        "Find this website in the list",
+        "Clear its saved choice, then return here and tap Enable"
+      ]
+    }
+
+    return appSteps[browser] || [
+      "Open this site’s permissions in the browser",
+      "Open Notifications for this site",
+      "Choose Allow, then tap Enable again"
+    ]
+  }
+
+  deviceNotificationSteps(browser, os) {
+    const appNames = {
+      Chrome: "Google Chrome",
+      Edge: "Microsoft Edge",
+      Firefox: "Firefox",
+      Opera: "Opera",
+      Safari: "Safari"
+    }
+    const appName = appNames[browser] || browser
+
+    if (os === "Mac") {
+      return browser === "Safari"
+        ? [
+            "Open System Settings → Notifications",
+            "Select this website under Application Notifications",
+            "Turn on Allow notifications"
+          ]
+        : [
+            "Open System Settings → Notifications",
+            `Select ${appName}`,
+            "Turn on Allow notifications"
+          ]
+    }
+
+    if (os === "Windows") {
+      return [
+        "Open Settings → System → Notifications",
+        `Under Notifications from apps and other senders, select ${appName}`,
+        "Turn notifications on and enable notification banners"
+      ]
+    }
+
+    if (os === "Android") {
+      return [
+        "Open Settings → Notifications → App notifications",
+        `Select ${appName}`,
+        "Turn notifications on"
+      ]
+    }
+
+    if (os === "Linux") {
+      return [
+        "Open your desktop notification settings",
+        `Find ${appName} in the application list`,
+        "Allow notifications and turn off Do Not Disturb"
+      ]
+    }
+
+    return [
+      "Open your device notification settings",
+      `Find ${appName} in the application list`,
+      "Allow notifications, then try a test alert"
+    ]
   }
 
   replaceStepList(listElement, steps) {

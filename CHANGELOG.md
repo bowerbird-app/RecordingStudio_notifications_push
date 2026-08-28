@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 0.1.12
+
+### Changed
+- Notification help now follows the same three-step format for every detected
+  browser and OS, using vendor-documented settings paths
+- iPhone and iPad guidance now correctly requires an iOS/iPadOS 16.4+ Home
+  Screen web app and points to that web app—not the browser—in Notifications
+- Safari on Mac now points to the website entry under Application Notifications
+
 ## 0.1.11
 
 ### Changed
