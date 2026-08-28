@@ -4,7 +4,14 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.12", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.13", ::RecordingStudioNotificationsPush::VERSION
+  end
+
+  def test_importmap_preloads_push_devices_controller
+    importmap = File.read(File.expand_path("../config/importmap.rb", __dir__))
+
+    assert_includes importmap, "controllers/recording_studio_notifications_push/push_devices_controller"
+    assert_includes importmap, "preload: true"
   end
 
   def test_engine_exists
@@ -99,6 +106,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "Notifications from apps and other senders"
     assert_includes push_devices_js, "Settings → Notifications → App notifications"
     assert_includes push_devices_js, "`${index + 1}. ${step}`"
+    assert_includes push_devices_js, "helpTarget"
+    assert_includes push_devices_js, "requestAnimationFrame(() => this.fillNotificationHelp())"
+    refute_includes push_devices_js, "refreshNotificationHelp"
     refute_includes push_devices_js, "Settings → Notifications → Safari"
     refute_includes push_devices_js, "Settings → Notifications → Chrome"
 
@@ -135,6 +145,10 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes devices_show, "Not getting alerts?"
     assert_includes devices_show, "push-notification-help-modal"
     assert_includes devices_show, "helpDetected"
+    assert_includes devices_show, "Open this browser’s site settings for notifications"
+    assert_includes devices_show, "Open your device notification settings"
+    refute_includes devices_show, "refreshNotificationHelp"
+    refute_includes devices_show, "Checking your browser"
   end
 
   def test_dummy_pwa_head_resolves_service_worker_via_main_app

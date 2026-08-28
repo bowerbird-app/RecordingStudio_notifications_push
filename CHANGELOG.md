@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.1.13
+
+### Fixed
+- Notification help modal is filled on page load (before it is opened), with
+  generic fallback steps in HTML when JavaScript has not run yet
+- Push devices Stimulus controller is preloaded so browser and OS detection
+  finishes before users tap **Not getting alerts?**
+
 ## 0.1.12
 
 ### Changed

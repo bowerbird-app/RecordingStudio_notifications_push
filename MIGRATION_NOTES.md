@@ -1,5 +1,13 @@
 # Migration notes
 
+## 0.1.13
+
+### Host app steps
+
+1. Bump to `0.1.13` and hard-refresh the push devices page so the preloaded
+   help modal JavaScript loads.
+2. No configuration changes are required.
+
 ## 0.1.12
 
 ### Host app steps

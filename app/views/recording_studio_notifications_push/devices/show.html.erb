@@ -53,7 +53,6 @@
         size: :md,
         type: "button",
         data: {
-          action: "click->flat-pack--modal#open",
           modal_id: "push-notification-help-modal"
         }
       ) %>
@@ -94,7 +93,7 @@
           size: :md,
           type: "button",
           data: {
-            action: "click->flat-pack--modal#open",
+            action: "click->recording-studio-notifications-push--push-devices#refreshNotificationHelp",
             modal_id: "push-notification-help-modal"
           }
         ) %>
@@ -111,16 +110,20 @@
       <div class="flex flex-col gap-4">
         <p data-recording-studio-notifications-push--push-devices-target="helpDetected"
            class="text-sm text-(--surface-content-color)">
-          Checking your browser…
+          These steps update for your browser and OS once the page loads.
         </p>
         <p data-recording-studio-notifications-push--push-devices-target="helpPermission"
            class="text-sm text-(--surface-muted-content-color)">
+          Tap Enable first, then use these steps if nothing shows up.
         </p>
 
         <div>
           <p class="mb-2 text-sm font-medium text-(--surface-content-color)">In this browser</p>
           <ol data-recording-studio-notifications-push--push-devices-target="helpSiteSteps"
               class="space-y-1 text-sm text-(--surface-muted-content-color)">
+            <li>1. Open this browser’s site settings for notifications</li>
+            <li>2. Find this site in the notification permissions</li>
+            <li>3. Choose Allow, then tap Enable again</li>
           </ol>
         </div>
 
@@ -128,6 +131,9 @@
           <p class="mb-2 text-sm font-medium text-(--surface-content-color)">On this device</p>
           <ol data-recording-studio-notifications-push--push-devices-target="helpOsSteps"
               class="space-y-1 text-sm text-(--surface-muted-content-color)">
+            <li>1. Open your device notification settings</li>
+            <li>2. Find this browser in the application list</li>
+            <li>3. Allow notifications, then try a test alert</li>
           </ol>
         </div>
 

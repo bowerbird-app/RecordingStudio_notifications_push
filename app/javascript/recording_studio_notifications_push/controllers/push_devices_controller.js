@@ -19,7 +19,10 @@ export default class extends Controller {
     this.currentInstallation = null
     this.updateEnableLabel()
     this.showEnable()
-    this.fillNotificationHelp()
+
+    // Fill help content as soon as the controller connects so the modal is
+    // ready before anyone taps "Not getting alerts?"
+    requestAnimationFrame(() => this.fillNotificationHelp())
 
     this._onPushClick = (event) => {
       const enable = event.target.closest("[data-push-enable]")
@@ -28,6 +31,10 @@ export default class extends Controller {
       }
     }
     this.element.addEventListener("click", this._onPushClick)
+
+    this._onTurboLoad = () => this.fillNotificationHelp()
+    document.addEventListener("turbo:load", this._onTurboLoad)
+
     this.detectCurrentBrowser()
   }
 
@@ -35,6 +42,11 @@ export default class extends Controller {
     if (this._onPushClick) {
       this.element.removeEventListener("click", this._onPushClick)
       this._onPushClick = null
+    }
+
+    if (this._onTurboLoad) {
+      document.removeEventListener("turbo:load", this._onTurboLoad)
+      this._onTurboLoad = null
     }
   }
 
@@ -195,16 +207,28 @@ export default class extends Controller {
     const client = this.detectClient()
     const guide = this.notificationHelpGuide(client)
 
-    if (this.hasHelpDetectedTarget) {
-      this.helpDetectedTarget.textContent = `Looks like ${client.browser} on ${client.os}.`
+    const detectedElement = this.helpTarget("helpDetected")
+    if (detectedElement) {
+      detectedElement.textContent = `Looks like ${client.browser} on ${client.os}.`
     }
 
-    if (this.hasHelpPermissionTarget) {
-      this.helpPermissionTarget.textContent = this.sitePermissionHelp(client)
+    const permissionElement = this.helpTarget("helpPermission")
+    if (permissionElement) {
+      permissionElement.textContent = this.sitePermissionHelp(client)
     }
 
-    this.replaceStepList(this.hasHelpSiteStepsTarget ? this.helpSiteStepsTarget : null, guide.site)
-    this.replaceStepList(this.hasHelpOsStepsTarget ? this.helpOsStepsTarget : null, guide.os)
+    this.replaceStepList(this.helpTarget("helpSiteSteps"), guide.site)
+    this.replaceStepList(this.helpTarget("helpOsSteps"), guide.os)
+  }
+
+  helpTarget(name) {
+    if (this[`has${name.charAt(0).toUpperCase()}${name.slice(1)}Target`]) {
+      return this[`${name}Target`]
+    }
+
+    return this.element.querySelector(
+      `[data-recording-studio-notifications-push--push-devices-target="${name}"]`
+    )
   }
 
   sitePermissionHelp({ browser, os }) {
