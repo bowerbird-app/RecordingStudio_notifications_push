@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.1.11
+
+### Changed
+- Mac Chrome help modal steps now point to `chrome://settings/`, Privacy and
+  security → Site settings → Notifications, and “Sites can ask to send
+  notifications”
+
 ## 0.1.10
 
 ### Added

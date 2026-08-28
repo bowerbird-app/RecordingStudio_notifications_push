@@ -223,6 +223,16 @@ export default class extends Controller {
   }
 
   notificationHelpGuide({ browser, os }) {
+    const siteByOsBrowser = {
+      Mac: {
+        Chrome: [
+          "Click the lock or info icon in the address bar, or open chrome://settings/",
+          "Open Privacy and security → Site settings → Notifications",
+          "Choose Sites can ask to send notifications"
+        ]
+      }
+    }
+
     const siteByBrowser = {
       Chrome: [
         "Click the lock or tune icon in the address bar",
@@ -374,10 +384,12 @@ export default class extends Controller {
       }
     }
 
-    const site = siteByBrowser[browser] || [
-      "Open this browser’s site settings for notifications",
-      "Allow this site"
-    ]
+    const site =
+      siteByOsBrowser[os]?.[browser] ||
+      siteByBrowser[browser] || [
+        "Open this browser’s site settings for notifications",
+        "Allow this site"
+      ]
 
     const osSteps =
       osByBrowser[os]?.[browser] ||

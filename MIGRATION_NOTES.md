@@ -1,5 +1,12 @@
 # Migration notes
 
+## 0.1.11
+
+### Host app steps
+
+1. Bump to `0.1.11` and refresh the devices page so the updated Mac Chrome
+   help steps load.
+
 ## 0.1.10
 
 ### Host app steps

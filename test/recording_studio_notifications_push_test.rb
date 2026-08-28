@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.10", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.1.11", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_engine_exists
@@ -82,7 +82,10 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "installedApp"
     assert_includes push_devices_js, "hideEnablePanel"
     assert_includes push_devices_js, "Enable on this device"
-    assert_includes push_devices_js, "Enable on this browser"
+    assert_includes push_devices_js, "Not getting alerts?"
+    assert_includes push_devices_js, "chrome://settings/"
+    assert_includes push_devices_js, "Sites can ask to send notifications"
+    assert_includes push_devices_js, "siteByOsBrowser"
 
     sw_partial = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/_service_worker_push.js.erb", __dir__)
