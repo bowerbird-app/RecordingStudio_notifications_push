@@ -114,6 +114,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes devices_show, "No devices yet"
     refute_includes devices_show, "push_disable"
     refute_includes devices_show, 'button_to "Remove"'
+    assert_includes devices_show, "Not getting alerts?"
+    assert_includes devices_show, "push-notification-help-modal"
+    assert_includes devices_show, "helpDetected"
   end
 
   def test_dummy_pwa_head_resolves_service_worker_via_main_app
