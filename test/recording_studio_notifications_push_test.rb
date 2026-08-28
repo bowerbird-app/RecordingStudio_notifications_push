@@ -93,6 +93,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "Use iOS or iPadOS 16.4 or later"
     assert_includes push_devices_js, "Add to Home Screen"
     assert_includes push_devices_js, "select this web app’s name"
+    assert_includes push_devices_js, "Website push cannot be set up directly"
+    assert_includes push_devices_js, '["Firefox", "Opera"].includes(browser)'
+    assert_includes push_devices_js, "Open this site in Safari, Chrome, or Edge"
     assert_includes push_devices_js, "Notifications from apps and other senders"
     assert_includes push_devices_js, "Settings → Notifications → App notifications"
     assert_includes push_devices_js, "`${index + 1}. ${step}`"

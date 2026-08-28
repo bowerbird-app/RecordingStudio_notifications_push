@@ -9,6 +9,8 @@
   browser and OS, using vendor-documented settings paths
 - iPhone and iPad guidance now correctly requires an iOS/iPadOS 16.4+ Home
   Screen web app and points to that web app—not the browser—in Notifications
+- iPhone and iPad setup in Firefox or Opera directs users to a supported
+  installation browser instead of implying in-tab website push support
 - Safari on Mac now points to the website entry under Application Notifications
 
 ## 0.1.11

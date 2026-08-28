@@ -207,8 +207,12 @@ export default class extends Controller {
     this.replaceStepList(this.hasHelpOsStepsTarget ? this.helpOsStepsTarget : null, guide.os)
   }
 
-  sitePermissionHelp({ os }) {
+  sitePermissionHelp({ browser, os }) {
     if (["iPhone", "iPad"].includes(os) && !this.installedApp()) {
+      if (["Firefox", "Opera"].includes(browser)) {
+        return `Website push cannot be set up directly in ${browser} on iPhone or iPad. Open this site in Safari, Chrome, or Edge first.`
+      }
+
       return "Web push works on iOS and iPadOS 16.4 or later only after this site is added to your Home Screen."
     }
 
@@ -234,7 +238,7 @@ export default class extends Controller {
     // Safari: support.apple.com/guide/safari/customize-website-notifications-sfri40734/mac
     // iPhone/iPad: webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/
     if (["iPhone", "iPad"].includes(os)) {
-      return this.appleMobileHelpGuide()
+      return this.appleMobileHelpGuide(browser)
     }
 
     const desktopSiteSteps = {
@@ -276,13 +280,20 @@ export default class extends Controller {
     return { site, os: this.deviceNotificationSteps(browser, os) }
   }
 
-  appleMobileHelpGuide() {
+  appleMobileHelpGuide(browser) {
+    const unsupportedSetupBrowser = ["Firefox", "Opera"].includes(browser)
     const site = this.installedApp()
       ? [
           "Open this app from its Home Screen icon",
           "Tap Enable and choose Allow when prompted",
           "If notifications were blocked, use the device steps below"
         ]
+      : unsupportedSetupBrowser
+        ? [
+            "Open this site in Safari, Chrome, or Edge",
+            "Tap Share → Add to Home Screen, then open the new icon",
+            "Open Push devices in the Home Screen app and tap Enable"
+          ]
       : [
           "Use iOS or iPadOS 16.4 or later",
           "Tap Share → Add to Home Screen, then open the new icon",
