@@ -27,10 +27,10 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_notifications.git
-  revision: 5ae524ff5c1774e7512b5e581efde9980c262ac7
+  revision: 0ef1832e3d48c3d3aebd47e1c83424aeff6c0aab
   branch: main
   specs:
-    recording_studio_notifications (0.2.5)
+    recording_studio_notifications (0.2.6)
       flat_pack
       rails (~> 8.1.0)
       recording_studio
@@ -70,7 +70,7 @@ PATH
 PATH
   remote: ../..
   specs:
-    recording_studio_notifications_push (0.1.14)
+    recording_studio_notifications_push (0.1.15)
       rails (~> 8.1.0)
       recording_studio (~> 4.2)
       recording_studio_notifications (>= 0.2, < 1)
@@ -628,9 +628,9 @@ CHECKSUMS
   rdoc (8.0.0) sha256=03bf8c08a9639658855a0cfd77c0abca8325c227693f7f33f82957811348c469
   recording_studio (4.2.0)
   recording_studio_accessible (0.7.0)
-  recording_studio_notifications (0.2.5)
+  recording_studio_notifications (0.2.6)
   recording_studio_notifications_email (0.1.0)
-  recording_studio_notifications_push (0.1.14)
+  recording_studio_notifications_push (0.1.15)
   recording_studio_pwa (0.3.0)
   recording_studio_root_switchable (0.5.0)
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4
