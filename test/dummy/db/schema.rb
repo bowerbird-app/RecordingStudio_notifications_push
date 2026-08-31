@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_21_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_24_130004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -56,6 +56,80 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_000000) do
     t.index ["recording_id", "idempotency_key"], name: "index_recording_studio_events_on_recording_and_idempotency_key", unique: true, where: "(idempotency_key IS NOT NULL)"
     t.index ["recording_id", "occurred_at", "created_at"], name: "index_rs_events_on_recording_and_timeline", order: { occurred_at: :desc, created_at: :desc }
     t.index ["recording_id"], name: "index_recording_studio_events_on_recording_id"
+  end
+
+  create_table "recording_studio_notifications_deliveries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "channel", null: false
+    t.datetime "created_at", null: false
+    t.datetime "delivered_at"
+    t.text "error_message"
+    t.jsonb "metadata", default: {}, null: false
+    t.uuid "notification_id", null: false
+    t.datetime "rollup_reserved_at"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["channel", "status"], name: "idx_rsn_deliveries_channel_status"
+    t.index ["notification_id", "channel"], name: "idx_rsn_deliveries_notification_channel", unique: true
+    t.index ["status", "rollup_reserved_at"], name: "idx_rsn_deliveries_rollup_reservation"
+  end
+
+  create_table "recording_studio_notifications_notifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "actor_id"
+    t.string "actor_type"
+    t.datetime "archived_at"
+    t.text "body"
+    t.datetime "cleared_at"
+    t.datetime "created_at", null: false
+    t.string "idempotency_key"
+    t.jsonb "metadata", default: {}, null: false
+    t.uuid "notifiable_id"
+    t.string "notifiable_type"
+    t.string "notification_type", null: false
+    t.datetime "read_at"
+    t.uuid "recipient_id", null: false
+    t.string "recipient_type", null: false
+    t.uuid "recording_id"
+    t.uuid "root_recording_id"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["recipient_type", "recipient_id", "idempotency_key"], name: "idx_rsn_notifications_idempotency", unique: true, where: "(idempotency_key IS NOT NULL)"
+    t.index ["recipient_type", "recipient_id", "notification_type"], name: "idx_rsn_notifications_recipient_type"
+    t.index ["recording_id"], name: "idx_rsn_notifications_recording"
+    t.index ["root_recording_id", "created_at"], name: "idx_rsn_notifications_root_created"
+  end
+
+  create_table "recording_studio_notifications_preferences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "cadence"
+    t.string "channel"
+    t.datetime "created_at", null: false
+    t.boolean "enabled"
+    t.string "notification_type", null: false
+    t.uuid "recipient_id", null: false
+    t.string "recipient_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_type", "channel"], name: "idx_rsn_preferences_type_channel"
+    t.index ["recipient_type", "recipient_id", "notification_type", "channel"], name: "idx_rsn_preferences_channel", unique: true, where: "(channel IS NOT NULL)"
+    t.index ["recipient_type", "recipient_id", "notification_type"], name: "idx_rsn_preferences_cadence", unique: true, where: "(channel IS NULL)"
+    t.check_constraint "channel IS NOT NULL AND enabled IS NOT NULL AND cadence IS NULL OR channel IS NULL AND enabled IS NULL AND cadence IS NOT NULL", name: "chk_rsn_preferences_shape"
+  end
+
+  create_table "recording_studio_notifications_push_installations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "disabled_at"
+    t.string "firebase_installation_id", null: false
+    t.string "label"
+    t.datetime "last_seen_at"
+    t.string "legacy_fcm_token"
+    t.string "platform"
+    t.uuid "recipient_id", null: false
+    t.string "recipient_type", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.index ["disabled_at"], name: "idx_rsnp_installations_disabled"
+    t.index ["firebase_installation_id"], name: "idx_rsnp_installations_fid"
+    t.index ["recipient_type", "recipient_id", "firebase_installation_id"], name: "idx_rsnp_installations_recipient_fid", unique: true
+    t.index ["recipient_type", "recipient_id"], name: "idx_rsnp_installations_recipient"
   end
 
   create_table "recording_studio_recordings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -113,6 +187,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_21_000000) do
   end
 
   add_foreign_key "recording_studio_events", "recording_studio_recordings", column: "recording_id"
+  add_foreign_key "recording_studio_notifications_deliveries", "recording_studio_notifications_notifications", column: "notification_id"
   add_foreign_key "recording_studio_recordings", "recording_studio_recordings", column: "parent_recording_id"
   add_foreign_key "recording_studio_recordings", "recording_studio_recordings", column: "root_recording_id"
 end

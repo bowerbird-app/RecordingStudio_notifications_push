@@ -1,81 +1,142 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## Unreleased
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-## [0.2.2] - 2026-08-24
-
-### Added
-- Restored the dummy app's FlatPack sidebar shell (`flat_pack_sidebar`) with docs navigation, root switcher top nav, and sign-out in the sidebar footer — matching the Recording Studio notifications gem host-app pattern
+## 0.1.15
 
 ### Changed
-- Authenticated dummy pages no longer use `RecordingStudio::UsesDefaultLayout`; Devise sign-in still uses the centered `application` layout
+- `FcmAdapter` builds one FCM payload per notification before fanning out to
+  installations instead of recomputing title, body, url, and metadata assets
+  for every device
+- `Event#metadata` is memoized so icon and image resolution reuse one frozen
+  copy
+- Firebase web-client readiness now lives on
+  `RecordingStudioNotificationsPush.configuration.web_push_client_ready?`
+- Devices page secondary actions (Manage notifications, Not getting alerts?)
+  render from one shared template block
+- Removed unused `testPushUrlTemplate` Stimulus value from the push devices
+  controller
+
+## 0.1.14
+
+### Changed
+- Help modal title is now **Not receiving push notifications?**
+- Removed browser/OS detection line, permission status line, and system-toggle
+  disclaimer from the help modal — only the step lists remain
+
+## 0.1.13
 
 ### Fixed
-- Dummy Tailwind `@source` paths now include system Ruby Bundler gem installs, so FlatPack and Recording Studio classes compile in Cloud Agent and other non-`vendor/bundle` environments
-- Dummy asset manifest now links the Tailwind build output and FlatPack stylesheets for precompilation
+- Notification help modal is filled on page load (before it is opened), with
+  generic fallback steps in HTML when JavaScript has not run yet
+- Push devices Stimulus controller is preloaded so browser and OS detection
+  finishes before users tap **Not getting alerts?**
 
-### Upgrade notes
-- If a host app's Tailwind build looks unstyled outside Codespaces or `vendor/bundle`, add the system Ruby `@source` paths from `test/dummy/app/assets/tailwind/application.css` and run `bin/rails tailwindcss:build`
-- Host apps that moved to `recording_studio/default_layout` can copy the dummy sidebar files back when they want persistent docs navigation
+## 0.1.12
 
-## [0.2.0] - 2026-08-21
+### Changed
+- Notification help now follows the same three-step format for every detected
+  browser and OS, using vendor-documented settings paths
+- iPhone and iPad guidance now correctly requires an iOS/iPadOS 16.4+ Home
+  Screen web app and points to that web app—not the browser—in Notifications
+- iPhone and iPad setup in Firefox or Opera directs users to a supported
+  installation browser instead of implying in-tab website push support
+- Safari on Mac now points to the website entry under Application Notifications
 
-New addons copied from this template are born on Recording Studio 4.x.
+## 0.1.11
+
+### Changed
+- Mac Chrome help modal steps now point to `chrome://settings/`, Privacy and
+  security → Site settings → Notifications, and “Sites can ask to send
+  notifications”
+
+## 0.1.10
 
 ### Added
-- Gemspec dependency `recording_studio`, `~> 4.1`
-- Dummy host wiring for Accessible (`enable_capability(:accessible, on: Workspace)`) and an opt-in `RecordingStudio::Capabilities::Example.to` mixin. `.to` wraps core 4.2.0 `include_for` (not a fourth verb, and not a raw `enable_capability` / `set_capability_options` path). Installing the gem does not enable the mixin globally; only dummy Workspace opts in.
-- `bin/rename_gem` leftover-identity rewrite/verification for README, homepage, and changelog URLs that still say `GemTemplate` or point at `bowerbird-app/gem_template`
+- Devices page **Not getting alerts?** opens a help modal with steps tailored to
+  the detected browser and OS (site permission + system notification settings)
+
+## 0.1.9
 
 ### Changed
-- Dummy GitHub tags: Recording Studio `v4.2.0`, Accessible `v0.6.0`, Root Switchable `v0.5.0`, FlatPack `v0.1.133`
-- Dummy authenticated layout is Recording Studio's default layout plus FlatPack CSS/JS; Devise keeps its own sign-in layout
-- Dummy app security pins: Rails `8.1.3.1`, `json` `2.21.2`, `mail` `2.9.1`, Brakeman `8.0.6`
-- Require `RecordingStudio::Hooks` and `RecordingStudio::Services::BaseService` from core instead of shipping copies
+- Devices page puts **Enable** and **Manage notifications** side by side; when
+  this browser is already registered, only **Manage notifications** remains
 
-### Removed
-- Copied `lib/gem_template/hooks.rb` and `lib/gem_template/services/base_service.rb`
-- Product-shipped `ExampleService`
-- Custom `flat_pack_sidebar` authenticated shell
+### Fixed
+- RuboCop cyclomatic complexity on Event `#meta_asset`
 
-### Upgrade notes
-- Point dummy or host Gemfiles at Recording Studio `v4.2.0` (not `recording_studio/v3.0.0`)
-- Add `spec.add_dependency "recording_studio", "~> 4.1"` to addon gemspecs
-- Include `RecordingStudio::UsesDefaultLayout` (or set `layout "recording_studio/default_layout"`) for authenticated screens
-- Delete any copied Hooks or BaseService files and require the core classes
-- Keep recordable declarations; they are required, not a v3-only concern
-- If Accessible is bundled, call `RecordingStudio.enable_capability(:accessible, on: Workspace)` (or your root type)
+## 0.1.8
 
-## [0.1.2] - 2026-07-21
+### Fixed
+- Service worker resolves notification `icon` / `image` to absolute URLs before
+  `showNotification` (relative paths were easy to miss on forwarded origins)
+- Push `metadata[:icon]` / `[:image]` accept absolute http(s) URLs without the
+  notification URL host allowlist (banner assets are not navigation targets)
 
 ### Changed
-- Bumped the dummy app FlatPack dependency from `v0.1.33` to `v0.1.129`
+- Dummy icon test sends store absolute icon+image URLs and preview the thumbnail
+  in the home inbox / test results
+- Dummy copy notes that macOS Chrome keeps the Chrome app badge on the left
 
-## [0.1.1] - 2026-04-28
-
-### Changed
-- Bumped the dummy app FlatPack dependency from `0.1.2` to `0.1.33` and pinned it by tag in `test/dummy/Gemfile`
-
-## [0.1.0] - 2025-12-04
+## 0.1.7
 
 ### Added
-- Initial release
-- Rails mountable engine structure
-- PostgreSQL with UUID primary keys support
-- TailwindCSS v4 integration
-- GitHub Codespaces devcontainer configuration
-- Docker Compose setup with PostgreSQL and Redis
-- Install generator for host applications
-- Comprehensive README and documentation
-- Basic test suite with Minitest
+- Push payloads include `data.icon` from notification `metadata[:icon]` so the
+  service worker can show a custom OS banner thumbnail (falls back to `/icon.png`)
+- Dummy home has **Test coral icon** and **Test teal icon** buttons that send
+  push demos with `/push-icon-coral.png` and `/push-icon-teal.png`
 
-[Unreleased]: https://github.com/bowerbird-app/RecordingStudio_gem_template/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/bowerbird-app/RecordingStudio_gem_template/releases/tag/v0.2.0
-[0.1.2]: https://github.com/bowerbird-app/RecordingStudio_gem_template/releases/tag/v0.1.2
-[0.1.1]: https://github.com/bowerbird-app/RecordingStudio_gem_template/releases/tag/v0.1.1
-[0.1.0]: https://github.com/bowerbird-app/RecordingStudio_gem_template/releases/tag/v0.1.0
+## 0.1.6
+
+### Added
+- Devices page **Manage notifications** default button under the subtitle links to
+  the parent notifications settings screen
+
+### Fixed
+- Devices trash button uses `data-turbo-method="delete"` so remove redirects back
+  to `/notifications/push/devices` instead of a GET routing error
+
+## 0.1.5
+
+### Changed
+- Push devices page title is **Push Notifications** with subtitle **Get notifications on your devices**
+- Enable button reads **Enable on this device** in an installed PWA and **Enable on this browser** in a normal tab
+- Device list uses FlatPack `List` with mobile (`device_phone_mobile`) or desktop (`computer_desktop`) leading icons
+- Remove uses a FlatPack ghost icon button (`trash`) instead of a text link
+- Empty-state copy and inline enable status text removed
+- When push is already enabled on this browser/device, the enable button is hidden (use **Remove** on the list row to turn off)
+
+## 0.1.4
+
+### Fixed
+- FCM web sends are **data-only** again; the service worker always calls `showNotification`. Skipping display when FCM included a `notification` block left Chrome with no banner because an active service worker must show it itself.
+
+## 0.1.3
+
+### Fixed
+- Restore FCM `notification` payloads for web push display; data-only sends stopped showing alerts in Chrome
+- Service worker only skips `showNotification` when the push payload includes a real notification title/body (avoids swallowing data-only messages that still carry an empty `notification` object)
+
+## 0.1.2
+
+### Fixed
+- FCM web sends no longer include a `notification` block alongside `data`, which duplicated OS banners when the service worker was active
+
+## 0.1.1
+
+### Changed
+- Data-only FCM web payloads so the service worker shows a **native Chrome** notification via `showNotification`
+- Disable installations on invalid FCM registration tokens
+- Service worker notification options include `/icon.png` for a standard Chrome banner look
+
+## 0.1.0
+
+First product release of the Recording Studio Firebase push channel.
+
+- Register `:push` with `RecordingStudioNotifications`
+- Store installations in `recording_studio_notifications_push_installations`
+- FCM HTTP v1 client with hand-rolled service-account OAuth (no googleauth)
+- Flatpack devices page + Stimulus registration controller
+- PWA service-worker extension partial for background `showNotification`
+- Install + migrations generators
+- No rollups / no `deliver_rollup`

@@ -15,17 +15,21 @@
   <% end %>
 
   <% nav.center do %>
-    <% if user_signed_in? %>
-      <%= recording_studio_root_switch_dropdown(style: :ghost, size: :md) %>
-    <% end %>
+    <span aria-hidden="true"></span>
   <% end %>
 
   <% nav.right do %>
     <% if user_signed_in? %>
-      <%= render FlatPack::Avatar::Component.new(
-        name: current_user.try(:name).presence || current_user.email,
-        size: :sm
-      ) %>
+      <div class="flex items-center gap-3">
+        <%= recording_studio_notifications_menu if respond_to?(:recording_studio_notifications_menu) %>
+
+        <%= recording_studio_root_switch_dropdown(style: :ghost, size: :md) %>
+
+        <%= render FlatPack::Avatar::Component.new(
+          name: current_user.try(:name).presence || current_user.email,
+          size: :sm
+        ) %>
+      </div>
     <% end %>
   <% end %>
 <% end %>

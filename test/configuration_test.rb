@@ -4,70 +4,103 @@ require "test_helper"
 
 class ConfigurationTest < Minitest::Test
   def setup
-    @configuration = GemTemplate::Configuration.new
+    @original = {
+      "FIREBASE_API_KEY" => ENV.fetch("FIREBASE_API_KEY", nil),
+      "FIREBASE_APP_ID" => ENV.fetch("FIREBASE_APP_ID", nil),
+      "FIREBASE_AUTH_DOMAIN" => ENV.fetch("FIREBASE_AUTH_DOMAIN", nil),
+      "FIREBASE_MESSAGING_SENDER_ID" => ENV.fetch("FIREBASE_MESSAGING_SENDER_ID", nil),
+      "FIREBASE_PROJECT_ID" => ENV.fetch("FIREBASE_PROJECT_ID", nil),
+      "FIREBASE_STORAGE_BUCKET" => ENV.fetch("FIREBASE_STORAGE_BUCKET", nil),
+      "FIREBASE_VAPID_PUBLIC_KEY" => ENV.fetch("FIREBASE_VAPID_PUBLIC_KEY", nil),
+      "FIREBASE_SERVICE_ACCOUNT_JSON" => ENV.fetch("FIREBASE_SERVICE_ACCOUNT_JSON", nil)
+    }
   end
 
-  def test_merge_updates_known_attributes
-    @configuration.merge!(api_key: "abc123", timeout: 9, enable_feature_x: true)
-
-    assert_equal "abc123", @configuration.api_key
-    assert_equal 9, @configuration.timeout
-    assert_equal true, @configuration.enable_feature_x
+  def teardown
+    @original.each { |key, value| value.nil? ? ENV.delete(key) : ENV[key] = value }
   end
 
-  def test_merge_ignores_unknown_keys
-    @configuration.merge!(unknown_key: "ignored", timeout: 7)
+  def test_defaults_include_push_channel
+    configuration = RecordingStudioNotificationsPush::Configuration.new
 
-    refute_respond_to @configuration, :unknown_key
-    assert_equal 7, @configuration.timeout
+    assert_equal :push, configuration.channel
+    assert_equal 5, configuration.open_timeout
+    assert_equal 15, configuration.read_timeout
   end
 
-  def test_merge_with_non_enumerable_is_noop
-    original = @configuration.to_h
+  def test_loads_firebase_web_config_from_env
+    ENV["FIREBASE_API_KEY"] = "api-key"
+    ENV["FIREBASE_APP_ID"] = "app-id"
+    ENV["FIREBASE_AUTH_DOMAIN"] = "example.firebaseapp.com"
+    ENV["FIREBASE_MESSAGING_SENDER_ID"] = "123"
+    ENV["FIREBASE_PROJECT_ID"] = "demo-project"
+    ENV["FIREBASE_STORAGE_BUCKET"] = "demo-project.appspot.com"
+    ENV["FIREBASE_VAPID_PUBLIC_KEY"] = "vapid-public"
+    ENV["FIREBASE_SERVICE_ACCOUNT_JSON"] = '{"type":"service_account"}'
 
-    @configuration.merge!(nil)
+    configuration = RecordingStudioNotificationsPush::Configuration.new
 
-    assert_nil @configuration.api_key if original[:api_key].nil?
-    assert_equal original[:api_key], @configuration.api_key unless original[:api_key].nil?
-    assert_equal original[:timeout], @configuration.timeout
-    assert_equal original[:enable_feature_x], @configuration.enable_feature_x
+    assert_equal "demo-project", configuration.firebase_project_id
+    assert_equal "vapid-public", configuration.vapid_public_key
+    assert_equal "api-key", configuration.firebase_web_config[:apiKey]
+    assert_equal "app-id", configuration.firebase_web_config[:appId]
+    assert_equal "123", configuration.firebase_web_config[:messagingSenderId]
+    assert configuration.service_account_configured?
   end
 
-  def test_initialize_uses_environment_api_key_and_defaults
-    previous_value = ENV.fetch("GEM_TEMPLATE_API_KEY", nil)
-    ENV["GEM_TEMPLATE_API_KEY"] = "env-token"
+  def test_merge_updates_known_keys
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.merge!("firebase_project_id" => "merged-project", unknown: true)
 
-    configuration = GemTemplate::Configuration.new
-
-    assert_equal "env-token", configuration.api_key
-    assert_equal false, configuration.enable_feature_x
-    assert_equal 5, configuration.timeout
-    assert_instance_of RecordingStudio::Hooks, configuration.hooks
-  ensure
-    ENV["GEM_TEMPLATE_API_KEY"] = previous_value
+    assert_equal "merged-project", configuration.firebase_project_id
+    refute_respond_to configuration, :unknown
   end
 
-  def test_merge_accepts_string_keys
-    @configuration.merge!("api_key" => "string-key", "timeout" => 12)
+  def test_to_h_hides_service_account_secret
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_service_account_json = '{"private_key":"SECRET"}'
+    hash = configuration.to_h
 
-    assert_equal "string-key", @configuration.api_key
-    assert_equal 12, @configuration.timeout
+    assert_equal true, hash[:firebase_service_account_configured]
+    refute_includes hash.values.map(&:to_s).join, "SECRET"
   end
 
-  def test_to_h_reports_registered_hook_counts
-    @configuration.hooks.before_initialize { nil }
-    @configuration.hooks.before_initialize { nil }
-    @configuration.hooks.after_service { nil }
+  def test_web_push_client_ready_when_required_firebase_values_present
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_web_config = {
+      apiKey: "key",
+      appId: "app",
+      projectId: "project",
+      messagingSenderId: "123"
+    }
+    configuration.vapid_public_key = "vapid"
 
-    result = @configuration.to_h
-
-    assert_equal 2, result.fetch(:hooks_registered).fetch(:before_initialize)
-    assert_equal 1, result.fetch(:hooks_registered).fetch(:after_service)
+    assert configuration.web_push_client_ready?
   end
 
-  def test_configure_without_block_is_safe
-    GemTemplate.configure
+  def test_web_push_client_ready_false_when_vapid_missing
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_web_config = {
+      apiKey: "key",
+      appId: "app",
+      projectId: "project",
+      messagingSenderId: "123"
+    }
+    configuration.vapid_public_key = nil
 
-    assert_kind_of GemTemplate::Configuration, GemTemplate.configuration
+    refute configuration.web_push_client_ready?
+  end
+
+  def test_web_push_client_ready_accepts_string_keys
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_web_config = {
+      "apiKey" => "key",
+      "appId" => "app",
+      "projectId" => "project",
+      "messagingSenderId" => "123"
+    }
+    configuration.vapid_public_key = "vapid"
+
+    assert configuration.web_push_client_ready?
   end
 end

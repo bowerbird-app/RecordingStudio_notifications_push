@@ -1,19 +1,112 @@
-<div class="flex w-full flex-col gap-6">
+<div class="flex w-full flex-col gap-8">
   <%= render FlatPack::PageTitle::Component.new(
     title: "Install",
-    subtitle: "Host-app setup for the mounted GemTemplate engine and its sample migrations.",
+    subtitle: "Wire Firebase push into a Recording Studio host. You need the notifications and PWA gems first.",
     variant: :h1
   ) %>
 
+  <%= render FlatPack::Alert::Component.new(
+    style: :info,
+    title: "Required companions",
+    description: "This gem is a push channel. It needs recording_studio_notifications for delivery and preferences, and recording_studio_pwa for the service-worker shell that shows Chrome alerts."
+  ) %>
+
   <%= render FlatPack::SectionTitle::Component.new(
-    title: "Step 1",
-    subtitle: "Provide one section title for each step",
+    title: "1. Add the gems",
+    subtitle: "Notifications and PWA are required. Push sits on top of both."
   ) %>
 
   <%= render FlatPack::CodeBlock::Component.new(
-    language: :bash,
-    code: <<~CODE
-      # Put the step instruction here.
+    title: "Gemfile",
+    language: :ruby,
+    code: <<~'CODE'
+      gem "recording_studio_notifications"
+      gem "recording_studio_pwa"
+      gem "recording_studio_notifications_push"
     CODE
   ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "2. Bundle and generate",
+    subtitle: "Install the parent notifications gem, then this push channel."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    title: "Terminal",
+    language: :bash,
+    code: <<~'CODE'
+      bundle install
+      bin/rails generate recording_studio_notifications:install
+      bin/rails generate recording_studio_notifications_push:install
+      bin/rails generate recording_studio_notifications_push:migrations
+      bin/rails db:migrate
+    CODE
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "3. Mount the engines and PWA routes",
+    subtitle: "Push needs a host service-worker URL. Recording Studio PWA owns that."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    title: "config/routes.rb",
+    language: :ruby,
+    code: <<~'CODE'
+      mount RecordingStudioNotifications::Engine, at: "/notifications"
+      mount RecordingStudioNotificationsPush::Engine, at: "/notifications/push"
+
+      get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+      get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+    CODE
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "4. Turn push on for a notification type",
+    subtitle: "The parent gem decides which channels a type can use."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    title: "config/initializers/recording_studio_notifications.rb",
+    language: :ruby,
+    code: <<~'CODE'
+      RecordingStudioNotifications.register_notification_type(
+        :page_comment,
+        label: "Page comment",
+        default_channels: %i[in_app push],
+        available_channels: %i[in_app email push]
+      )
+    CODE
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "5. Set Firebase ENV",
+    subtitle: "Web config registers browsers. The service account JSON is what actually sends."
+  ) %>
+
+  <%= render FlatPack::CodeBlock::Component.new(
+    title: "Environment",
+    language: :bash,
+    code: <<~'CODE'
+      FIREBASE_API_KEY=…
+      FIREBASE_APP_ID=…
+      FIREBASE_AUTH_DOMAIN=…
+      FIREBASE_MESSAGING_SENDER_ID=…
+      FIREBASE_PROJECT_ID=…
+      FIREBASE_STORAGE_BUCKET=…
+      FIREBASE_VAPID_PUBLIC_KEY=…
+      FIREBASE_SERVICE_ACCOUNT_JSON=…   # required to send
+    CODE
+  ) %>
+
+  <%= render FlatPack::SectionTitle::Component.new(
+    title: "6. Enable a browser",
+    subtitle: "Each browser registers itself. No registration means no push."
+  ) %>
+
+  <p class="text-sm leading-6 text-(--surface-content-color)">
+    Open
+    <%= link_to "/notifications/push/devices", "/notifications/push/devices", class: "underline" %>
+    while signed in, then hit
+    <strong>Enable on this browser</strong>.
+  </p>
 </div>
