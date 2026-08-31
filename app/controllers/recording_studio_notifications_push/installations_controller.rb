@@ -10,8 +10,7 @@ module RecordingStudioNotificationsPush
     end
 
     def destroy
-      installation = Installation.active.for_recipient(current_push_actor).find(params[:id])
-      installation.disable!(reason: "unregistered")
+      current_installation!.disable!(reason: "unregistered")
       head :no_content
     rescue ActiveRecord::RecordNotFound
       head :not_found
@@ -20,8 +19,7 @@ module RecordingStudioNotificationsPush
     # Sends one FCM message to a single installation and reports what FCM said.
     # This separates "FCM refused the token" from "the browser never showed it".
     def test_push
-      installation = Installation.active.for_recipient(current_push_actor).find(params[:id])
-      result = TestPush.new.call(installation: installation)
+      result = TestPush.new.call(installation: current_installation!)
 
       render json: result.to_h, status: result.accepted? ? :ok : :bad_gateway
     rescue ActiveRecord::RecordNotFound
@@ -29,6 +27,10 @@ module RecordingStudioNotificationsPush
     end
 
     private
+
+    def current_installation!
+      Installation.active.for_recipient(current_push_actor).find(params[:id])
+    end
 
     def upsert_installation!
       Installation.upsert!(

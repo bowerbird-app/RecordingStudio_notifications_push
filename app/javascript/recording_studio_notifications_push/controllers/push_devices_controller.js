@@ -7,7 +7,6 @@ export default class extends Controller {
   static values = {
     registerUrl: String,
     unregisterUrlTemplate: String,
-    testPushUrlTemplate: String,
     vapidKey: String,
     firebaseConfig: Object,
     firebaseReady: Boolean,

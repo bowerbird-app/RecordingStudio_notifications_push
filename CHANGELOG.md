@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.1.15
+
+### Changed
+- `FcmAdapter` builds one FCM payload per notification before fanning out to
+  installations instead of recomputing title, body, url, and metadata assets
+  for every device
+- `Event#metadata` is memoized so icon and image resolution reuse one frozen
+  copy
+- Firebase web-client readiness now lives on
+  `RecordingStudioNotificationsPush.configuration.web_push_client_ready?`
+- Devices page secondary actions (Manage notifications, Not getting alerts?)
+  render from one shared template block
+- Removed unused `testPushUrlTemplate` Stimulus value from the push devices
+  controller
+
 ## 0.1.14
 
 ### Changed

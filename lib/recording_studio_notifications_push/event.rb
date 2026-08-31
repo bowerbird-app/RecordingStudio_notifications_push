@@ -2,6 +2,7 @@
 
 module RecordingStudioNotificationsPush
   # Read-only, normalized view of a parent notification for FCM payloads.
+  # rubocop:disable Metrics/ClassLength
   class Event
     attr_reader :source, :delivery
 
@@ -44,8 +45,10 @@ module RecordingStudioNotificationsPush
     end
 
     def metadata
-      value = attribute(:metadata)
-      value.respond_to?(:to_h) ? deep_freeze(value.to_h.deep_dup) : {}.freeze
+      @metadata ||= begin
+        value = attribute(:metadata)
+        value.respond_to?(:to_h) ? deep_freeze(value.to_h.deep_dup) : {}.freeze
+      end
     end
 
     # Optional OS banner thumbnail from notification metadata[:icon] / ["icon"].
@@ -138,4 +141,5 @@ module RecordingStudioNotificationsPush
       value.freeze
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

@@ -2,6 +2,8 @@
 
 module RecordingStudioNotificationsPush
   class Configuration
+    WEB_CLIENT_REQUIRED_KEYS = %i[apiKey appId projectId messagingSenderId].freeze
+
     WEB_CONFIG_ENV_KEYS = {
       apiKey: "FIREBASE_API_KEY",
       appId: "FIREBASE_APP_ID",
@@ -52,7 +54,17 @@ module RecordingStudioNotificationsPush
       firebase_service_account_json.to_s.strip.present?
     end
 
+    def web_push_client_ready?
+      config = firebase_web_config || {}
+      WEB_CLIENT_REQUIRED_KEYS.all? { |key| web_config_value_present?(config, key) } &&
+        vapid_public_key.present?
+    end
+
     private
+
+    def web_config_value_present?(config, key)
+      config[key].present? || config[key.to_s].present?
+    end
 
     def default_firebase_web_config
       WEB_CONFIG_ENV_KEYS.each_with_object({}) do |(key, env_name), config|

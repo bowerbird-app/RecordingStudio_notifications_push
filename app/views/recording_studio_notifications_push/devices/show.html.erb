@@ -5,7 +5,26 @@
       firebase_installation_id: installation.firebase_installation_id
     }
   }
+  secondary_actions = capture do
 %>
+      <% if @notifications_settings_path.present? %>
+        <%= render FlatPack::Button::Component.new(
+          text: "Manage notifications",
+          style: :default,
+          size: :md,
+          href: @notifications_settings_path
+        ) %>
+      <% end %>
+      <%= render FlatPack::Button::Component.new(
+        text: "Not getting alerts?",
+        style: :ghost,
+        size: :md,
+        type: "button",
+        data: {
+          modal_id: "push-notification-help-modal"
+        }
+      ) %>
+<% end %>
 <div class="mx-auto flex w-full max-w-2xl flex-col gap-6"
      data-controller="recording-studio-notifications-push--push-devices"
      data-recording-studio-notifications-push--push-devices-register-url-value="<%= installations_path %>"
@@ -39,23 +58,7 @@
           data: { push_enable: true }
         ) %>
       </div>
-      <% if @notifications_settings_path.present? %>
-        <%= render FlatPack::Button::Component.new(
-          text: "Manage notifications",
-          style: :default,
-          size: :md,
-          href: @notifications_settings_path
-        ) %>
-      <% end %>
-      <%= render FlatPack::Button::Component.new(
-        text: "Not getting alerts?",
-        style: :ghost,
-        size: :md,
-        type: "button",
-        data: {
-          modal_id: "push-notification-help-modal"
-        }
-      ) %>
+      <%= secondary_actions %>
     </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
@@ -79,23 +82,7 @@
           type: "button",
           data: { action: "recording-studio-notifications-push--push-devices#registerManualFid" }
         ) %>
-        <% if @notifications_settings_path.present? %>
-          <%= render FlatPack::Button::Component.new(
-            text: "Manage notifications",
-            style: :default,
-            size: :md,
-            href: @notifications_settings_path
-          ) %>
-        <% end %>
-        <%= render FlatPack::Button::Component.new(
-          text: "Not getting alerts?",
-          style: :ghost,
-          size: :md,
-          type: "button",
-          data: {
-            modal_id: "push-notification-help-modal"
-          }
-        ) %>
+        <%= secondary_actions %>
       </div>
     </div>
   <% end %>

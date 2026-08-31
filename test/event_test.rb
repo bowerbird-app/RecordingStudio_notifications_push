@@ -41,6 +41,18 @@ class EventTest < Minitest::Test
     assert_nil event.icon
   end
 
+  def test_metadata_is_memoized
+    notification = Notification.new(
+      id: "1",
+      title: "T",
+      metadata: { icon: "/push-icon-coral.png" }
+    )
+    event = RecordingStudioNotificationsPush::Event.wrap(notification)
+
+    assert_same event.metadata, event.metadata
+    assert_equal "/push-icon-coral.png", event.icon
+  end
+
   def test_allows_absolute_http_icons_without_host_allowlist
     event = RecordingStudioNotificationsPush::Event.wrap(
       Notification.new(

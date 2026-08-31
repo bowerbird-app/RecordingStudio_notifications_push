@@ -64,4 +64,43 @@ class ConfigurationTest < Minitest::Test
     assert_equal true, hash[:firebase_service_account_configured]
     refute_includes hash.values.map(&:to_s).join, "SECRET"
   end
+
+  def test_web_push_client_ready_when_required_firebase_values_present
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_web_config = {
+      apiKey: "key",
+      appId: "app",
+      projectId: "project",
+      messagingSenderId: "123"
+    }
+    configuration.vapid_public_key = "vapid"
+
+    assert configuration.web_push_client_ready?
+  end
+
+  def test_web_push_client_ready_false_when_vapid_missing
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_web_config = {
+      apiKey: "key",
+      appId: "app",
+      projectId: "project",
+      messagingSenderId: "123"
+    }
+    configuration.vapid_public_key = nil
+
+    refute configuration.web_push_client_ready?
+  end
+
+  def test_web_push_client_ready_accepts_string_keys
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_web_config = {
+      "apiKey" => "key",
+      "appId" => "app",
+      "projectId" => "project",
+      "messagingSenderId" => "123"
+    }
+    configuration.vapid_public_key = "vapid"
+
+    assert configuration.web_push_client_ready?
+  end
 end

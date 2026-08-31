@@ -1,5 +1,11 @@
 # Migration notes
 
+## 0.1.15
+
+### Host app steps
+
+1. Bump to `0.1.15`. No configuration or migration changes are required.
+
 ## 0.1.14
 
 ### Host app steps

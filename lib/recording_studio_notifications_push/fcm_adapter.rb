@@ -22,11 +22,12 @@ module RecordingStudioNotificationsPush
       installations = installation_class.active.for_recipient(recipient).to_a
       raise DeliveryError, "no active push installations for recipient" if installations.empty?
 
+      payload = build_send_payload(event, delivery)
       successes = 0
       last_error = nil
 
       installations.each do |installation|
-        outcome = deliver_to_installation(installation, event, delivery)
+        outcome = deliver_to_installation(installation, payload)
         if outcome[:ok]
           successes += 1
         else
@@ -42,27 +43,28 @@ module RecordingStudioNotificationsPush
 
     private
 
-    # rubocop:disable Metrics/MethodLength
-    def deliver_to_installation(installation, event, delivery)
+    def build_send_payload(event, delivery)
+      {
+        title: event.title,
+        body: event.body,
+        url: event.url,
+        data: message_data(event, delivery)
+      }
+    end
+
+    def deliver_to_installation(installation, payload)
       token = installation.delivery_token
       if token.blank?
         installation.disable!(reason: "missing_token")
         return { ok: false, error: "missing_token" }
       end
 
-      result = client.send_message(
-        token: token,
-        title: event.title,
-        body: event.body,
-        url: event.url,
-        data: message_data(event, delivery)
-      )
+      result = client.send_message(token: token, **payload)
 
       apply_send_result(installation, result)
     rescue DeliveryError => e
       { ok: false, error: e.message }
     end
-    # rubocop:enable Metrics/MethodLength
 
     def message_data(event, delivery)
       {

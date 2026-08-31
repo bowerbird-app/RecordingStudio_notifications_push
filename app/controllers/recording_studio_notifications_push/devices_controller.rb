@@ -8,7 +8,7 @@ module RecordingStudioNotificationsPush
       @installations = Installation.active.for_recipient(current_push_actor).order(last_seen_at: :desc)
       @firebase_web_config = RecordingStudioNotificationsPush.configuration.firebase_web_config
       @vapid_public_key = RecordingStudioNotificationsPush.configuration.vapid_public_key
-      @firebase_ready = firebase_ready?
+      @firebase_ready = RecordingStudioNotificationsPush.configuration.web_push_client_ready?
       @service_worker_path = service_worker_path
       @notifications_settings_path = notifications_settings_path
     end
@@ -22,13 +22,6 @@ module RecordingStudioNotificationsPush
     end
 
     private
-
-    def firebase_ready?
-      config = @firebase_web_config || {}
-      required = %i[apiKey appId projectId messagingSenderId]
-      required.all? { |key| config[key].present? || config[key.to_s].present? } &&
-        @vapid_public_key.present?
-    end
 
     def service_worker_path
       return unless respond_to?(:main_app, true)
