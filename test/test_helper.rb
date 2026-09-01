@@ -9,6 +9,7 @@ require "active_support/time"
 require "net/http"
 require "json"
 Time.zone ||= "UTC"
+require "recording_studio_notifications"
 require "recording_studio_notifications_push"
 
 module StubSupport

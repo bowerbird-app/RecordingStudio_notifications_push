@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.2.0
+
+### Added
+- `FcmAdapter#available_for?` returns false when the recipient has no active push
+  installations.
+
+### Changed
+- Push `Event` resolves title, body, and url via
+  `RecordingStudioNotifications.delivery_payload_for` when a delivery is present.
+- Require `recording_studio_notifications` `>= 0.3.0`.
+
+### Upgrade notes
+- Install `recording_studio_notifications` `0.3.0` (or later) before bumping to
+  `0.2.0`.
+
 ## 0.1.15
 
 ### Changed

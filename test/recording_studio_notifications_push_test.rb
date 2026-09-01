@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.1.15", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.2.0", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -22,7 +22,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
     assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.2"'
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.2", "< 1"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.3.0", "< 1"'
     assert_includes gemspec, "RecordingStudio_notifications_push"
     assert_includes gemspec, "CHANGELOG.md"
   end

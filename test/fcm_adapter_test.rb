@@ -11,7 +11,7 @@ class FcmAdapterTest < Minitest::Test
     end
   end
 
-  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, keyword_init: true)
+  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, :notification_type, keyword_init: true)
   Delivery = Struct.new(:id)
 
   class FakeInstallation
@@ -54,6 +54,10 @@ class FcmAdapterTest < Minitest::Test
 
     def to_a
       @records
+    end
+
+    def exists?
+      @records.any?
     end
   end
 
@@ -98,7 +102,8 @@ class FcmAdapterTest < Minitest::Test
         title: "Hello",
         body: "World",
         url: "/pages/1",
-        recipient: FakeRecipient.new(id: "user-1")
+        recipient: FakeRecipient.new(id: "user-1"),
+        notification_type: :generic
       ),
       delivery: Delivery.new("d1")
     )
@@ -127,7 +132,8 @@ class FcmAdapterTest < Minitest::Test
         body: "Banner",
         url: "/pages/1",
         recipient: FakeRecipient.new(id: "user-1"),
-        metadata: { icon: "/push-icon-coral.png" }
+        metadata: { icon: "/push-icon-coral.png" },
+        notification_type: :generic
       ),
       delivery: Delivery.new("d-icon")
     )
@@ -145,11 +151,17 @@ class FcmAdapterTest < Minitest::Test
 
     error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
       adapter.deliver(
-        notification: Notification.new(id: "n1", title: "Hello", recipient: FakeRecipient.new(id: "user-1")),
+        notification: Notification.new(
+          id: "n1",
+          title: "Hello",
+          recipient: FakeRecipient.new(id: "user-1"),
+          notification_type: :generic
+        ),
         delivery: Delivery.new("d1")
       )
     end
     assert_match(/no active push installations/, error.message)
+    refute adapter.available_for?(recipient: FakeRecipient.new(id: "user-1"))
   end
 
   def test_raises_when_all_sends_fail
@@ -163,7 +175,12 @@ class FcmAdapterTest < Minitest::Test
 
     error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
       adapter.deliver(
-        notification: Notification.new(id: "n1", title: "Hello", recipient: FakeRecipient.new(id: "user-1")),
+        notification: Notification.new(
+          id: "n1",
+          title: "Hello",
+          recipient: FakeRecipient.new(id: "user-1"),
+          notification_type: :generic
+        ),
         delivery: Delivery.new("d1")
       )
     end
@@ -181,10 +198,46 @@ class FcmAdapterTest < Minitest::Test
 
     error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
       adapter.deliver(
-        notification: Notification.new(id: "n1", title: "Hello", recipient: FakeRecipient.new(id: "user-1")),
+        notification: Notification.new(
+          id: "n1",
+          title: "Hello",
+          recipient: FakeRecipient.new(id: "user-1"),
+          notification_type: :generic
+        ),
         delivery: Delivery.new("d1")
       )
     end
     assert_match(/FIREBASE_SERVICE_ACCOUNT_JSON/, error.message)
+  end
+
+  def test_resolved_delivery_payload_is_used_without_persisting_code
+    installations = [FakeInstallation.new(fid: "fid-1")]
+    client = FakeClient.new([{ ok: true, status: 200, disable: false }])
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: client,
+      installation_class: FakeInstallationClass.new(installations)
+    )
+    notification = Notification.new(
+      id: "n-otp",
+      title: "Safe title",
+      body: nil,
+      recipient: FakeRecipient.new(id: "user-1"),
+      notification_type: :login_otp
+    )
+    delivery = Delivery.new("d-otp")
+
+    RecordingStudioNotifications.register_delivery_payload_resolver(:login_otp) do |notification:, delivery:|
+      raise "unexpected notification" unless notification.id == "n-otp"
+      raise "unexpected delivery" unless delivery.id == "d-otp"
+
+      { title: "Your sign-in code", body: "123456 is your code." }
+    end
+
+    adapter.deliver(notification: notification, delivery: delivery)
+
+    assert_equal "Your sign-in code", client.calls.first[:title]
+    assert_equal "123456 is your code.", client.calls.first[:body]
+    assert_nil notification.body
   end
 end

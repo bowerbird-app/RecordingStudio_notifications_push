@@ -6,7 +6,7 @@ gem "recording_studio_notifications_push", path: "../.."
 # Parent notification stack
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    branch: "main"
+    branch: "cursor/otp-delivery-payload-78f4"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 email_path = "../../vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?

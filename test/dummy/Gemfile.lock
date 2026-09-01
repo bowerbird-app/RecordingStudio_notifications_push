@@ -27,8 +27,8 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_notifications.git
-  revision: 837b4bdb777136e7cf4b7097032ca17af4aab95e
-  branch: main
+  revision: fac15fbbf2c4d9789c8b468cddee4c576e9c372c
+  branch: cursor/otp-delivery-payload-78f4
   specs:
     recording_studio_notifications (0.3.0)
       flat_pack
@@ -70,10 +70,10 @@ PATH
 PATH
   remote: ../..
   specs:
-    recording_studio_notifications_push (0.1.15)
+    recording_studio_notifications_push (0.2.0)
       rails (~> 8.1.0)
       recording_studio (~> 4.2)
-      recording_studio_notifications (>= 0.2, < 1)
+      recording_studio_notifications (>= 0.3.0, < 1)
 
 GEM
   remote: https://rubygems.org/
@@ -630,7 +630,7 @@ CHECKSUMS
   recording_studio_accessible (0.7.0)
   recording_studio_notifications (0.3.0)
   recording_studio_notifications_email (0.1.0)
-  recording_studio_notifications_push (0.1.15)
+  recording_studio_notifications_push (0.2.0)
   recording_studio_pwa (0.3.0)
   recording_studio_root_switchable (0.5.0)
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4
