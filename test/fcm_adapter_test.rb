@@ -228,6 +228,9 @@ class FcmAdapterTest < Minitest::Test
     delivery = Delivery.new("d-otp")
 
     RecordingStudioNotifications.register_delivery_payload_resolver(:login_otp) do |notification:, delivery:|
+      raise "unexpected notification" unless notification.id == "n-otp"
+      raise "unexpected delivery" unless delivery.id == "d-otp"
+
       { title: "Your sign-in code", body: "123456 is your code." }
     end
 
