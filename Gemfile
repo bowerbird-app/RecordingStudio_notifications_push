@@ -9,7 +9,7 @@ gemspec
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.0"
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    branch: "main"
+    branch: "cursor/otp-delivery-payload-78f4"
 
 # Temporary vendored email channel with recording_studio ~> 4.2 until upstream
 # RecordingStudio_notifications_email bumps its gemspec off < 4. Override with

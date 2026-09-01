@@ -41,6 +41,12 @@ module RecordingStudioNotificationsPush
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+    def available_for?(recipient:, **)
+      return false if recipient.nil?
+
+      installation_class.active.for_recipient(recipient).exists?
+    end
+
     private
 
     def build_send_payload(event, delivery)

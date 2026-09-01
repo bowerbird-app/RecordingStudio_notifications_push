@@ -24,18 +24,23 @@ module RecordingStudioNotificationsPush
     end
 
     def title
-      value = attribute(:title)
+      value = resolved_delivery_payload&.title
+      value = attribute(:title) if value.blank?
       return sanitize_header_text(value) if value.present?
 
       "Notification"
     end
 
     def body
-      attribute(:body).to_s.presence
+      value = resolved_delivery_payload&.body
+      value = attribute(:body) if value.blank?
+      value.to_s.presence
     end
 
     def url
-      value = attribute(:url).to_s.presence
+      value = resolved_delivery_payload&.url
+      value = attribute(:url) if value.blank?
+      value = value.to_s.presence
       return unless value
       return if unsafe_url_characters?(value)
 
@@ -67,6 +72,17 @@ module RecordingStudioNotificationsPush
     end
 
     private
+
+    def resolved_delivery_payload
+      return @resolved_delivery_payload if defined?(@resolved_delivery_payload)
+      return @resolved_delivery_payload = nil unless delivery
+      return @resolved_delivery_payload = nil unless defined?(RecordingStudioNotifications)
+
+      @resolved_delivery_payload = RecordingStudioNotifications.delivery_payload_for(
+        notification: source,
+        delivery: delivery
+      )
+    end
 
     def meta_asset(key)
       value = metadata_string(key)
