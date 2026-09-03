@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.2.1
+
+Cloud Agent Builds fetch Recording Studio skills. A warm rebuild does not fail
+the install hook.
+
+### Added
+
+- Cloud Agent Builds run `.cursor/install.sh`, then `.cursor/fetch-skills.sh`.
+  On a warm snapshot the install hook skips apt, ruby-build, db:prepare, and
+  tailwind when Ruby, bundle, and Postgres are already usable. A skippable
+  provision failure does not fail the Build. Fetch-skills always runs last.
+
+### Upgrade notes
+
+- No host or schema changes. Rebuild the Cloud Agent environment with Draft
+  off so Build loads the pack.
+
 ## 0.2.0
 
 ### Added
