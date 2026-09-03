@@ -123,6 +123,15 @@ gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch:
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
 ```
 
+## Cloud Agent boot
+
+Cloud Agent Builds run `.cursor/install.sh`, then `.cursor/fetch-skills.sh`.
+The install hook provisions a cold image. On a warm snapshot it skips apt,
+ruby-build, db:prepare, and tailwind when Ruby, bundle, and Postgres are
+already usable. Fetch-skills always runs last. `.cursor/start.sh` starts
+PostgreSQL on each boot. Rebuild with Draft off to load a new pack. See
+[Cursor skills in Cloud Agents](docs/cursor-skills.md).
+
 ## License
 
 MIT

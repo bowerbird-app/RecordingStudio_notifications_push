@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.0", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.2.1", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
