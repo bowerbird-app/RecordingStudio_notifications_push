@@ -22,6 +22,8 @@ Devices screens use Recording Studio core's default layout.
   `RecordingStudio::UsesDefaultLayout` (or set
   `layout "recording_studio/default_layout"`) on the devices controller
   instead. Do not render a second PageNav in the devices template.
+- Tailwind must scan FlatPack components and Recording Studio default layout
+  views so core PageNav back/close can paint. Dummy already sources those gems.
 
 ## 0.2.1
 

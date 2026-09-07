@@ -11,6 +11,9 @@
    `layout "recording_studio/default_layout"` on that controller instead.
 3. Remove any host copy of the devices PageNav. Core layout already draws
    back and close.
+4. Confirm the host Tailwind entry scans FlatPack components and Recording
+   Studio default layout views. Dummy `app/assets/tailwind/application.css`
+   already does this so Cloud Agent Builds paint the PageNav.
 
 ## 0.2.0
 
