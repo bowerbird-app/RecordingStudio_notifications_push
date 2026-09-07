@@ -2,7 +2,7 @@
 
 module RecordingStudioNotificationsPush
   class DevicesController < ApplicationController
-    layout "recording_studio_notifications_push/blank"
+    include RecordingStudio::UsesDefaultLayout
 
     def show
       @installations = Installation.active.for_recipient(current_push_actor).order(last_seen_at: :desc)

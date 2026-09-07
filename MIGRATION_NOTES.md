@@ -1,5 +1,17 @@
 # Migration notes
 
+## 0.2.2
+
+### Host app steps
+
+1. Bump to `0.2.2`. No configuration or migration changes are required.
+2. Devices now render inside Recording Studio's default layout. If you overrode
+   `recording_studio_notifications_push/blank`, include
+   `RecordingStudio::UsesDefaultLayout` or set
+   `layout "recording_studio/default_layout"` on that controller instead.
+3. Remove any host copy of the devices PageNav. Core layout already draws
+   back and close.
+
 ## 0.2.0
 
 ### Host app steps

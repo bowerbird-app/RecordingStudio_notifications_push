@@ -11,7 +11,8 @@ background delivery, retries, and delivery status. This gem:
 - registers a `:push` channel adapter
 - stores **device installations** in one ActiveRecord table (not a recordable)
 - sends FCM HTTP v1 messages with a service-account OAuth token
-- exposes a small Flatpack devices page and a PWA service-worker extension
+- exposes a Flatpack devices page on Recording Studio's default layout and a
+  PWA service-worker extension
 
 This channel does **not** implement rollups / `deliver_rollup`.
 
@@ -105,7 +106,8 @@ RecordingStudioNotifications.notify(
 ## Device registration
 
 Authenticated users visit `/notifications/push/devices` to enable the current
-browser. The Stimulus controller reads Firebase web config from the page,
+browser. That screen uses Recording Studio's default layout for back and
+close. The Stimulus controller reads Firebase web config from the page,
 requests notification permission, obtains a token via Firebase Messaging
 (importmap pins), and POSTs an installation JSON record.
 

@@ -24,6 +24,8 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
+    assert_includes response.body, 'data-recording-studio-default-layout="true"'
+    assert_equal 1, response.body.scan("flat-pack-page-nav").length
     assert_includes response.body, "Push Notifications"
     assert_includes response.body, "Get notifications on your devices"
     assert_includes response.body, "Manage notifications"

@@ -91,5 +91,5 @@ mount RecordingStudioNotifications::Engine, at: "/notifications"
 mount RecordingStudioNotificationsPush::Engine, at: "/notifications/push"
 ```
 
-Devices UI: `/notifications/push/devices`  
+Devices UI: `/notifications/push/devices` (Recording Studio default layout)  
 Installations JSON: `POST/DELETE /notifications/push/installations`

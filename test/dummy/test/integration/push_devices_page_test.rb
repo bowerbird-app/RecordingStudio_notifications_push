@@ -6,6 +6,13 @@ require "devise/test/integration_helpers"
 class PushDevicesPageTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
+  test "devices controller uses core default layout and installations stay off it" do
+    assert_includes RecordingStudioNotificationsPush::DevicesController.ancestors,
+                    RecordingStudio::UsesDefaultLayout
+    refute_includes RecordingStudioNotificationsPush::InstallationsController.ancestors,
+                    RecordingStudio::UsesDefaultLayout
+  end
+
   test "push devices page registers the host PWA service worker from the mounted engine" do
     user = User.find_or_create_by!(email: "push-sw-test@example.com") do |record|
       record.password = "Password123!"
@@ -16,8 +23,11 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
+    assert_includes response.body, 'data-recording-studio-default-layout="true"'
     refute_includes response.body, "flat-pack-sidebar-layout"
     assert_includes response.body, "flat-pack-page-nav"
+    assert_equal 1, response.body.scan("flat-pack-page-nav").length
+    refute_includes response.body, "recording_studio_notifications_push/blank"
     assert_includes response.body, "Push Notifications"
     assert_includes response.body, "navigator.serviceWorker"
     assert_includes response.body, "/service-worker.js"

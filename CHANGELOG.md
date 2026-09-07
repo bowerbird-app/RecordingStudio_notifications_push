@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+## 0.2.2
+
+Devices screens use Recording Studio core's default layout.
+
+### Changed
+
+- `DevicesController` includes `RecordingStudio::UsesDefaultLayout` instead of
+  `layout "recording_studio_notifications_push/blank"`.
+- The devices show template no longer renders `FlatPack::PageNav`. Core layout
+  owns back and close. `recording_studio_page_nav` still sets the document
+  title and Close to the host root.
+- Removed the unused gem `blank` layout.
+
+### Upgrade notes
+
+- Bump to `0.2.2`. No schema or configuration changes.
+- If a host overrode `recording_studio_notifications_push/blank`, include
+  `RecordingStudio::UsesDefaultLayout` (or set
+  `layout "recording_studio/default_layout"`) on the devices controller
+  instead. Do not render a second PageNav in the devices template.
+
 ## 0.2.1
 
 Cloud Agent Builds fetch Recording Studio skills. A warm rebuild does not fail

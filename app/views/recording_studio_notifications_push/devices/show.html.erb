@@ -1,4 +1,8 @@
 <%
+  recording_studio_page_nav(
+    title: "Push Notifications",
+    page_nav_anchor_url: main_app.root_path
+  )
   installations_payload = @installations.map { |installation|
     {
       id: installation.id,
@@ -36,10 +40,6 @@
      <% if @service_worker_path.present? %>
        data-recording-studio-notifications-push--push-devices-service-worker-path-value="<%= @service_worker_path %>"
      <% end %>>
-
-  <%= render FlatPack::PageNav::Component.new(
-    anchor_url: main_app.root_path
-  ) %>
 
   <%= render FlatPack::PageTitle::Component.new(
     title: "Push Notifications",

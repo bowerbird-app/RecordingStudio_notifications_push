@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.1", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.2.2", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -55,6 +55,22 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes controller_source, "UsesDefaultLayout"
     assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack_sidebar.html.erb", __dir__))
     assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
+  end
+
+  def test_devices_controller_uses_core_default_layout
+    controller_source = File.read(
+      File.expand_path("../app/controllers/recording_studio_notifications_push/devices_controller.rb", __dir__)
+    )
+    application_source = File.read(
+      File.expand_path("../app/controllers/recording_studio_notifications_push/application_controller.rb", __dir__)
+    )
+
+    assert_includes controller_source, "RecordingStudio::UsesDefaultLayout"
+    refute_includes controller_source, 'layout "recording_studio_notifications_push/blank"'
+    refute_includes application_source, "push_application_layout"
+    refute File.exist?(
+      File.expand_path("../app/views/layouts/recording_studio_notifications_push/blank.html.erb", __dir__)
+    )
   end
 
   def test_product_readme_describes_push_channel
@@ -125,6 +141,10 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     devices_show = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)
     )
+    assert_includes devices_show, "recording_studio_page_nav"
+    assert_includes devices_show, "page_nav_anchor_url: main_app.root_path"
+    refute_includes devices_show, "FlatPack::PageNav"
+    refute_includes devices_show, "PageNav::Component"
     assert_includes devices_show, "push_enable: true"
     assert_includes devices_show, "Push Notifications"
     assert_includes devices_show, "Get notifications on your devices"
