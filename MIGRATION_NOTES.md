@@ -12,8 +12,8 @@
 3. Remove any host copy of the devices PageNav. Core layout already draws
    back and close.
 4. Confirm the host Tailwind entry scans FlatPack components and Recording
-   Studio default layout views. Dummy `app/assets/tailwind/application.css`
-   already does this so Cloud Agent Builds paint the PageNav.
+   Studio default layout views. Dummy writes those paths at `tailwindcss:build`
+   with `rake tailwindcss:enhance_sources`.
 
 ## 0.2.0
 

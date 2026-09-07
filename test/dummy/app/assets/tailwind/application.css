@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./gem_sources.css";
 
 @theme inline {
   --color-primary: var(--color-primary);
@@ -19,8 +20,6 @@
 @source "../../../vendor/bundle/**/flatpack*/app/components/**/*.{rb,erb}";
 @source "../../../../../../usr/local/bundle/ruby/**/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
 @source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
-@source "/usr/local/lib/ruby/gems/*/bundler/gems/flatpack-*/app/components/**/*.{rb,erb}";
-@source "/usr/local/lib/ruby/gems/*/bundler/gems/RecordingStudio-*/app/views/**/*.erb";
 
 @source "../../../../../app/views/**/*.erb";
 @source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_notifications-*/app/views/**/*.erb";

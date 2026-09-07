@@ -57,11 +57,11 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
   end
 
-  def test_dummy_tailwind_scans_installed_flatpack_and_recording_studio
+  def test_dummy_tailwind_imports_generated_gem_sources
     css = File.read(File.expand_path("dummy/app/assets/tailwind/application.css", __dir__))
 
-    assert_includes css, "/usr/local/lib/ruby/gems/*/bundler/gems/flatpack-"
-    assert_includes css, "/usr/local/lib/ruby/gems/*/bundler/gems/RecordingStudio-"
+    assert_includes css, '@import "./gem_sources.css"'
+    assert File.exist?(File.expand_path("dummy/lib/tasks/tailwind_gem_sources.rake", __dir__))
   end
 
   def test_devices_controller_uses_core_default_layout
