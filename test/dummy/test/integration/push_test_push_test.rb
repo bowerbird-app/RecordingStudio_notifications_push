@@ -27,7 +27,8 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'data-recording-studio-default-layout="true"'
     assert_equal 1, response.body.scan("flat-pack-page-nav").length
     assert_includes response.body, "Connected devices"
-    assert_includes response.body, "Browsers and phones that get push alerts"
+    assert_includes response.body, "Your connected devices that can receive notifications"
+    refute_includes response.body, "Browsers and phones that get push alerts"
     refute_includes response.body, "Push Notifications"
     refute_includes response.body, "Get notifications on your devices"
     assert_includes response.body, "<title>Connected devices</title>"
