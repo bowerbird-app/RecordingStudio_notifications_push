@@ -1,4 +1,8 @@
 <%
+  recording_studio_page_nav(
+    title: "Connected devices",
+    page_nav_anchor_url: main_app.root_path
+  )
   installations_payload = @installations.map { |installation|
     {
       id: installation.id,
@@ -15,15 +19,6 @@
           href: @notifications_settings_path
         ) %>
       <% end %>
-      <%= render FlatPack::Button::Component.new(
-        text: "Not getting alerts?",
-        style: :ghost,
-        size: :md,
-        type: "button",
-        data: {
-          modal_id: "push-notification-help-modal"
-        }
-      ) %>
 <% end %>
 <div class="mx-auto flex w-full max-w-2xl flex-col gap-6"
      data-controller="recording-studio-notifications-push--push-devices"
@@ -37,13 +32,9 @@
        data-recording-studio-notifications-push--push-devices-service-worker-path-value="<%= @service_worker_path %>"
      <% end %>>
 
-  <%= render FlatPack::PageNav::Component.new(
-    anchor_url: main_app.root_path
-  ) %>
-
   <%= render FlatPack::PageTitle::Component.new(
-    title: "Push Notifications",
-    subtitle: "Get notifications on your devices",
+    title: "Connected devices",
+    subtitle: "Your connected devices that can receive notifications",
     variant: :h1
   ) %>
 
@@ -62,68 +53,13 @@
     </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
-      style: :info,
+      style: :warning,
       title: "Firebase is not configured yet",
-      description: "Set the FIREBASE_* environment variables to enable real browser registration. For local demos you can still paste a Firebase installation id below."
+      description: "Set the FIREBASE_* environment variables to enable real browser registration."
     ) %>
-
-    <div class="flex flex-col gap-3">
-      <%= render FlatPack::TextInput::Component.new(
-        name: "manual_fid",
-        label: "Firebase installation id",
-        placeholder: "Paste a FID for local testing",
-        data: { recording_studio_notifications_push__push_devices_target: "manualFid" }
-      ) %>
-      <div class="flex flex-wrap items-center gap-3">
-        <%= render FlatPack::Button::Component.new(
-          text: "Register this id",
-          style: :primary,
-          size: :md,
-          type: "button",
-          data: { action: "recording-studio-notifications-push--push-devices#registerManualFid" }
-        ) %>
-        <%= secondary_actions %>
-      </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <%= secondary_actions %>
     </div>
-  <% end %>
-
-  <%= render FlatPack::Modal::Component.new(
-    id: "push-notification-help-modal",
-    title: "Not receiving push notifications?",
-    size: :md
-  ) do |modal| %>
-    <% modal.body do %>
-      <div class="flex flex-col gap-4">
-        <div>
-          <p class="mb-2 text-sm font-medium text-(--surface-content-color)">In this browser</p>
-          <ol data-recording-studio-notifications-push--push-devices-target="helpSiteSteps"
-              class="space-y-1 text-sm text-(--surface-muted-content-color)">
-            <li>1. Open this browser’s site settings for notifications</li>
-            <li>2. Find this site in the notification permissions</li>
-            <li>3. Choose Allow, then tap Enable again</li>
-          </ol>
-        </div>
-
-        <div>
-          <p class="mb-2 text-sm font-medium text-(--surface-content-color)">On this device</p>
-          <ol data-recording-studio-notifications-push--push-devices-target="helpOsSteps"
-              class="space-y-1 text-sm text-(--surface-muted-content-color)">
-            <li>1. Open your device notification settings</li>
-            <li>2. Find this browser in the application list</li>
-            <li>3. Allow notifications, then try a test alert</li>
-          </ol>
-        </div>
-      </div>
-    <% end %>
-    <% modal.footer do %>
-      <%= render FlatPack::Button::Component.new(
-        text: "Got it",
-        style: :primary,
-        size: :md,
-        type: "button",
-        data: { action: "flat-pack--modal#close" }
-      ) %>
-    <% end %>
   <% end %>
 
   <% if @installations.any? %>

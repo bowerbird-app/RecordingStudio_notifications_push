@@ -24,28 +24,38 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "Push Notifications"
-    assert_includes response.body, "Get notifications on your devices"
+    assert_includes response.body, 'data-recording-studio-default-layout="true"'
+    assert_equal 1, response.body.scan("flat-pack-page-nav").length
+    assert_includes response.body, "Connected devices"
+    assert_includes response.body, "Your connected devices that can receive notifications"
+    refute_includes response.body, "Browsers and phones that get push alerts"
+    refute_includes response.body, "Push Notifications"
+    refute_includes response.body, "Get notifications on your devices"
+    assert_includes response.body, "<title>Connected devices</title>"
     assert_includes response.body, "Manage notifications"
     assert_includes response.body, 'href="/notifications/settings"'
     assert_includes response.body, "Test browser"
     assert_includes response.body, 'data-turbo-method="delete"'
     refute_includes response.body, "Active browsers and devices"
     refute_includes response.body, "No devices yet"
-    assert_includes response.body, "Not getting alerts?"
-    assert_includes response.body, "push-notification-help-modal"
-    assert_includes response.body, "Not receiving push notifications?"
+    refute_includes response.body, "Not getting alerts?"
+    refute_includes response.body, "push-notification-help-modal"
+    refute_includes response.body, "Not receiving push notifications?"
     refute_includes response.body, "Show a local notification"
     refute_includes response.body, "Send a test push"
 
     if firebase_ready_for_browser?
       assert_includes response.body, "Enable on this browser"
       assert_includes response.body, "flex flex-wrap items-center gap-3"
-      # Enable and Manage share one row; enablePanel can hide when this browser is already registered.
       assert_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="enablePanel"'
     else
       assert_includes response.body, "Firebase is not configured yet"
-      assert_includes response.body, "Register this id"
+      assert_includes response.body, "bg-[var(--alert-warning-background-color)]"
+      refute_includes response.body, "Register this id"
+      refute_includes response.body, "Paste a FID"
+      refute_includes response.body, "paste a Firebase installation id"
+      refute_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="manualFid"'
+      refute_includes response.body, "registerManualFid"
     end
   end
 

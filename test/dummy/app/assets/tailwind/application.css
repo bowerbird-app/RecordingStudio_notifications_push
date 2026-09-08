@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./gem_sources.css";
 
 @theme inline {
   --color-primary: var(--color-primary);

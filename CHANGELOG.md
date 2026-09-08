@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+## 0.2.2
+
+Devices screens use Recording Studio core's default layout.
+
+### Changed
+
+- `DevicesController` includes `RecordingStudio::UsesDefaultLayout` instead of
+  `layout "recording_studio_notifications_push/blank"`.
+- The devices show template no longer renders `FlatPack::PageNav`. Core layout
+  owns back and close. `recording_studio_page_nav` still sets the document
+  title and Close to the host root.
+- Removed the unused gem `blank` layout.
+- When Firebase is not configured, the devices Alert uses FlatPack
+  `style: :warning`. The page no longer offers a Firebase installation id
+  paste field or Register this id. Manage notifications stays on that branch.
+- The devices page title is **Connected devices**. The subtitle is
+  **Your connected devices that can receive notifications**. The browser
+  tab uses the same title via `recording_studio_page_nav`.
+- The devices page no longer has Not getting alerts? or the help Modal.
+
+### Upgrade notes
+
+- Bump to `0.2.2`. No schema or configuration changes.
+- If a host overrode `recording_studio_notifications_push/blank`, include
+  `RecordingStudio::UsesDefaultLayout` (or set
+  `layout "recording_studio/default_layout"`) on the devices controller
+  instead. Do not render a second PageNav in the devices template.
+- Tailwind must scan FlatPack components and Recording Studio default layout
+  views so core PageNav back/close can paint. Dummy writes those `@source`
+  paths at `tailwindcss:build` via `tailwindcss:enhance_sources`.
+- Drop any host override of the unconfigured FID paste field. Set `FIREBASE_*`
+  and use Enable on this browser.
+- Drop any host copy of Not getting alerts? and the help Modal on devices.
+
 ## 0.2.1
 
 Cloud Agent Builds fetch Recording Studio skills. A warm rebuild does not fail

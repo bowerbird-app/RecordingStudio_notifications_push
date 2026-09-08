@@ -8,5 +8,9 @@ addon. It mounts:
 - `RecordingStudioNotificationsPush` at `/notifications/push`
 - PWA manifest + service-worker routes for the SW composition seam
 
-Sign in with the seeded admin user, open **Manage devices**, and register a
-browser (or paste a FID when Firebase ENVs are unset).
+Sign in with the seeded admin user (`admin@admin.com` / `Password`) and open
+**Manage devices**. When Firebase ENVs are set, use **Enable on this browser**.
+When they are not, the page shows a warning and keeps Manage notifications.
+Dummy home stays on the host sidebar. The devices screen is titled
+**Connected devices** and uses Recording Studio's default layout (back and
+close), not that sidebar.

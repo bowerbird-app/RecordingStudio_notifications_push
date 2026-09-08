@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.1", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.2.2", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -57,6 +57,29 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
   end
 
+  def test_dummy_tailwind_imports_generated_gem_sources
+    css = File.read(File.expand_path("dummy/app/assets/tailwind/application.css", __dir__))
+
+    assert_includes css, '@import "./gem_sources.css"'
+    assert File.exist?(File.expand_path("dummy/lib/tasks/tailwind_gem_sources.rake", __dir__))
+  end
+
+  def test_devices_controller_uses_core_default_layout
+    controller_source = File.read(
+      File.expand_path("../app/controllers/recording_studio_notifications_push/devices_controller.rb", __dir__)
+    )
+    application_source = File.read(
+      File.expand_path("../app/controllers/recording_studio_notifications_push/application_controller.rb", __dir__)
+    )
+
+    assert_includes controller_source, "RecordingStudio::UsesDefaultLayout"
+    refute_includes controller_source, 'layout "recording_studio_notifications_push/blank"'
+    refute_includes application_source, "push_application_layout"
+    refute File.exist?(
+      File.expand_path("../app/views/layouts/recording_studio_notifications_push/blank.html.erb", __dir__)
+    )
+  end
+
   def test_product_readme_describes_push_channel
     readme = File.read(File.expand_path("../README.md", __dir__))
 
@@ -90,23 +113,10 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "hideEnablePanel"
     assert_includes push_devices_js, "Enable on this device"
     assert_includes push_devices_js, "Enable on this browser"
-    assert_includes push_devices_js, "chrome://settings/"
-    assert_includes push_devices_js, "Sites can ask to send notifications"
-    assert_includes push_devices_js, "Privacy, search, and services"
-    assert_includes push_devices_js, "Site permissions → All sites"
-    assert_includes push_devices_js, "Privacy & Security → Permissions"
-    assert_includes push_devices_js, "Open Websites → Notifications"
-    assert_includes push_devices_js, "Privacy & security → Site settings → Notifications"
-    assert_includes push_devices_js, "Use iOS or iPadOS 16.4 or later"
-    assert_includes push_devices_js, "Add to Home Screen"
-    assert_includes push_devices_js, "select this web app’s name"
-    assert_includes push_devices_js, '["Firefox", "Opera"].includes(browser)'
-    assert_includes push_devices_js, "Open this site in Safari, Chrome, or Edge"
-    assert_includes push_devices_js, "Notifications from apps and other senders"
-    assert_includes push_devices_js, "Settings → Notifications → App notifications"
-    assert_includes push_devices_js, "`${index + 1}. ${step}`"
-    assert_includes push_devices_js, "helpTarget"
-    assert_includes push_devices_js, "requestAnimationFrame(() => this.fillNotificationHelp())"
+    refute_includes push_devices_js, "fillNotificationHelp"
+    refute_includes push_devices_js, "helpSiteSteps"
+    refute_includes push_devices_js, "helpOsSteps"
+    refute_includes push_devices_js, "helpTarget"
     refute_includes push_devices_js, "sitePermissionHelp"
     refute_includes push_devices_js, "Looks like"
     refute_includes push_devices_js, "Settings → Notifications → Safari"
@@ -125,9 +135,16 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     devices_show = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)
     )
+    assert_includes devices_show, "recording_studio_page_nav"
+    assert_includes devices_show, "page_nav_anchor_url: main_app.root_path"
+    refute_includes devices_show, "FlatPack::PageNav"
+    refute_includes devices_show, "PageNav::Component"
     assert_includes devices_show, "push_enable: true"
-    assert_includes devices_show, "Push Notifications"
-    assert_includes devices_show, "Get notifications on your devices"
+    assert_includes devices_show, "Connected devices"
+    assert_includes devices_show, "Your connected devices that can receive notifications"
+    refute_includes devices_show, "Browsers and phones that get push alerts"
+    refute_includes devices_show, "Push Notifications"
+    refute_includes devices_show, "Get notifications on your devices"
     assert_includes devices_show, "Manage notifications"
     assert_includes devices_show, "@notifications_settings_path"
     assert_includes devices_show, "flex flex-wrap items-center gap-3"
@@ -142,12 +159,11 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes devices_show, "No devices yet"
     refute_includes devices_show, "push_disable"
     refute_includes devices_show, 'button_to "Remove"'
-    assert_includes devices_show, "Not getting alerts?"
-    assert_includes devices_show, "push-notification-help-modal"
-    assert_includes devices_show, "Not receiving push notifications?"
-    assert_includes devices_show, "helpSiteSteps"
-    assert_includes devices_show, "Open this browser’s site settings for notifications"
-    assert_includes devices_show, "Open your device notification settings"
+    refute_includes devices_show, "Not getting alerts?"
+    refute_includes devices_show, "push-notification-help-modal"
+    refute_includes devices_show, "Not receiving push notifications?"
+    refute_includes devices_show, "helpSiteSteps"
+    refute_includes devices_show, "helpOsSteps"
     refute_includes devices_show, "helpDetected"
     refute_includes devices_show, "helpPermission"
     refute_includes devices_show, "We can spot your browser and OS"
