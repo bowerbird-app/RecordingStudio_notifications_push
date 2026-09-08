@@ -1,9 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Registers this browser for FCM push, or accepts a manual FID when Firebase
-// ENV config is missing (dummy / local demos).
 export default class extends Controller {
-  static targets = ["manualFid", "enablePanel", "helpSiteSteps", "helpOsSteps"]
+  static targets = ["enablePanel", "helpSiteSteps", "helpOsSteps"]
   static values = {
     registerUrl: String,
     unregisterUrlTemplate: String,
@@ -19,8 +17,6 @@ export default class extends Controller {
     this.updateEnableLabel()
     this.showEnable()
 
-    // Fill help content as soon as the controller connects so the modal is
-    // ready before anyone taps "Not getting alerts?"
     requestAnimationFrame(() => this.fillNotificationHelp())
 
     this._onPushClick = (event) => {
@@ -93,19 +89,6 @@ export default class extends Controller {
       window.location.reload()
     } catch (error) {
       console.error("[push-devices] enable failed", error)
-    }
-  }
-
-  async registerManualFid(event) {
-    event?.preventDefault?.()
-    const fid = this.hasManualFidTarget ? this.manualFidTarget.value.trim() : ""
-    if (!fid) return
-
-    try {
-      await this.registerInstallation(fid)
-      window.location.reload()
-    } catch (error) {
-      console.error("[push-devices] manual registration failed", error)
     }
   }
 
@@ -425,7 +408,6 @@ export default class extends Controller {
         const payload = await response.json()
         message = payload.error || message
       } catch (_error) {
-        // ignore
       }
       throw new Error(message)
     }

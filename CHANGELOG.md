@@ -14,6 +14,10 @@ Devices screens use Recording Studio core's default layout.
   owns back and close. `recording_studio_page_nav` still sets the document
   title and Close to the host root.
 - Removed the unused gem `blank` layout.
+- When Firebase is not configured, the devices Alert uses FlatPack
+  `style: :warning`. The page no longer offers a Firebase installation id
+  paste field or Register this id. Manage notifications and Not getting
+  alerts? stay on that branch.
 
 ### Upgrade notes
 
@@ -25,6 +29,8 @@ Devices screens use Recording Studio core's default layout.
 - Tailwind must scan FlatPack components and Recording Studio default layout
   views so core PageNav back/close can paint. Dummy writes those `@source`
   paths at `tailwindcss:build` via `tailwindcss:enhance_sources`.
+- Drop any host override of the unconfigured FID paste field. Set `FIREBASE_*`
+  and use Enable on this browser.
 
 ## 0.2.1
 

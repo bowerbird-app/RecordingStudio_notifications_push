@@ -107,9 +107,12 @@ RecordingStudioNotifications.notify(
 
 Authenticated users visit `/notifications/push/devices` to enable the current
 browser. That screen uses Recording Studio's default layout for back and
-close. The Stimulus controller reads Firebase web config from the page,
-requests notification permission, obtains a token via Firebase Messaging
-(importmap pins), and POSTs an installation JSON record.
+close. When Firebase web config is missing, the page shows a warning Alert
+and keeps Manage notifications and Not getting alerts? It does not accept a
+pasted installation id. When Firebase is ready, the Stimulus controller
+reads web config from the page, requests notification permission, obtains a
+token via Firebase Messaging (importmap pins), and POSTs an installation
+JSON record.
 
 Installations are keyed by polymorphic recipient + `firebase_installation_id`
 (FID-first targeting). `legacy_fcm_token` is optional for older clients.

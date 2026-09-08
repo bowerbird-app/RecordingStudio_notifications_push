@@ -62,28 +62,12 @@
     </div>
   <% else %>
     <%= render FlatPack::Alert::Component.new(
-      style: :info,
+      style: :warning,
       title: "Firebase is not configured yet",
-      description: "Set the FIREBASE_* environment variables to enable real browser registration. For local demos you can still paste a Firebase installation id below."
+      description: "Set the FIREBASE_* environment variables to enable real browser registration."
     ) %>
-
-    <div class="flex flex-col gap-3">
-      <%= render FlatPack::TextInput::Component.new(
-        name: "manual_fid",
-        label: "Firebase installation id",
-        placeholder: "Paste a FID for local testing",
-        data: { recording_studio_notifications_push__push_devices_target: "manualFid" }
-      ) %>
-      <div class="flex flex-wrap items-center gap-3">
-        <%= render FlatPack::Button::Component.new(
-          text: "Register this id",
-          style: :primary,
-          size: :md,
-          type: "button",
-          data: { action: "recording-studio-notifications-push--push-devices#registerManualFid" }
-        ) %>
-        <%= secondary_actions %>
-      </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <%= secondary_actions %>
     </div>
   <% end %>
 

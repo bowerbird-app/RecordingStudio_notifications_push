@@ -14,6 +14,10 @@
 4. Confirm the host Tailwind entry scans FlatPack components and Recording
    Studio default layout views. Dummy writes those paths at `tailwindcss:build`
    with `rake tailwindcss:enhance_sources`.
+5. The devices page no longer accepts a pasted Firebase installation id when
+   Firebase is unset. Set `FIREBASE_*` and use Enable on this browser. Hosts
+   that overrode the unconfigured branch should drop that field too.
+
 
 ## 0.2.0
 

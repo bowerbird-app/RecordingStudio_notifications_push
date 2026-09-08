@@ -46,7 +46,12 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
       assert_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="enablePanel"'
     else
       assert_includes response.body, "Firebase is not configured yet"
-      assert_includes response.body, "Register this id"
+      assert_includes response.body, "bg-[var(--alert-warning-background-color)]"
+      refute_includes response.body, "Register this id"
+      refute_includes response.body, "Paste a FID"
+      refute_includes response.body, "paste a Firebase installation id"
+      refute_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="manualFid"'
+      refute_includes response.body, "registerManualFid"
     end
   end
 

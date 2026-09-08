@@ -50,4 +50,38 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "helpOsSteps"
     refute_includes response.body, "helpDetected"
   end
+
+  test "unconfigured devices page warns without a Firebase installation id field" do
+    user = User.find_or_create_by!(email: "push-unconfigured-test@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+    sign_in user
+
+    get "/notifications/push/devices"
+
+    assert_response :success
+    assert_includes response.body, "Not getting alerts?"
+    assert_includes response.body, "Manage notifications"
+    refute_includes response.body, "Register this id"
+    refute_includes response.body, "Paste a FID"
+    refute_includes response.body, "paste a Firebase installation id"
+    refute_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="manualFid"'
+    refute_includes response.body, "registerManualFid"
+
+    config = RecordingStudioNotificationsPush.configuration
+    web = config.firebase_web_config || {}
+    required = %i[apiKey appId projectId messagingSenderId]
+    firebase_ready = required.all? { |key| web[key].present? || web[key.to_s].present? } &&
+      config.vapid_public_key.present?
+
+    if firebase_ready
+      assert_includes response.body, "Enable on this browser"
+    else
+      assert_includes response.body, "Firebase is not configured yet"
+      assert_includes response.body, "bg-[var(--alert-warning-background-color)]"
+      refute_includes response.body, "bg-[var(--alert-info-background-color)]"
+    end
+  end
 end
+
