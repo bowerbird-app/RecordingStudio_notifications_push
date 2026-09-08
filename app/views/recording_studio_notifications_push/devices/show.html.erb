@@ -1,6 +1,6 @@
 <%
   recording_studio_page_nav(
-    title: "Push Notifications",
+    title: "Connected devices",
     page_nav_anchor_url: main_app.root_path
   )
   installations_payload = @installations.map { |installation|
@@ -42,8 +42,8 @@
      <% end %>>
 
   <%= render FlatPack::PageTitle::Component.new(
-    title: "Push Notifications",
-    subtitle: "Get notifications on your devices",
+    title: "Connected devices",
+    subtitle: "Browsers and phones that get push alerts",
     variant: :h1
   ) %>
 

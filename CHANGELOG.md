@@ -18,6 +18,9 @@ Devices screens use Recording Studio core's default layout.
   `style: :warning`. The page no longer offers a Firebase installation id
   paste field or Register this id. Manage notifications and Not getting
   alerts? stay on that branch.
+- The devices page title is **Connected devices**. The subtitle is
+  **Browsers and phones that get push alerts**. The browser tab uses the
+  same title via `recording_studio_page_nav`.
 
 ### Upgrade notes
 
