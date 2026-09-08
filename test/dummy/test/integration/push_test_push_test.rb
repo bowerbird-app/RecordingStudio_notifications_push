@@ -37,9 +37,9 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'data-turbo-method="delete"'
     refute_includes response.body, "Active browsers and devices"
     refute_includes response.body, "No devices yet"
-    assert_includes response.body, "Not getting alerts?"
-    assert_includes response.body, "push-notification-help-modal"
-    assert_includes response.body, "Not receiving push notifications?"
+    refute_includes response.body, "Not getting alerts?"
+    refute_includes response.body, "push-notification-help-modal"
+    refute_includes response.body, "Not receiving push notifications?"
     refute_includes response.body, "Show a local notification"
     refute_includes response.body, "Send a test push"
 

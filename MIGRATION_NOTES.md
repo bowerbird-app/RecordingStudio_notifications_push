@@ -17,7 +17,7 @@
 5. The devices page no longer accepts a pasted Firebase installation id when
    Firebase is unset. Set `FIREBASE_*` and use Enable on this browser. Hosts
    that overrode the unconfigured branch should drop that field too.
-
+6. Drop any host copy of Not getting alerts? and the help Modal on devices.
 
 ## 0.2.0
 

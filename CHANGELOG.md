@@ -16,11 +16,11 @@ Devices screens use Recording Studio core's default layout.
 - Removed the unused gem `blank` layout.
 - When Firebase is not configured, the devices Alert uses FlatPack
   `style: :warning`. The page no longer offers a Firebase installation id
-  paste field or Register this id. Manage notifications and Not getting
-  alerts? stay on that branch.
+  paste field or Register this id. Manage notifications stays on that branch.
 - The devices page title is **Connected devices**. The subtitle is
   **Browsers and phones that get push alerts**. The browser tab uses the
   same title via `recording_studio_page_nav`.
+- The devices page no longer has Not getting alerts? or the help Modal.
 
 ### Upgrade notes
 
@@ -34,6 +34,7 @@ Devices screens use Recording Studio core's default layout.
   paths at `tailwindcss:build` via `tailwindcss:enhance_sources`.
 - Drop any host override of the unconfigured FID paste field. Set `FIREBASE_*`
   and use Enable on this browser.
+- Drop any host copy of Not getting alerts? and the help Modal on devices.
 
 ## 0.2.1
 

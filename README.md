@@ -108,7 +108,7 @@ RecordingStudioNotifications.notify(
 Authenticated users visit `/notifications/push/devices` to enable the current
 browser. The screen is titled Connected devices. It uses Recording Studio's
 default layout for back and close. When Firebase web config is missing, the page shows a warning Alert
-and keeps Manage notifications and Not getting alerts? It does not accept a
+and keeps Manage notifications. It does not accept a
 pasted installation id. When Firebase is ready, the Stimulus controller
 reads web config from the page, requests notification permission, obtains a
 token via Firebase Messaging (importmap pins), and POSTs an installation

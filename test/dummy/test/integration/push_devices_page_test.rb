@@ -36,7 +36,7 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     refute_includes response.body, "PWA service worker route is not mounted"
   end
 
-  test "push devices page includes notification help modal for browser and OS steps" do
+  test "push devices page has no notification help modal" do
     user = User.find_or_create_by!(email: "push-help-test@example.com") do |record|
       record.password = "Password123!"
       record.password_confirmation = "Password123!"
@@ -46,11 +46,11 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "Not getting alerts?"
-    assert_includes response.body, "push-notification-help-modal"
-    assert_includes response.body, "Not receiving push notifications?"
-    assert_includes response.body, "helpOsSteps"
-    refute_includes response.body, "helpDetected"
+    refute_includes response.body, "Not getting alerts?"
+    refute_includes response.body, "push-notification-help-modal"
+    refute_includes response.body, "Not receiving push notifications?"
+    refute_includes response.body, "helpOsSteps"
+    refute_includes response.body, "helpSiteSteps"
   end
 
   test "unconfigured devices page warns without a Firebase installation id field" do
@@ -63,8 +63,8 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, "Not getting alerts?"
     assert_includes response.body, "Manage notifications"
+    refute_includes response.body, "Not getting alerts?"
     refute_includes response.body, "Register this id"
     refute_includes response.body, "Paste a FID"
     refute_includes response.body, "paste a Firebase installation id"
