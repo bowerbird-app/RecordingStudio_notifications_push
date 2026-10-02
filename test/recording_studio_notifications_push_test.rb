@@ -36,7 +36,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, "vendor/recording_studio_notifications_email"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
     assert_includes gemfile, "cursor/pwa-service-worker-seam-453c"
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.196"'
+    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.197"'
   end
 
   def test_does_not_ship_template_capabilities_or_pages
