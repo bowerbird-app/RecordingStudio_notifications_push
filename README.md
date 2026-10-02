@@ -122,7 +122,7 @@ Installations are keyed by polymorphic recipient + `firebase_installation_id`
 Until parent gems are published:
 
 ```ruby
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.2"
 gem "recording_studio_notifications", github: "bowerbird-app/RecordingStudio_notifications", branch: "main"
 gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch: "cursor/pwa-service-worker-seam-453c"
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
