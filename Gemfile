@@ -18,7 +18,7 @@ email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 email_path = "vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?
 gem "recording_studio_notifications_email", path: email_path
 
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
     tag: "v0.7.0"
