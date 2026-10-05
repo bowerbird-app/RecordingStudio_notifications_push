@@ -102,6 +102,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     gitignore = File.read(File.expand_path("../.gitignore", __dir__))
 
     assert_includes gitignore, "test/dummy/config/master.key"
+    assert_includes gitignore, "config/master.key"
     assert_includes gitignore, "test/dummy/config/credentials/*.key"
     refute_includes `git ls-files -- test/dummy/config/master.key`, "master.key"
   end
