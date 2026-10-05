@@ -221,7 +221,7 @@ class ConfigurationTest < Minitest::Test
 
   private
 
-  def with_firebase_credentials(values)
+  def with_firebase_credentials(values, &)
     credentials = Object.new
     credentials.define_singleton_method(:dig) do |namespace, key|
       namespace == :firebase ? values[key] : nil
@@ -230,6 +230,6 @@ class ConfigurationTest < Minitest::Test
     application = Object.new
     application.define_singleton_method(:credentials) { credentials }
 
-    Rails.stub(:application, application) { yield }
+    Rails.stub(:application, application, &)
   end
 end

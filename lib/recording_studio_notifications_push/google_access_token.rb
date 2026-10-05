@@ -7,9 +7,8 @@ require "openssl"
 require "uri"
 
 module RecordingStudioNotificationsPush
-  # Exchanges a Firebase / Google service-account JSON key for an OAuth access
-  # token using a hand-rolled RS256 JWT. No googleauth dependency.
-  class GoogleAccessToken
+  # Exchanges a Firebase service-account JSON key for an OAuth access token.
+  class GoogleAccessToken # rubocop:disable Metrics/ClassLength
     TOKEN_URI = "https://oauth2.googleapis.com/token"
     SCOPE = "https://www.googleapis.com/auth/firebase.messaging"
     EXPIRY_SKEW = 60

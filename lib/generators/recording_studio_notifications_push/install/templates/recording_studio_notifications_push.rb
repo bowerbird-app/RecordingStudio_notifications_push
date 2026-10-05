@@ -18,9 +18,9 @@ RecordingStudioNotificationsPush.configure do |config|
     appId: Rails.application.credentials.dig(:firebase, :app_id) || ENV.fetch("FIREBASE_APP_ID", nil),
     authDomain: Rails.application.credentials.dig(:firebase, :auth_domain) || ENV.fetch("FIREBASE_AUTH_DOMAIN", nil),
     messagingSenderId: Rails.application.credentials.dig(:firebase, :messaging_sender_id) ||
-      ENV.fetch("FIREBASE_MESSAGING_SENDER_ID", nil),
+                       ENV.fetch("FIREBASE_MESSAGING_SENDER_ID", nil),
     projectId: Rails.application.credentials.dig(:firebase, :project_id) || ENV.fetch("FIREBASE_PROJECT_ID", nil),
     storageBucket: Rails.application.credentials.dig(:firebase, :storage_bucket) ||
-      ENV.fetch("FIREBASE_STORAGE_BUCKET", nil)
+                   ENV.fetch("FIREBASE_STORAGE_BUCKET", nil)
   }
 end
