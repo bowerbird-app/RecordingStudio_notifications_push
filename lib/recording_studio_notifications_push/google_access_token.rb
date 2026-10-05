@@ -7,9 +7,8 @@ require "openssl"
 require "uri"
 
 module RecordingStudioNotificationsPush
-  # Exchanges a Firebase / Google service-account JSON key for an OAuth access
-  # token using a hand-rolled RS256 JWT. No googleauth dependency.
-  class GoogleAccessToken
+  # Exchanges a Firebase service-account JSON key for an OAuth access token.
+  class GoogleAccessToken # rubocop:disable Metrics/ClassLength
     TOKEN_URI = "https://oauth2.googleapis.com/token"
     SCOPE = "https://www.googleapis.com/auth/firebase.messaging"
     EXPIRY_SKEW = 60
@@ -52,15 +51,16 @@ module RecordingStudioNotificationsPush
     end
 
     def credentials_from_payload(payload)
-      client_email = payload["client_email"].to_s.strip
-      private_key = payload["private_key"].to_s
+      data = payload.respond_to?(:with_indifferent_access) ? payload.with_indifferent_access : payload
+      client_email = data["client_email"].to_s.strip
+      private_key = data["private_key"].to_s
       raise ArgumentError, "service account JSON must include client_email" if client_email.blank?
       raise ArgumentError, "service account JSON must include private_key" if private_key.blank?
 
       {
         "client_email" => client_email,
         "private_key" => private_key,
-        "token_uri" => payload["token_uri"].presence || TOKEN_URI
+        "token_uri" => data["token_uri"].presence || TOKEN_URI
       }
     end
 

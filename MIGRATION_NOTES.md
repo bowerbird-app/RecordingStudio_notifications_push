@@ -1,5 +1,17 @@
 # Migration notes
 
+## 0.2.6
+
+### Host app steps
+
+1. Bump to `0.2.6`. ENV-only hosts need no changes.
+2. Optional: store Firebase secrets in `bin/rails credentials:edit` under
+   `firebase:` (`api_key`, `app_id`, `auth_domain`, `messaging_sender_id`,
+   `project_id`, `storage_bucket`, `vapid_public_key`). `service_account_json`
+   is required only to send and may be a nested hash or a JSON string.
+3. Re-run `bin/rails generate recording_studio_notifications_push:install` if
+   you want the initializer to show the credentials-then-ENV assignments.
+
 ## 0.2.2
 
 ### Host app steps

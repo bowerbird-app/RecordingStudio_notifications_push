@@ -29,6 +29,32 @@
   `RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` only for a local path.
 - This push channel gem version is unchanged. No push-channel migration.
 
+## 0.2.6
+
+Firebase config reads Rails credentials, then ENV.
+
+Tags `v0.2.3` through `v0.2.5` already exist on this repository while `main`
+still had `VERSION` `0.2.2`; this release ships as `0.2.6`.
+
+### Changed
+
+- `Configuration` resolves Firebase values when they are read:
+  `Rails.application.credentials.dig(:firebase, :key)` first, then
+  `ENV["FIREBASE_*"]`. Credential keys are `api_key`, `app_id`,
+  `auth_domain`, `messaging_sender_id`, `project_id`, `storage_bucket`,
+  `vapid_public_key`, and `service_account_json`.
+- `service_account_json` may be a nested hash or a JSON string.
+- The install generator initializer uses the same
+  `credentials.dig(...) || ENV[...]` pattern as RecordingStudio_AI.
+- README documents a `bin/rails credentials:edit` YAML block and which
+  key is send-only (the service account).
+
+### Upgrade notes
+
+- Bump to `0.2.6`. ENV-only hosts need no changes.
+- Optional: move secrets into Rails credentials under `firebase:` using the
+  snake_case keys above. Keep `test/dummy/config/master.key` out of git.
+
 ## 0.2.2
 
 Devices screens use Recording Studio core's default layout.

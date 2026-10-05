@@ -59,30 +59,64 @@ extension partial
 
 ## Configuration
 
-Web client values load from ENV by default:
+Firebase values are resolved when they are read: Rails credentials under
+`firebase:` first, then matching `FIREBASE_*` environment variables. Hosts can
+still override any key in `RecordingStudioNotificationsPush.configure`.
 
-| ENV | Purpose |
-|---|---|
-| `FIREBASE_API_KEY` | Firebase web config |
-| `FIREBASE_APP_ID` | Firebase web config |
-| `FIREBASE_AUTH_DOMAIN` | Firebase web config |
-| `FIREBASE_MESSAGING_SENDER_ID` | Firebase web config |
-| `FIREBASE_PROJECT_ID` | Web config + FCM v1 project |
-| `FIREBASE_STORAGE_BUCKET` | Firebase web config |
-| `FIREBASE_VAPID_PUBLIC_KEY` | Web Push certificate key |
-| `FIREBASE_SERVICE_ACCOUNT_JSON` | Server OAuth for FCM sends |
+ENV-only hosts keep working. `service_account_json` /
+`FIREBASE_SERVICE_ACCOUNT_JSON` is required only for sending. Browser
+registration uses the web keys and VAPID public key.
+
+Edit credentials:
+
+```bash
+bin/rails credentials:edit
+```
+
+```yaml
+firebase:
+  api_key: your-web-api-key
+  app_id: your-web-app-id
+  auth_domain: your-project.firebaseapp.com
+  messaging_sender_id: "123456789"
+  project_id: your-project
+  storage_bucket: your-project.appspot.com
+  vapid_public_key: your-web-push-certificate-key
+  # Required only to send (nested hash or a JSON string):
+  service_account_json:
+    type: service_account
+    project_id: your-project
+    client_email: firebase-adminsdk@your-project.iam.gserviceaccount.com
+    private_key: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+```
+
+Matching ENV names:
+
+| Credential | ENV | Purpose |
+|---|---|---|
+| `firebase.api_key` | `FIREBASE_API_KEY` | Firebase web config |
+| `firebase.app_id` | `FIREBASE_APP_ID` | Firebase web config |
+| `firebase.auth_domain` | `FIREBASE_AUTH_DOMAIN` | Firebase web config |
+| `firebase.messaging_sender_id` | `FIREBASE_MESSAGING_SENDER_ID` | Firebase web config |
+| `firebase.project_id` | `FIREBASE_PROJECT_ID` | Web config + FCM v1 project |
+| `firebase.storage_bucket` | `FIREBASE_STORAGE_BUCKET` | Firebase web config |
+| `firebase.vapid_public_key` | `FIREBASE_VAPID_PUBLIC_KEY` | Web Push certificate key |
+| `firebase.service_account_json` | `FIREBASE_SERVICE_ACCOUNT_JSON` | Server OAuth for FCM sends |
 
 ```ruby
 RecordingStudioNotificationsPush.configure do |config|
   config.channel = :push
-  # Optional overrides; ENV defaults are usually enough.
-  # config.firebase_service_account_json = Rails.application.credentials.dig(:firebase, :service_account_json)
+  # Optional overrides. Defaults are credentials.dig(:firebase, ...) || ENV[...].
+  # config.firebase_service_account_json =
+  #   Rails.application.credentials.dig(:firebase, :service_account_json) ||
+  #     ENV.fetch("FIREBASE_SERVICE_ACCOUNT_JSON", nil)
 end
 ```
 
-`FIREBASE_SERVICE_ACCOUNT_JSON` may be unset while developing UI. Delivery
-raises `RecordingStudioNotificationsPush::DeliveryError` when a send is
-attempted without it.
+`FIREBASE_SERVICE_ACCOUNT_JSON` (and `firebase.service_account_json`) may be
+unset while developing UI. Delivery raises
+`RecordingStudioNotificationsPush::DeliveryError` when a send is attempted
+without it.
 
 ## Parent notification setup
 

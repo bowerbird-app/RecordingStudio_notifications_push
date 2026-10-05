@@ -91,4 +91,16 @@ class GoogleAccessTokenTest < Minitest::Test
 
     assert_equal 1, calls
   end
+
+  def test_accepts_service_account_hash_with_symbol_keys
+    provider = RecordingStudioNotificationsPush::GoogleAccessToken.new(
+      service_account_json: {
+        client_email: @service_account.fetch("client_email"),
+        private_key: @service_account.fetch("private_key"),
+        token_uri: @service_account.fetch("token_uri")
+      }
+    )
+
+    assert_instance_of RecordingStudioNotificationsPush::GoogleAccessToken, provider
+  end
 end

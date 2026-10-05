@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.2", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.2.6", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -89,9 +89,21 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes readme, "RecordingStudioNotificationsPush"
     assert_includes readme, ":push"
     assert_includes readme, "FIREBASE_SERVICE_ACCOUNT_JSON"
+    assert_includes readme, "bin/rails credentials:edit"
+    assert_includes readme, "firebase:"
+    assert_includes readme, "service_account_json"
+    assert_includes readme, "required only for sending"
     assert_includes readme, "deliver_rollup"
     refute_includes readme, "ExampleService"
     refute_includes readme, "addon template"
+  end
+
+  def test_dummy_master_key_is_gitignored_and_untracked
+    gitignore = File.read(File.expand_path("../.gitignore", __dir__))
+
+    assert_includes gitignore, "test/dummy/config/master.key"
+    assert_includes gitignore, "test/dummy/config/credentials/*.key"
+    refute_includes `git ls-files -- test/dummy/config/master.key`, "master.key"
   end
 
   def test_devices_view_and_service_worker_partial_exist
