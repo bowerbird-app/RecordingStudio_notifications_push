@@ -65,8 +65,6 @@ module RecordingStudioNotificationsPush
         read_timeout: @configuration.read_timeout,
         write_timeout: @configuration.write_timeout
       )
-    rescue ArgumentError => e
-      raise DeliveryError, e.message
     end
 
     def post_json(uri, payload)
