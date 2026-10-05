@@ -41,6 +41,17 @@ begin
   folder_recording = find_or_record_child.call(folder, root_recording, root_recording)
 
   find_or_record_child.call(page, root_recording, folder_recording)
+
+  if defined?(RecordingStudioAccessible)
+    [root_recording, accessible_root_recording, private_root_recording].each do |workspace_root|
+      unless RecordingStudioAccessible.authorized?(actor: user, recording: workspace_root, role: "admin")
+        RecordingStudioAccessible.bootstrap_owner_access!(
+          recording: workspace_root,
+          actor: user
+        ).value!
+      end
+    end
+  end
 ensure
   Current.actor = previous_actor
 end

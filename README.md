@@ -123,10 +123,20 @@ Until parent gems are published:
 
 ```ruby
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.2"
-gem "recording_studio_notifications", github: "bowerbird-app/RecordingStudio_notifications", branch: "main"
+gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.11.1"
+gem "recording_studio_notifications",
+    github: "bowerbird-app/RecordingStudio_notifications",
+    branch: "cursor/otp-delivery-payload-78f4"
+gem "recording_studio_notifications_email",
+    github: "bowerbird-app/RecordingStudio_notifications_email",
+    tag: "v0.3.4"
 gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch: "cursor/pwa-service-worker-seam-453c"
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.133"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
 ```
+
+Notifications stays on the OTP payload branch until tag `v0.3.4` contains that
+commit. PWA stays on the service-worker seam branch until tag `v0.2.3` contains
+that commit. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md).
 
 ## Cloud Agent boot
 

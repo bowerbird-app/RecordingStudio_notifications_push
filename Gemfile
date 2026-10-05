@@ -7,21 +7,26 @@ gemspec
 
 # Parent gems are not published to RubyGems; resolve from GitHub.
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.2"
+# Branch pin: tag v0.3.4 does not contain this OTP payload commit
+# (git merge-base --is-ancestor). See CHANGELOG / PR notes.
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
     branch: "cursor/otp-delivery-payload-78f4"
 
-# Temporary vendored email channel with recording_studio ~> 4.2 until upstream
-# RecordingStudio_notifications_email bumps its gemspec off < 4. Override with
-# RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH if needed (see MIGRATION_NOTES.md).
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
-email_path = "vendor/recording_studio_notifications_email" if email_path.nil? || email_path.strip.empty?
-gem "recording_studio_notifications_email", path: email_path
+if email_path && !email_path.strip.empty?
+  gem "recording_studio_notifications_email", path: email_path
+else
+  gem "recording_studio_notifications_email",
+      github: "bowerbird-app/RecordingStudio_notifications_email",
+      tag: "v0.3.4"
+end
 
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
-    tag: "v0.7.0"
+    tag: "v0.11.1"
+# Branch pin: tag v0.2.3 does not contain the service-worker seam commit.
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",
     branch: "cursor/pwa-service-worker-seam-453c"
