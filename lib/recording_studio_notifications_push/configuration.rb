@@ -4,24 +4,21 @@ module RecordingStudioNotificationsPush
   class Configuration
     WEB_CLIENT_REQUIRED_KEYS = %i[apiKey appId projectId messagingSenderId].freeze
 
-    WEB_CONFIG_ENV_KEYS = {
-      apiKey: "FIREBASE_API_KEY",
-      appId: "FIREBASE_APP_ID",
-      authDomain: "FIREBASE_AUTH_DOMAIN",
-      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
-      projectId: "FIREBASE_PROJECT_ID",
-      storageBucket: "FIREBASE_STORAGE_BUCKET"
+    WEB_CONFIG_KEYS = {
+      apiKey: { credential: :api_key, env: "FIREBASE_API_KEY" },
+      appId: { credential: :app_id, env: "FIREBASE_APP_ID" },
+      authDomain: { credential: :auth_domain, env: "FIREBASE_AUTH_DOMAIN" },
+      messagingSenderId: { credential: :messaging_sender_id, env: "FIREBASE_MESSAGING_SENDER_ID" },
+      projectId: { credential: :project_id, env: "FIREBASE_PROJECT_ID" },
+      storageBucket: { credential: :storage_bucket, env: "FIREBASE_STORAGE_BUCKET" }
     }.freeze
 
-    attr_accessor :channel, :firebase_project_id, :firebase_web_config, :vapid_public_key,
-                  :firebase_service_account_json, :open_timeout, :read_timeout, :write_timeout
+    attr_accessor :channel, :open_timeout, :read_timeout, :write_timeout
+    attr_writer :firebase_project_id, :firebase_web_config, :vapid_public_key,
+                :firebase_service_account_json
 
     def initialize
       @channel = :push
-      @firebase_project_id = ENV.fetch("FIREBASE_PROJECT_ID", nil)
-      @firebase_web_config = default_firebase_web_config
-      @vapid_public_key = ENV.fetch("FIREBASE_VAPID_PUBLIC_KEY", nil)
-      @firebase_service_account_json = ENV.fetch("FIREBASE_SERVICE_ACCOUNT_JSON", nil)
       @open_timeout = 5
       @read_timeout = 15
       @write_timeout = 15
@@ -43,15 +40,42 @@ module RecordingStudioNotificationsPush
         firebase_project_id: firebase_project_id,
         firebase_web_config: firebase_web_config.to_h,
         vapid_public_key: vapid_public_key,
-        firebase_service_account_configured: firebase_service_account_json.to_s.strip.present?,
+        firebase_service_account_configured: service_account_configured?,
         open_timeout: open_timeout,
         read_timeout: read_timeout,
         write_timeout: write_timeout
       }
     end
 
+    def firebase_project_id
+      return @firebase_project_id if instance_variable_defined?(:@firebase_project_id)
+
+      credential_or_env(:project_id, "FIREBASE_PROJECT_ID")
+    end
+
+    def vapid_public_key
+      return @vapid_public_key if instance_variable_defined?(:@vapid_public_key)
+
+      credential_or_env(:vapid_public_key, "FIREBASE_VAPID_PUBLIC_KEY")
+    end
+
+    def firebase_service_account_json
+      return @firebase_service_account_json if instance_variable_defined?(:@firebase_service_account_json)
+
+      credential_or_env(:service_account_json, "FIREBASE_SERVICE_ACCOUNT_JSON")
+    end
+
+    def firebase_web_config
+      return @firebase_web_config if instance_variable_defined?(:@firebase_web_config)
+
+      default_firebase_web_config
+    end
+
     def service_account_configured?
-      firebase_service_account_json.to_s.strip.present?
+      value = firebase_service_account_json
+      return value.present? if value.is_a?(Hash)
+
+      value.to_s.strip.present?
     end
 
     def web_push_client_ready?
@@ -67,10 +91,29 @@ module RecordingStudioNotificationsPush
     end
 
     def default_firebase_web_config
-      WEB_CONFIG_ENV_KEYS.each_with_object({}) do |(key, env_name), config|
-        value = ENV.fetch(env_name, nil)
+      WEB_CONFIG_KEYS.each_with_object({}) do |(key, sources), config|
+        value = credential_or_env(sources[:credential], sources[:env])
         config[key] = value if value.present?
       end
+    end
+
+    def credential_or_env(credential_key, env_name)
+      credential = firebase_credential(credential_key)
+      return credential if credential.present?
+
+      ENV.fetch(env_name, nil)
+    end
+
+    def firebase_credential(key)
+      application = defined?(Rails) ? Rails.application : nil
+      return unless application.respond_to?(:credentials)
+
+      credentials = application.credentials
+      return unless credentials.respond_to?(:dig)
+
+      credentials.dig(:firebase, key)
+    rescue ActiveSupport::EncryptedFile::MissingKeyError
+      nil
     end
   end
 end

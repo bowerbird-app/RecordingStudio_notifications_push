@@ -30,8 +30,14 @@ class InstallGeneratorTest < Minitest::Test
       assert File.exist?(path)
       source = File.read(path)
       assert_includes source, "RecordingStudioNotificationsPush.configure"
-      assert_includes source, "FIREBASE_SERVICE_ACCOUNT_JSON"
-      assert_includes source, "FIREBASE_VAPID_PUBLIC_KEY"
+      assert_includes source, "credentials.dig(:firebase, :project_id)"
+      assert_includes source, 'ENV.fetch("FIREBASE_PROJECT_ID", nil)'
+      assert_includes source, "credentials.dig(:firebase, :vapid_public_key)"
+      assert_includes source, 'ENV.fetch("FIREBASE_VAPID_PUBLIC_KEY", nil)'
+      assert_includes source, "credentials.dig(:firebase, :service_account_json)"
+      assert_includes source, 'ENV.fetch("FIREBASE_SERVICE_ACCOUNT_JSON", nil)'
+      assert_includes source, "credentials.dig(:firebase, :api_key)"
+      assert_includes source, 'ENV.fetch("FIREBASE_API_KEY", nil)'
     end
   end
 end
