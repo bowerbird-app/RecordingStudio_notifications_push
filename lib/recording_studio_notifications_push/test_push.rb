@@ -30,7 +30,7 @@ module RecordingStudioNotificationsPush
       result = send_probe(token)
       installation.touch_seen! if result[:ok] && installation.respond_to?(:touch_seen!)
       build_result(result)
-    rescue DeliveryError => e
+    rescue DeliveryError, ArgumentError => e
       Result.new(accepted: false, error: e.message)
     end
 

@@ -97,6 +97,16 @@ class TestPushTest < Minitest::Test
     assert_match(/FIREBASE_SERVICE_ACCOUNT_JSON/, result.error)
   end
 
+  def test_surfaces_invalid_service_account_json_as_a_refusal
+    installation = FakeInstallation.new(token: "fid-1")
+    client = FakeClient.new(ArgumentError.new("service account JSON is invalid: unexpected character"))
+
+    result = RecordingStudioNotificationsPush::TestPush.new(client: client).call(installation: installation)
+
+    refute result.accepted?
+    assert_match(/service account JSON is invalid/, result.error)
+  end
+
   def test_result_hash_drops_blank_values
     result = RecordingStudioNotificationsPush::TestPush::Result.new(accepted: true, status: 200)
 
