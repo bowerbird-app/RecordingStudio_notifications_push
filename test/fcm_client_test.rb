@@ -110,4 +110,16 @@ class FcmClientTest < Minitest::Test
     end
     assert_match(/FIREBASE_PROJECT_ID/, error.message)
   end
+
+  def test_invalid_service_account_json_surfaces_as_delivery_error
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_project_id = "demo-project"
+    configuration.firebase_service_account_json = "dev_placeholder"
+    client = RecordingStudioNotificationsPush::FcmClient.new(configuration: configuration)
+
+    error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
+      client.send_message(token: "fid-1", title: "Hello")
+    end
+    assert_match(/service account JSON is invalid/, error.message)
+  end
 end
