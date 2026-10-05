@@ -85,6 +85,7 @@ class DocsControllerTest < ActionDispatch::IntegrationTest
     folder_recording = record_child(folder, root_recording, root_recording)
     page = Page.create!(title: "API")
     record_child(page, root_recording, folder_recording)
+    RecordingStudioAccessible.bootstrap_owner_access!(recording: root_recording, actor: @user).value!
 
     get docs_recordings_tree_path
 
