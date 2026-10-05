@@ -152,17 +152,13 @@ are gone.
 
 ### Bundler note: notifications_email + Recording Studio 4.2
 
-Upstream `recording_studio_notifications_email` on `main` still gemspecs
-`recording_studio >= 3, < 4`, which conflicts with this gem's `~> 4.2` stack and
-`recording_studio_pwa`.
+`recording_studio_notifications_email` `v0.3.4` gemspecs `recording_studio ~> 4.2`
+and `recording_studio_notifications >= 0.3.0, < 1`. Root and dummy Gemfiles pin
+that GitHub tag. Override with `RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` when
+testing against a local checkout.
 
-This repo vendors a temporary compatibility checkout at
-`vendor/recording_studio_notifications_email` with:
-
-- `recording_studio ~> 4.2`
-- `recording_studio_notifications >= 0.2, < 1`
-
-Root and dummy Gemfiles point at that path by default. Override with
-`RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` when testing against another
-checkout. Remove the vendored copy once upstream publishes a 4.x-compatible
-gemspec.
+Notifications stays on branch `cursor/otp-delivery-payload-78f4` because tag
+`v0.3.4` does not contain that OTP payload commit. PWA stays on
+`cursor/pwa-service-worker-seam-453c` because tag `v0.2.3` does not contain the
+service-worker seam commit. Do not move those pins until the target tag is an
+ancestor of the pinned commit.

@@ -21,6 +21,9 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
 
     assert connection.column_exists?(:recording_studio_recordings, :root_recording_id)
     assert connection.table_exists?(:recording_studio_accesses)
+    assert connection.table_exists?(:recording_studio_access_invitations)
+    role_column = connection.columns(:recording_studio_accesses).find { |column| column.name == "role" }
+    assert_equal :string, role_column.type
     refute connection.table_exists?(:recording_studio_access_boundaries)
     refute connection.table_exists?(:recording_studio_device_sessions)
   end
@@ -50,6 +53,11 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     assert_equal folder_recording, page_recording.parent_recording
     assert_equal root_recording, page_recording.root_recording
     assert_equal 3, Workspace.count
+    assert RecordingStudioAccessible.authorized?(
+      actor: User.find_by!(email: "admin@admin.com"),
+      recording: root_recording,
+      role: "admin"
+    )
 
     assert_no_difference -> { User.count } do
       assert_no_difference -> { RecordingStudio::Recording.count } do

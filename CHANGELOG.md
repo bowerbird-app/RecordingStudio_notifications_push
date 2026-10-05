@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+### Changed
+
+- Development and dummy Gemfiles pin Accessible to GitHub tag `v0.11.1` (was
+  `v0.7.0`), Root Switchable to `v0.5.3` (dummy, was `v0.5.0`), and
+  notifications email to `v0.3.4` (was the vendored 4.2 compatibility
+  checkout). Recording Studio stays on `v4.2.2`.
+- Dummy app copies Accessible 0.8–0.11 migrations: `depends_on_recording_id`,
+  access invitations, and string `role`. Dummy seeds grant through
+  `bootstrap_owner_access!` (Accessible 0.11 treats `RecordingStudio::Access`
+  as readonly).
+- Notifications stays on branch `cursor/otp-delivery-payload-78f4` and PWA
+  stays on `cursor/pwa-service-worker-seam-453c`: neither target tag contains
+  the pinned commit (`git merge-base --is-ancestor`).
+
+### Upgrade notes
+
+- Point host Gemfiles at Accessible `v0.11.1` when you follow this
+  development pin set. Accessible `0.11` stores roles as strings and ships a
+  migration; in hosts that use Accessible run
+  `bin/rails generate recording_studio_accessible:migrations` then
+  `bin/rails db:migrate`. Dummy and host grants must use Accessible public
+  services. Do not `update!` / `create!` `RecordingStudio::Access` rows.
+- Notifications email `v0.3.4` already gemspecs `recording_studio ~> 4.2`.
+  Drop the vendored email checkout. Override with
+  `RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` only for a local path.
+- This push channel gem version is unchanged. No push-channel migration.
+
 ## 0.2.2
 
 Devices screens use Recording Studio core's default layout.
