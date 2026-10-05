@@ -1,10 +1,10 @@
 # Migration notes
 
-## 0.2.3
+## 0.2.6
 
 ### Host app steps
 
-1. Bump to `0.2.3`. ENV-only hosts need no changes.
+1. Bump to `0.2.6`. ENV-only hosts need no changes.
 2. Optional: store Firebase secrets in `bin/rails credentials:edit` under
    `firebase:` (`api_key`, `app_id`, `auth_domain`, `messaging_sender_id`,
    `project_id`, `storage_bucket`, `vapid_public_key`). `service_account_json`

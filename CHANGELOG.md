@@ -29,9 +29,12 @@
   `RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` only for a local path.
 - This push channel gem version is unchanged. No push-channel migration.
 
-## 0.2.3
+## 0.2.6
 
 Firebase config reads Rails credentials, then ENV.
+
+Tags `v0.2.3` through `v0.2.5` already exist on this repository while `main`
+still had `VERSION` `0.2.2`; this release ships as `0.2.6`.
 
 ### Changed
 
@@ -48,7 +51,7 @@ Firebase config reads Rails credentials, then ENV.
 
 ### Upgrade notes
 
-- Bump to `0.2.3`. ENV-only hosts need no changes.
+- Bump to `0.2.6`. ENV-only hosts need no changes.
 - Optional: move secrets into Rails credentials under `firebase:` using the
   snake_case keys above. Keep `test/dummy/config/master.key` out of git.
 
