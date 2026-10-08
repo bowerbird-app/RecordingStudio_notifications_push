@@ -6,7 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 # Parent gems are not published to RubyGems; resolve from GitHub.
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.2"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.3.0"
 # Branch pin: tag v0.3.4 does not contain this OTP payload commit
 # (git merge-base --is-ancestor). See CHANGELOG / PR notes.
 gem "recording_studio_notifications",
