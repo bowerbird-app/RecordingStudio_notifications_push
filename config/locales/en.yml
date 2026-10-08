@@ -1,0 +1,67 @@
+en:
+  recording_studio:
+    notifications_push:
+      devices:
+        title: Connected devices
+        subtitle: Your connected devices that can receive notifications
+        enable_browser: Enable on this browser
+        enable_device: Enable on this device
+        manage: Manage notifications
+        remove: Remove device
+        remove_confirm: Stop push alerts on this device?
+        current: this device
+        last_seen: "Last seen %{time} ago"
+        unconfigured_title: Firebase is not configured yet
+        unconfigured_body: Set the FIREBASE_* environment variables to enable real browser registration.
+      flashes:
+        removed: That device will stay quiet now.
+        not_found: We could not find that device.
+      labels:
+        browser: Browser
+        "on": "%{browser} on %{os}"
+        browsers:
+          edge: Edge
+          chrome: Chrome
+          firefox: Firefox
+          safari: Safari
+          opera: Opera
+          browser: Browser
+        os:
+          ipad: iPad
+          iphone: iPhone
+          mac: Mac
+          windows: Windows
+          android: Android
+          linux: Linux
+          device: device
+      payloads:
+        fallback_title: Notification
+        test_title: Push test
+        test_body: If you can read this, this browser can show push.
+      js:
+        enable_browser: Enable on this browser
+        enable_device: Enable on this device
+        unsupported_notifications: This browser does not support notifications.
+        unsupported_messaging: This browser does not support Firebase messaging.
+        unsupported_service_worker: This browser does not support service workers.
+        permission_denied: Notifications are blocked for this site. Allow them in your browser settings, then try again.
+        token_failed: Could not turn on alerts for this browser. Try again.
+        registration_failed: Could not register this browser.
+        label_on: "%{browser} on %{os}"
+        browser: Browser
+        this_device: this device
+        browsers:
+          edge: Edge
+          opera: Opera
+          chrome: Chrome
+          firefox: Firefox
+          safari: Safari
+          browser: Browser
+        os:
+          ipad: iPad
+          iphone: iPhone
+          mac: Mac
+          windows: Windows
+          android: Android
+          linux: Linux
+          this_device: this device

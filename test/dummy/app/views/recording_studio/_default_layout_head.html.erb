@@ -24,9 +24,18 @@
 <% if pwa_manifest_href.present? %>
   <link rel="manifest" href="<%= pwa_manifest_href %>">
 <% end %>
+<%
+  locale_attributes = respond_to?(:recording_studio_locale_attributes) ? recording_studio_locale_attributes : { lang: I18n.locale.to_s }
+  fp_copy = respond_to?(:flat_pack_copy_data) ? flat_pack_copy_data[:fp_copy] : nil
+%>
 <% if pwa_service_worker_href.present? %>
   <%= javascript_tag nonce: true do %>
     document.documentElement.setAttribute("data-theme", "rounded");
+    document.documentElement.lang = <%= locale_attributes[:lang].to_json %>;
+    document.documentElement.dir = <%= (locale_attributes[:dir] || "ltr").to_json %>;
+    <% if fp_copy.present? %>
+    document.documentElement.setAttribute("data-fp-copy", <%= raw fp_copy.to_json %>);
+    <% end %>
     window.RecordingStudioPwa = window.RecordingStudioPwa || {};
     if ("serviceWorker" in navigator) {
       window.RecordingStudioPwa.serviceWorkerReady = navigator.serviceWorker
@@ -41,6 +50,11 @@
 <% else %>
   <%= javascript_tag nonce: true do %>
     document.documentElement.setAttribute("data-theme", "rounded");
+    document.documentElement.lang = <%= locale_attributes[:lang].to_json %>;
+    document.documentElement.dir = <%= (locale_attributes[:dir] || "ltr").to_json %>;
+    <% if fp_copy.present? %>
+    document.documentElement.setAttribute("data-fp-copy", <%= raw fp_copy.to_json %>);
+    <% end %>
     window.RecordingStudioPwa = window.RecordingStudioPwa || {};
     window.RecordingStudioPwa.serviceWorkerReady = Promise.reject(
       new Error("PWA service worker route is not mounted")

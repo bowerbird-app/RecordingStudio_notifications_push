@@ -47,7 +47,8 @@ class TestPushTest < Minitest::Test
     assert_nil result.error
     assert_equal 1, installation.seen_count
     assert_equal "fid-1", client.calls.first[:token]
-    assert_equal RecordingStudioNotificationsPush::TestPush::TITLE, client.calls.first[:title]
+    assert_equal RecordingStudioNotificationsPush::Copy.t("payloads.test_title"), client.calls.first[:title]
+    assert_equal RecordingStudioNotificationsPush::Copy.t("payloads.test_body"), client.calls.first[:body]
   end
 
   def test_reports_refusal_with_the_fcm_message
@@ -105,6 +106,20 @@ class TestPushTest < Minitest::Test
 
     refute result.accepted?
     assert_match(/service account JSON is invalid/, result.error)
+  end
+
+  def test_title_and_body_arguments_override_locale_defaults
+    installation = FakeInstallation.new(token: "fid-1")
+    client = FakeClient.new({ ok: true, status: 200, error_message: nil })
+
+    RecordingStudioNotificationsPush::TestPush.new(
+      client: client,
+      title: "Acme ping",
+      body: "Host body"
+    ).call(installation: installation)
+
+    assert_equal "Acme ping", client.calls.first[:title]
+    assert_equal "Host body", client.calls.first[:body]
   end
 
   def test_result_hash_drops_blank_values

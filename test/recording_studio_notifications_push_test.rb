@@ -4,7 +4,7 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.2.6", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.3.0", ::RecordingStudioNotificationsPush::VERSION
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -33,13 +33,18 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.3.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.11.1"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
-    assert_includes gemfile, "cursor/otp-delivery-payload-78f4"
+    assert_includes gemfile, 'tag: "v0.4.1"'
+    refute_includes gemfile, "cursor/otp-delivery-payload-78f4"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications_email"'
     assert_includes gemfile, 'tag: "v0.3.4"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
     assert_includes gemfile, "cursor/pwa-service-worker-seam-453c"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.5.3"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.198"'
+    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
+    assert_includes gemfile, 'tag: "v0.1.2"'
+    refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
+                    "recording_studio_internationalization"
   end
 
   def test_does_not_ship_template_capabilities_or_pages
@@ -127,8 +132,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes push_devices_js, "detectCurrentBrowser"
     assert_includes push_devices_js, "installedApp"
     assert_includes push_devices_js, "hideEnablePanel"
-    assert_includes push_devices_js, "Enable on this device"
-    assert_includes push_devices_js, "Enable on this browser"
+    assert_includes push_devices_js, 'this.copy("enable_device")'
+    assert_includes push_devices_js, 'this.copy("enable_browser")'
+    assert_includes push_devices_js, 'this.copy("permission_denied")'
+    assert_includes push_devices_js, 'this.copy("unsupported_notifications")'
+    refute_includes push_devices_js, "Enable on this device"
+    refute_includes push_devices_js, "Enable on this browser"
+    refute_includes push_devices_js, "This browser does not support notifications."
     refute_includes push_devices_js, "fillNotificationHelp"
     refute_includes push_devices_js, "helpSiteSteps"
     refute_includes push_devices_js, "helpOsSteps"
@@ -156,12 +166,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes devices_show, "FlatPack::PageNav"
     refute_includes devices_show, "PageNav::Component"
     assert_includes devices_show, "push_enable: true"
-    assert_includes devices_show, "Connected devices"
-    assert_includes devices_show, "Your connected devices that can receive notifications"
+    assert_includes devices_show, 'push_t("devices.title")'
+    assert_includes devices_show, 'push_t("devices.subtitle")'
+    assert_includes devices_show, "push_js_copy"
     refute_includes devices_show, "Browsers and phones that get push alerts"
     refute_includes devices_show, "Push Notifications"
     refute_includes devices_show, "Get notifications on your devices"
-    assert_includes devices_show, "Manage notifications"
+    assert_includes devices_show, 'push_t("devices.manage")'
     assert_includes devices_show, "@notifications_settings_path"
     assert_includes devices_show, "flex flex-wrap items-center gap-3"
     assert_includes devices_show, "enablePanel"

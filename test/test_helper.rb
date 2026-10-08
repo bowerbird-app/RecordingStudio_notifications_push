@@ -11,6 +11,12 @@ require "json"
 Time.zone ||= "UTC"
 require "recording_studio_notifications"
 require "recording_studio_notifications_push"
+require "i18n"
+
+I18n.load_path |= [File.expand_path("../config/locales/en.yml", __dir__)]
+I18n.backend.reload!
+I18n.available_locales = %i[en]
+I18n.default_locale = :en
 
 module StubSupport
   def stub(method_name, implementation)

@@ -5,7 +5,7 @@
       icon_only: true,
       style: :ghost,
       size: :md,
-      aria: { label: "Toggle sidebar" },
+      aria: { label: t("dummy.nav.toggle_sidebar", default: "Toggle sidebar") },
       data: {
         "flat-pack--sidebar-layout-target": "mobileToggle",
         action: "click->flat-pack--sidebar-layout#toggleMobile"
@@ -20,7 +20,14 @@
 
   <% nav.right do %>
     <% if user_signed_in? %>
-      <div class="flex items-center gap-3">
+      <div
+        class="flex items-center gap-3"
+        data-controller="flat-pack--theme"
+        data-flat-pack--theme-themes-value='[{"value":"rounded","label":"<%= j t("dummy.theme.rounded", default: "Rounded") %>"},{"value":"system","label":"<%= j t("dummy.theme.system", default: "System") %>"},{"value":"light","label":"<%= j t("dummy.theme.light", default: "Light") %>"},{"value":"dark","label":"<%= j t("dummy.theme.dark", default: "Dark") %>"}]'
+      >
+        <%= dummy_language_selector %>
+        <%= dummy_theme_selector %>
+
         <%= recording_studio_notifications_menu if respond_to?(:recording_studio_notifications_menu) %>
 
         <%= recording_studio_root_switch_dropdown(style: :ghost, size: :md) %>

@@ -37,6 +37,16 @@ class EngineTest < Minitest::Test
     refute_nil initializer
   end
 
+  def test_engine_loads_only_english_locale_files
+    locale_dir = RecordingStudioNotificationsPush::Engine.root.join("config/locales")
+    loaded = I18n.load_path.select { |path| path.to_s.start_with?(locale_dir.to_s) }
+
+    assert(Dir[locale_dir.join("*")].any? { |path| path.end_with?("en.yml") })
+    refute(Dir[locale_dir.join("*")].any? { |path| path.end_with?("fr.yml") })
+    assert(loaded.any? { |path| path.end_with?("en.yml") }) if loaded.any?
+    refute(loaded.any? { |path| path.end_with?("fr.yml") })
+  end
+
   private
 
   def find_initializer(name)

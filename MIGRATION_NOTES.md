@@ -1,5 +1,21 @@
 # Migration notes
 
+## 0.3.0
+
+### Host app steps
+
+1. Bump to `0.3.0`. No configuration or migration changes are required.
+2. English screens stay the same. To offer another language, copy
+   `recording_studio.notifications_push.*` from `config/locales/en.yml` into
+   `config/locales/<locale>.yml` and list that locale in
+   `config.i18n.available_locales`.
+3. Do not add `RecordingStudio_Internationalization` to this gem. Add it in the
+   host if you want a language selector.
+4. Notification titles/bodies and stored device labels stay as written.
+   `TestPush.new(title:, body:)` still wins over locale defaults.
+5. Parent notifications `0.4.x` is compatible (`>= 0.3.0, < 1`). Dummy uses
+   `v0.4.1`.
+
 ## 0.2.6
 
 ### Host app steps

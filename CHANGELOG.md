@@ -2,32 +2,44 @@
 
 ## Unreleased
 
-### Changed
+## 0.3.0
 
-- Development and dummy Gemfiles pin Accessible to GitHub tag `v0.11.1` (was
-  `v0.7.0`), Root Switchable to `v0.5.3` (dummy, was `v0.5.0`), and
-  notifications email to `v0.3.4` (was the vendored 4.2 compatibility
-  checkout). Recording Studio stays on `v4.2.2`.
-- Dummy app copies Accessible 0.8–0.11 migrations: `depends_on_recording_id`,
-  access invitations, and string `role`. Dummy seeds grant through
-  `bootstrap_owner_access!` (Accessible 0.11 treats `RecordingStudio::Access`
-  as readonly).
-- Notifications stays on branch `cursor/otp-delivery-payload-78f4` and PWA
-  stays on `cursor/pwa-service-worker-seam-453c`: neither target tag contains
-  the pinned commit (`git merge-base --is-ancestor`).
+Customer-facing push devices copy now lives under
+`recording_studio.notifications_push.*` so hosts can translate the opt-in
+screen, flashes, Stimulus strings, and default payloads this gem generates.
+
+### Added
+
+- Engine ships English only in `config/locales/en.yml`
+- Nested keys: `t("recording_studio.notifications_push.devices.title")`
+- Dummy hosts English and French via Recording Studio Internationalization, with
+  a compact language selector in the top nav (left of the theme selector)
+- Stimulus enable/disable copy, permission denied, and unsupported-browser
+  messages are passed from I18n (no hard-coded English in JS)
 
 ### Upgrade notes
 
-- Point host Gemfiles at Accessible `v0.11.1` when you follow this
-  development pin set. Accessible `0.11` stores roles as strings and ships a
-  migration; in hosts that use Accessible run
-  `bin/rails generate recording_studio_accessible:migrations` then
-  `bin/rails db:migrate`. Dummy and host grants must use Accessible public
-  services. Do not `update!` / `create!` `RecordingStudio::Access` rows.
-- Notifications email `v0.3.4` already gemspecs `recording_studio ~> 4.2`.
-  Drop the vendored email checkout. Override with
-  `RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` only for a local path.
-- This push channel gem version is unchanged. No push-channel migration.
+- Bump to **0.3.0** (minor: hosts can translate the push devices screen). No
+  migration
+- English screens stay the same. `TestPush` `title:` / `body:` arguments still
+  win over locale defaults, including `nil`
+- To offer another language, copy `recording_studio.notifications_push.*` from
+  `config/locales/en.yml` into the host (`config/locales/<locale>.yml`) and list
+  that locale in `config.i18n.available_locales`. Dummy
+  `test/dummy/config/locales/fr.yml` is a complete starting point
+- Do not add `RecordingStudio_Internationalization` as a gem dependency of this
+  engine. Use plain Rails I18n. Internationalization is a host (and dummy)
+  concern
+- Notification titles and bodies stored by the parent notifications gem stay
+  untranslated. Stored device labels stay as written
+- Developer errors (missing recipient, missing Firebase installation id,
+  invalid service-account JSON, FCM HTTP failures) stay English
+- Dummy pins notifications `v0.4.1` and Flatpack `v0.1.209`. The gemspec still
+  allows `recording_studio_notifications` `>= 0.3.0, < 1`
+- Dummy adds `RecordingStudio_Internationalization` `v0.1.2` as a host-only
+  dependency. Development and dummy Gemfiles pin notifications to tag `v0.4.1`
+  (was the OTP payload branch). PWA stays on
+  `cursor/pwa-service-worker-seam-453c`
 
 ## 0.2.6
 

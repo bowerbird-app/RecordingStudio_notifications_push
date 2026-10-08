@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="rounded">
+<html <%= tag.attributes(dummy_document_attributes) %>>
   <head>
     <title><%= content_for(:title) || (defined?(RecordingStudioPwa) ? RecordingStudioPwa.web_app_name : "Dummy") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">

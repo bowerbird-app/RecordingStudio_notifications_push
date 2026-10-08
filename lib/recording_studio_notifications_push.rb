@@ -6,6 +6,7 @@ require "uri"
 require "rails"
 require "recording_studio_notifications"
 require "recording_studio_notifications_push/version"
+require "recording_studio_notifications_push/copy"
 
 module RecordingStudioNotificationsPush
   class ConfigurationError < StandardError; end

@@ -14,3 +14,8 @@ When they are not, the page shows a warning and keeps Manage notifications.
 Dummy home stays on the host sidebar. The devices screen is titled
 **Connected devices** and uses Recording Studio's default layout (back and
 close), not that sidebar.
+
+The dummy ships English and French. Use the language selector in the top nav
+(left of the theme selector) to switch. Engine copy lives under
+`recording_studio.notifications_push.*`; French overrides are in
+`config/locales/fr.yml`.

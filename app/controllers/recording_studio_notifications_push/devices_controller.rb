@@ -4,6 +4,8 @@ module RecordingStudioNotificationsPush
   class DevicesController < ApplicationController
     include RecordingStudio::UsesDefaultLayout
 
+    helper DevicesHelper
+
     def show
       @installations = Installation.active.for_recipient(current_push_actor).order(last_seen_at: :desc)
       @firebase_web_config = RecordingStudioNotificationsPush.configuration.firebase_web_config
@@ -16,9 +18,9 @@ module RecordingStudioNotificationsPush
     def destroy
       installation = Installation.active.for_recipient(current_push_actor).find(params[:id])
       installation.disable!(reason: "removed")
-      redirect_to devices_path, notice: "That device will stay quiet now."
+      redirect_to devices_path, notice: Copy.t("flashes.removed")
     rescue ActiveRecord::RecordNotFound
-      redirect_to devices_path, alert: "We could not find that device."
+      redirect_to devices_path, alert: Copy.t("flashes.not_found")
     end
 
     private
