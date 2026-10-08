@@ -60,6 +60,50 @@ class InstallationTest < Minitest::Test
                  RecordingStudioNotificationsPush::Installation.label_from_user_agent(user_agent)
   end
 
+  def test_display_label_keeps_stored_labels_over_generated_user_agent
+    installation = installation_with(
+      label: "Jo test tablet",
+      user_agent: chrome_mac_user_agent,
+      platform: "web"
+    )
+
+    assert_equal "Jo test tablet", installation.display_label
+  end
+
+  def test_display_label_falls_back_to_generated_i18n_label
+    installation = installation_with(label: nil, user_agent: chrome_mac_user_agent)
+
+    assert_equal "Chrome on Mac", installation.display_label
+  end
+
+  def test_generated_device_labels_follow_the_current_locale
+    I18n.available_locales = %i[en fr]
+    I18n.backend.store_translations(
+      :fr,
+      recording_studio: {
+        notifications_push: {
+          labels: {
+            on: "%{browser} sur %{os}", # rubocop:disable Style/FormatStringToken
+            browsers: { chrome: "Chrome" },
+            os: { mac: "Mac" }
+          }
+        }
+      }
+    )
+
+    I18n.with_locale(:en) do
+      assert_equal "Chrome on Mac",
+                   RecordingStudioNotificationsPush::Installation.label_from_user_agent(chrome_mac_user_agent)
+    end
+    I18n.with_locale(:fr) do
+      assert_equal "Chrome sur Mac",
+                   RecordingStudioNotificationsPush::Installation.label_from_user_agent(chrome_mac_user_agent)
+    end
+  ensure
+    I18n.available_locales = %i[en]
+    I18n.locale = :en
+  end
+
   def test_user_agent_like_detects_raw_user_agent_labels
     assert RecordingStudioNotificationsPush::Installation.user_agent_like?(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
@@ -103,5 +147,23 @@ class InstallationTest < Minitest::Test
     assert_includes source, "recording_studio_notifications_push_installations"
     assert_includes source, "firebase_installation_id"
     refute_includes source, "recording_studio_notifications_push_pages"
+  end
+
+  private
+
+  def installation_with(label:, user_agent:, platform: nil)
+    recording = RecordingStudioNotificationsPush::Installation.allocate
+    recording.define_singleton_method(:label) { label }
+    recording.define_singleton_method(:user_agent) { user_agent }
+    recording.define_singleton_method(:platform) { platform }
+    recording
+  end
+
+  def chrome_mac_user_agent
+    [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+      "AppleWebKit/537.36 (KHTML, like Gecko)",
+      "Chrome/120.0.0.0 Safari/537.36"
+    ].join(" ")
   end
 end

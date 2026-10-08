@@ -69,13 +69,10 @@ module RecordingStudioNotificationsPush
     end
 
     def display_label
-      generated = self.class.label_from_user_agent(user_agent)
-      return generated if generated.present?
-
       candidate = label.to_s.strip
       return candidate if candidate.present? && !self.class.user_agent_like?(candidate)
 
-      platform.presence || Copy.t("labels.browser")
+      self.class.label_from_user_agent(user_agent) || platform.presence || Copy.t("labels.browser")
     end
 
     def mobile?
