@@ -93,3 +93,9 @@ mount RecordingStudioNotificationsPush::Engine, at: "/notifications/push"
 
 Devices UI: `/notifications/push/devices` (Recording Studio default layout)  
 Installations JSON: `POST/DELETE /notifications/push/installations`
+
+Customer-facing devices copy, flashes, Stimulus strings, and default payloads
+this gem generates use Rails I18n under
+`recording_studio.notifications_push.*`. The engine ships English only. Stored
+notification titles/bodies stay as written. See the README Internationalization
+section.

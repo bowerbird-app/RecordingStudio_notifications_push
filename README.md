@@ -151,6 +151,32 @@ JSON record.
 Installations are keyed by polymorphic recipient + `firebase_installation_id`
 (FID-first targeting). `legacy_fcm_token` is optional for older clients.
 
+## Internationalization
+
+The engine ships English defaults in `config/locales/en.yml` under
+`recording_studio.notifications_push.*` and adds that file to the host I18n
+load path. The devices screen, flashes, default test-push payload, fallback
+banner title, and Stimulus strings resolve those keys at request time.
+
+Other languages are the host's job. Copy the same keys into
+`config/locales/<locale>.yml` and list that locale in
+`config.i18n.available_locales`. A host key with the same name overrides the
+English default. The dummy app's `test/dummy/config/locales/fr.yml` is a
+complete French override you can copy.
+
+`RecordingStudio_Internationalization` is optional and a host dependency. This
+gem does not declare it. Hosts that want a language selector add that gem
+themselves.
+
+Notification titles and bodies stored on the parent notification (or written
+by other gems) stay as written. Device labels you store yourself stay as
+written. Browser labels generated from a user agent follow the current locale.
+
+JavaScript has no hard-coded English. The devices Stimulus controller reads
+copy from a `copy` value rendered from I18n (the same idea as Flatpack's
+`data-fp-copy` on `<html>`). `TestPush` `title:` / `body:` arguments still win
+over locale defaults, including `nil`.
+
 ## Development Gemfile pins
 
 Until parent gems are published:
@@ -160,17 +186,16 @@ gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.2"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.11.1"
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    branch: "cursor/otp-delivery-payload-78f4"
+    tag: "v0.4.1"
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.3.4"
 gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch: "cursor/pwa-service-worker-seam-453c"
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.209"
 ```
 
-Notifications stays on the OTP payload branch until tag `v0.3.4` contains that
-commit. PWA stays on the service-worker seam branch until tag `v0.2.3` contains
-that commit. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md).
+PWA stays on the service-worker seam branch until tag `v0.2.3` contains that
+commit. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md).
 
 ## Dummy credentials
 

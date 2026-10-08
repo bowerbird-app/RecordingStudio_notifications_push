@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   mount RecordingStudioRootSwitchable::Engine, at: "/recording_studio_root_switchable"
   mount RecordingStudioNotifications::Engine, at: "/notifications"
   mount RecordingStudioNotificationsPush::Engine, at: "/notifications/push"
+  mount RecordingStudioInternationalization::Engine, at: "/recording_studio_internationalization"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check

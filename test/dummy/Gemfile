@@ -3,11 +3,10 @@ source "https://rubygems.org"
 # Use the recording_studio_notifications_push engine
 gem "recording_studio_notifications_push", path: "../.."
 
-# Parent notification stack. Branch pin: tag v0.3.4 does not contain this
-# OTP payload commit (git merge-base --is-ancestor).
+# Parent notification stack. v0.4.1 includes delivery payloads and customer I18n.
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    branch: "cursor/otp-delivery-payload-78f4"
+    tag: "v0.4.1"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 if email_path && !email_path.strip.empty?
@@ -53,8 +52,13 @@ gem "jbuilder"
 # Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
 gem "tailwindcss-rails"
 
+# Dummy-only language switching. The push gem ships English; hosts own other languages.
+gem "recording_studio_internationalization",
+    github: "bowerbird-app/RecordingStudio_Internationalization",
+    tag: "v0.1.2"
+
 # FlatPack UI component library [https://github.com/bowerbird-app/flatpack]
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.209"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]

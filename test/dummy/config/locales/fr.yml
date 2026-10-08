@@ -1,0 +1,168 @@
+# Dummy-only host translations. The engine ships English defaults; other
+# languages belong to the host. This file covers every engine
+# recording_studio.notifications_push key plus dummy chrome.
+fr:
+  date:
+    abbr_month_names:
+      - ~
+      - janv.
+      - févr.
+      - mars
+      - avr.
+      - mai
+      - juin
+      - juil.
+      - août
+      - sept.
+      - oct.
+      - nov.
+      - déc.
+  datetime:
+    distance_in_words:
+      half_a_minute: une demi-minute
+      less_than_x_seconds:
+        one: moins d’une seconde
+        other: moins de %{count} secondes
+      x_seconds:
+        one: 1 seconde
+        other: "%{count} secondes"
+      less_than_x_minutes:
+        one: moins d’une minute
+        other: moins de %{count} minutes
+      x_minutes:
+        one: 1 minute
+        other: "%{count} minutes"
+      about_x_hours:
+        one: environ une heure
+        other: environ %{count} heures
+      x_days:
+        one: 1 jour
+        other: "%{count} jours"
+      about_x_months:
+        one: environ un mois
+        other: environ %{count} mois
+      x_months:
+        one: 1 mois
+        other: "%{count} mois"
+      about_x_years:
+        one: environ un an
+        other: environ %{count} ans
+      over_x_years:
+        one: plus d’un an
+        other: plus de %{count} ans
+      almost_x_years:
+        one: presque un an
+        other: presque %{count} ans
+  recording_studio:
+    internationalization:
+      selector:
+        label: Langue
+        submit: Changer de langue
+    notifications_push:
+      devices:
+        title: Appareils connectés
+        subtitle: Vos appareils connectés qui peuvent recevoir des notifications
+        enable_browser: Activer sur ce navigateur
+        enable_device: Activer sur cet appareil
+        manage: Gérer les notifications
+        remove: Retirer l’appareil
+        remove_confirm: Arrêter les alertes push sur cet appareil ?
+        current: cet appareil
+        last_seen: "Vu il y a %{time}"
+        unconfigured_title: Firebase n’est pas encore configuré
+        unconfigured_body: Définissez les variables d’environnement FIREBASE_* pour activer l’inscription du navigateur.
+      flashes:
+        removed: Cet appareil restera silencieux.
+        not_found: Impossible de trouver cet appareil.
+      labels:
+        browser: Navigateur
+        "on": "%{browser} sur %{os}"
+        browsers:
+          edge: Edge
+          chrome: Chrome
+          firefox: Firefox
+          safari: Safari
+          opera: Opera
+          browser: Navigateur
+        os:
+          ipad: iPad
+          iphone: iPhone
+          mac: Mac
+          windows: Windows
+          android: Android
+          linux: Linux
+          device: appareil
+      payloads:
+        fallback_title: Notification
+        test_title: Test push
+        test_body: Si vous lisez ceci, ce navigateur peut afficher les notifications push.
+      js:
+        enable_browser: Activer sur ce navigateur
+        enable_device: Activer sur cet appareil
+        unsupported_notifications: Ce navigateur ne prend pas en charge les notifications.
+        unsupported_messaging: Ce navigateur ne prend pas en charge Firebase Messaging.
+        unsupported_service_worker: Ce navigateur ne prend pas en charge les service workers.
+        permission_denied: Les notifications sont bloquées pour ce site. Autorisez-les dans les réglages du navigateur, puis réessayez.
+        token_failed: Impossible d’activer les alertes pour ce navigateur. Réessayez.
+        registration_failed: Impossible d’enregistrer ce navigateur.
+        label_on: "%{browser} sur %{os}"
+        browser: Navigateur
+        this_device: cet appareil
+        browsers:
+          edge: Edge
+          opera: Opera
+          chrome: Chrome
+          firefox: Firefox
+          safari: Safari
+          browser: Navigateur
+        os:
+          ipad: iPad
+          iphone: iPhone
+          mac: Mac
+          windows: Windows
+          android: Android
+          linux: Linux
+          this_device: cet appareil
+  dummy:
+    nav:
+      toggle_sidebar: Ouvrir le menu
+    sidebar:
+      brand: Démo push
+      subtitle: Recording Studio
+      nav: Navigation principale
+      open: Ouvrir le menu
+      collapse: Refermer le menu
+      home: Accueil
+      push_devices: Appareils push
+      inbox: Boîte de réception
+      notification_settings: Réglages des notifications
+      install: Installation
+      config: Config
+      sign_out: Se déconnecter
+    home:
+      title: Notifications push
+      subtitle: App dummy pour le canal push Firebase de Recording Studio.
+    theme:
+      label: Thème
+      rounded: Arrondi
+      system: Système
+      light: Clair
+      dark: Sombre
+  flatpack:
+    page_nav:
+      back: Retour
+      close: Fermer
+      previous: Page précédente
+      label: Navigation de page
+    common:
+      close: Fermer
+      back: Retour
+    timestamp:
+      fallback: "-"
+      ago: "il y a %{distance}"
+      just_now: À l’instant
+      a_min_ago: il y a 1 min
+      minutes_ago: "il y a %{count} minutes"
+      hours_ago: "il y a %{count} heures"
+      yesterday: Hier
+      days_ago: "il y a %{count} jours"

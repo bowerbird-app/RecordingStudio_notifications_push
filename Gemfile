@@ -7,11 +7,9 @@ gemspec
 
 # Parent gems are not published to RubyGems; resolve from GitHub.
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.2.2"
-# Branch pin: tag v0.3.4 does not contain this OTP payload commit
-# (git merge-base --is-ancestor). See CHANGELOG / PR notes.
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    branch: "cursor/otp-delivery-payload-78f4"
+    tag: "v0.4.1"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 if email_path && !email_path.strip.empty?

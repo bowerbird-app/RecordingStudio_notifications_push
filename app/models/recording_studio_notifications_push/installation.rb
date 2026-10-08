@@ -69,10 +69,13 @@ module RecordingStudioNotificationsPush
     end
 
     def display_label
+      generated = self.class.label_from_user_agent(user_agent)
+      return generated if generated.present?
+
       candidate = label.to_s.strip
       return candidate if candidate.present? && !self.class.user_agent_like?(candidate)
 
-      self.class.label_from_user_agent(user_agent) || platform.presence || "Browser"
+      platform.presence || Copy.t("labels.browser")
     end
 
     def mobile?
@@ -95,7 +98,7 @@ module RecordingStudioNotificationsPush
       os = os_name_from_user_agent(agent)
       return unless browser && os
 
-      "#{browser} on #{os}"
+      Copy.t("labels.on", browser: browser, os: os)
     end
 
     def self.mobile_device?(user_agent: nil, platform: nil, label: nil)
@@ -107,23 +110,23 @@ module RecordingStudioNotificationsPush
     end
 
     def self.browser_name_from_user_agent(user_agent)
-      return "Edge" if user_agent.match?(%r{Edg/})
-      return "Chrome" if user_agent.match?(%r{Chrome/})
-      return "Firefox" if user_agent.match?(%r{Firefox/})
-      return "Safari" if user_agent.match?(%r{Safari/}) && !user_agent.match?(%r{Chrome/})
+      return Copy.t("labels.browsers.edge") if user_agent.match?(%r{Edg/})
+      return Copy.t("labels.browsers.chrome") if user_agent.match?(%r{Chrome/})
+      return Copy.t("labels.browsers.firefox") if user_agent.match?(%r{Firefox/})
+      return Copy.t("labels.browsers.safari") if user_agent.match?(%r{Safari/}) && !user_agent.match?(%r{Chrome/})
 
-      "Browser"
+      Copy.t("labels.browsers.browser")
     end
 
     def self.os_name_from_user_agent(user_agent)
-      return "iPad" if user_agent.match?(/iPad/)
-      return "iPhone" if user_agent.match?(/iPhone|iPod/)
-      return "Mac" if user_agent.match?(/Mac OS X|Macintosh/)
-      return "Windows" if user_agent.match?(/Windows/)
-      return "Android" if user_agent.match?(/Android/)
-      return "Linux" if user_agent.match?(/Linux/)
+      return Copy.t("labels.os.ipad") if user_agent.match?(/iPad/)
+      return Copy.t("labels.os.iphone") if user_agent.match?(/iPhone|iPod/)
+      return Copy.t("labels.os.mac") if user_agent.match?(/Mac OS X|Macintosh/)
+      return Copy.t("labels.os.windows") if user_agent.match?(/Windows/)
+      return Copy.t("labels.os.android") if user_agent.match?(/Android/)
+      return Copy.t("labels.os.linux") if user_agent.match?(/Linux/)
 
-      "device"
+      Copy.t("labels.os.device")
     end
   end
 end

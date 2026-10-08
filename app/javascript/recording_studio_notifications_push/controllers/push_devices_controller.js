@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["enablePanel"]
+  static targets = ["enablePanel", "status"]
   static values = {
     registerUrl: String,
     unregisterUrlTemplate: String,
@@ -9,7 +9,8 @@ export default class extends Controller {
     firebaseConfig: Object,
     firebaseReady: Boolean,
     serviceWorkerPath: String,
-    installations: Array
+    installations: Array,
+    copy: Object
   }
 
   connect() {
@@ -33,6 +34,24 @@ export default class extends Controller {
       this.element.removeEventListener("click", this._onPushClick)
       this._onPushClick = null
     }
+  }
+
+  copy(key, vars = {}) {
+    const template = (this.copyValue || {})[key]
+    if (template == null || template === "") return ""
+
+    return String(template).replace(/%\{(\w+)\}/g, (_, name) => {
+      const value = vars[name]
+      return value == null ? "" : String(value)
+    })
+  }
+
+  showStatus(message) {
+    if (!this.hasStatusTarget) return
+
+    const text = (message || "").toString().trim()
+    this.statusTarget.textContent = text
+    this.statusTarget.classList.toggle("hidden", text.length === 0)
   }
 
   async detectCurrentBrowser() {
@@ -59,26 +78,31 @@ export default class extends Controller {
   async enable(event) {
     event?.preventDefault?.()
     event?.stopPropagation?.()
+    this.showStatus("")
 
     try {
       if (!("Notification" in window)) {
-        throw new Error("This browser does not support notifications.")
+        this.showStatus(this.copy("unsupported_notifications"))
+        return
       }
 
       const permission = await Notification.requestPermission()
       if (permission !== "granted") {
+        this.showStatus(this.copy("permission_denied"))
         return
       }
 
       const token = await this.fetchFirebaseToken()
       if (!token) {
-        throw new Error("Could not get a Firebase token. Check the Firebase importmap pins.")
+        this.showStatus(this.copy("token_failed"))
+        return
       }
 
       await this.registerInstallation(token)
       window.location.reload()
     } catch (error) {
       console.error("[push-devices] enable failed", error)
+      this.showStatus(error?.message || this.copy("registration_failed"))
     }
   }
 
@@ -92,7 +116,7 @@ export default class extends Controller {
     const { getMessaging, getToken, isSupported } = await import("firebase/messaging")
 
     if (!(await isSupported())) {
-      throw new Error("This browser does not support Firebase messaging.")
+      throw new Error(this.copy("unsupported_messaging"))
     }
 
     const app = initializeApp(config)
@@ -117,7 +141,7 @@ export default class extends Controller {
     }
 
     if (!("serviceWorker" in navigator)) {
-      throw new Error("This browser does not support service workers.")
+      throw new Error(this.copy("unsupported_service_worker"))
     }
 
     const existing = await navigator.serviceWorker.getRegistration()
@@ -143,36 +167,39 @@ export default class extends Controller {
     if (!button) return
 
     button.textContent = this.installedApp()
-      ? "Enable on this device"
-      : "Enable on this browser"
+      ? this.copy("enable_device")
+      : this.copy("enable_browser")
   }
 
   browserLabel() {
     const { browser, os } = this.detectClient()
-    return `${browser} on ${os}`
+    return this.copy("label_on", { browser, os })
   }
 
   detectClient() {
     const ua = navigator.userAgent || ""
     const platformHint = navigator.userAgentData?.platform || ""
 
-    let browser = "Browser"
-    if (/Edg\/|EdgiOS\//.test(ua)) browser = "Edge"
-    else if (/OPR\/|OPiOS\//.test(ua)) browser = "Opera"
-    else if (/CriOS\/|Chrome\//.test(ua)) browser = "Chrome"
-    else if (/FxiOS\/|Firefox\//.test(ua)) browser = "Firefox"
-    else if (/Safari\//.test(ua)) browser = "Safari"
+    let browserKey = "browser"
+    if (/Edg\/|EdgiOS\//.test(ua)) browserKey = "edge"
+    else if (/OPR\/|OPiOS\//.test(ua)) browserKey = "opera"
+    else if (/CriOS\/|Chrome\//.test(ua)) browserKey = "chrome"
+    else if (/FxiOS\/|Firefox\//.test(ua)) browserKey = "firefox"
+    else if (/Safari\//.test(ua)) browserKey = "safari"
 
-    let os = "this device"
-    if (/iPad|Macintosh/.test(ua) && navigator.maxTouchPoints > 1) os = "iPad"
+    let osKey = "this_device"
+    if (/iPad|Macintosh/.test(ua) && navigator.maxTouchPoints > 1) osKey = "ipad"
     else if (/iPhone|iPod|iOS/.test(ua) || /iPhone|iPad|iOS/i.test(platformHint)) {
-      os = /iPad/.test(ua) ? "iPad" : "iPhone"
-    } else if (/Mac OS X|Macintosh|macOS/i.test(ua) || /macOS|Mac/i.test(platformHint)) os = "Mac"
-    else if (/Windows|Win32|Win64/i.test(ua) || /Windows/i.test(platformHint)) os = "Windows"
-    else if (/Android/i.test(ua) || /Android/i.test(platformHint)) os = "Android"
-    else if (/Linux/i.test(ua) || /Linux/i.test(platformHint)) os = "Linux"
+      osKey = /iPad/.test(ua) ? "ipad" : "iphone"
+    } else if (/Mac OS X|Macintosh|macOS/i.test(ua) || /macOS|Mac/i.test(platformHint)) osKey = "mac"
+    else if (/Windows|Win32|Win64/i.test(ua) || /Windows/i.test(platformHint)) osKey = "windows"
+    else if (/Android/i.test(ua) || /Android/i.test(platformHint)) osKey = "android"
+    else if (/Linux/i.test(ua) || /Linux/i.test(platformHint)) osKey = "linux"
 
-    return { browser, os }
+    return {
+      browser: this.copy(`browsers.${browserKey}`) || this.copy("browser"),
+      os: this.copy(`os.${osKey}`) || this.copy("this_device")
+    }
   }
 
   async registerInstallation(firebaseInstallationId, legacyFcmToken = null) {
@@ -198,7 +225,7 @@ export default class extends Controller {
     })
 
     if (!response.ok) {
-      let message = "Registration failed"
+      let message = this.copy("registration_failed")
       try {
         const payload = await response.json()
         message = payload.error || message

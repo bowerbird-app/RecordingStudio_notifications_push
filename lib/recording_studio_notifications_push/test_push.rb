@@ -15,12 +15,12 @@ module RecordingStudioNotificationsPush
       end
     end
 
-    TITLE = "Push test"
-    BODY = "If you can read this, this browser can show push."
-
-    def initialize(client: nil, configuration: RecordingStudioNotificationsPush.configuration)
+    def initialize(client: nil, configuration: RecordingStudioNotificationsPush.configuration,
+                   title: Copy::UNSET, body: Copy::UNSET)
       @client = client
       @configuration = configuration
+      @title = title
+      @body = body
     end
 
     def call(installation:)
@@ -39,8 +39,8 @@ module RecordingStudioNotificationsPush
     def send_probe(token)
       client.send_message(
         token: token,
-        title: TITLE,
-        body: BODY,
+        title: Copy.value(@title, "payloads.test_title"),
+        body: Copy.value(@body, "payloads.test_body"),
         url: "/",
         data: { "test_push" => "1" }
       )

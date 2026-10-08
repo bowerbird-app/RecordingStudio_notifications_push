@@ -7,6 +7,15 @@ GIT
       rails (>= 8.1.0)
 
 GIT
+  remote: https://github.com/bowerbird-app/RecordingStudio_Internationalization.git
+  revision: 554ddebae26e9a6ecfbf9e7f17ac2e2c66359613
+  tag: v0.1.2
+  specs:
+    recording_studio_internationalization (0.1.2)
+      rails (~> 8.1.0)
+      recording_studio (~> 4.2)
+
+GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_PWA.git
   revision: 4be2d8e77c8488fc53e54447d841e5bd57315895
   branch: cursor/pwa-service-worker-seam-453c
@@ -27,13 +36,13 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_notifications.git
-  revision: fac15fbbf2c4d9789c8b468cddee4c576e9c372c
-  branch: cursor/otp-delivery-payload-78f4
+  revision: 96e797bb2ee4e957922b8e0bd4f326926258277a
+  tag: v0.4.1
   specs:
-    recording_studio_notifications (0.3.0)
+    recording_studio_notifications (0.4.0)
       flat_pack
       rails (~> 8.1.0)
-      recording_studio
+      recording_studio (~> 4.2)
       recording_studio_accessible
       view_component
 
@@ -60,10 +69,10 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/flatpack.git
-  revision: 83a866fc3399c888614d7140ec63dd37f2d9bc35
-  tag: v0.1.198
+  revision: bdf2e381777e69db23cb61ccd60de6dbd1fe7958
+  tag: v0.1.209
   specs:
-    flat_pack (0.1.198)
+    flat_pack (0.1.209)
       pagy (~> 9.0)
       rails (>= 7.1, < 9)
       tailwind_merge (~> 0.13)
@@ -72,7 +81,7 @@ GIT
 PATH
   remote: ../..
   specs:
-    recording_studio_notifications_push (0.2.6)
+    recording_studio_notifications_push (0.3.0)
       rails (~> 8.1.0)
       recording_studio (~> 4.2)
       recording_studio_notifications (>= 0.3.0, < 1)
@@ -499,6 +508,7 @@ DEPENDENCIES
   rails (~> 8.1.1)
   recording_studio!
   recording_studio_accessible!
+  recording_studio_internationalization!
   recording_studio_notifications!
   recording_studio_notifications_email!
   recording_studio_notifications_push!
@@ -560,7 +570,7 @@ CHECKSUMS
   ffi (1.17.2-x86_64-darwin) sha256=981f2d4e32ea03712beb26e55e972797c2c5a7b0257955d8667ba58f2da6440e
   ffi (1.17.2-x86_64-linux-gnu) sha256=05d2026fc9dbb7cfd21a5934559f16293815b7ce0314846fee2ac8efbdb823ea
   ffi (1.17.2-x86_64-linux-musl) sha256=97c0eb3981414309285a64dc4d466bd149e981c279a56371ef811395d68cb95c
-  flat_pack (0.1.198)
+  flat_pack (0.1.209)
   fugit (1.12.1) sha256=5898f478ede9b415f0804e42b8f3fd53f814bd85eebffceebdbc34e1107aaf68
   globalid (1.4.0) sha256=037f12fbf1d9d7a014d501c2d5c77356fd4ddd96d7a7991d6700bba96706f427
   i18n (1.15.2) sha256=00f9eb62412fe593b2a65a97daa75300d37abb8f7202ec748e94b6d46a9dd1b5
@@ -630,9 +640,10 @@ CHECKSUMS
   rdoc (8.1.0) sha256=befc37880a5cfd36dcb176c748b5fd5ee39dd3536a75e81824e4972ce230f60a
   recording_studio (4.2.1)
   recording_studio_accessible (0.11.0)
-  recording_studio_notifications (0.3.0)
+  recording_studio_internationalization (0.1.2)
+  recording_studio_notifications (0.4.0)
   recording_studio_notifications_email (0.3.1)
-  recording_studio_notifications_push (0.2.6)
+  recording_studio_notifications_push (0.3.0)
   recording_studio_pwa (0.3.0)
   recording_studio_root_switchable (0.5.1)
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4

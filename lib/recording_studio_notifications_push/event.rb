@@ -28,7 +28,7 @@ module RecordingStudioNotificationsPush
       value = attribute(:title) if value.blank?
       return sanitize_header_text(value) if value.present?
 
-      "Notification"
+      Copy.t("payloads.fallback_title")
     end
 
     def body

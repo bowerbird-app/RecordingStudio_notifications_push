@@ -25,6 +25,22 @@ class EventTest < Minitest::Test
     assert_equal "/push-icon-coral.png", event.icon
   end
 
+  def test_blank_title_falls_back_to_locale_default
+    event = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(id: "1", title: "  ")
+    )
+
+    assert_equal "Notification", event.title
+  end
+
+  def test_stored_title_is_not_replaced_by_locale
+    event = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(id: "1", title: "Jo likes the new heading")
+    )
+
+    assert_equal "Jo likes the new heading", event.title
+  end
+
   def test_rejects_unsafe_urls
     event = RecordingStudioNotificationsPush::Event.wrap(
       Notification.new(id: "1", title: "T", url: "javascript:alert(1)")
