@@ -8,9 +8,6 @@ addon. It mounts:
 - `RecordingStudioNotificationsPush` at `/notifications/push`
 - PWA manifest + service-worker routes for the SW composition seam
 
-Push device metrics register through RecordingStudio Metrics. The dummy does
-not mount RecordingStudio API.
-
 Sign in with the seeded admin user (`admin@admin.com` / `Password`) and open
 **Manage devices**. When Firebase ENVs are set, use **Enable on this browser**.
 When they are not, the page shows a warning and keeps Manage notifications.
