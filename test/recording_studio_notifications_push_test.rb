@@ -33,7 +33,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.4.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.13.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
-    assert_includes gemfile, 'tag: "v0.4.1"'
+    assert_includes gemfile, 'tag: "v0.5.0"'
     refute_includes gemfile, "cursor/otp-delivery-payload-78f4"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications_email"'
     assert_includes gemfile, 'tag: "v0.3.4"'

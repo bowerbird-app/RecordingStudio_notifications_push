@@ -13,8 +13,8 @@
    host if you want a language selector.
 4. Notification titles/bodies and stored device labels stay as written.
    `TestPush.new(title:, body:)` still wins over locale defaults.
-5. Parent notifications `0.4.x` is compatible (`>= 0.3.0, < 1`). Dummy uses
-   `v0.4.1`.
+5. Parent notifications `0.5.x` is compatible (`>= 0.3.0, < 1`). Dummy uses
+   `v0.5.0`.
 
 ## 0.2.6
 
