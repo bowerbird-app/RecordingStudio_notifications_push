@@ -51,9 +51,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
     assert_includes gemfile, 'tag: "v0.1.2"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_admin", tag: "v2.0.7"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_api", tag: "v0.6.11"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.2.0"'
+    refute_includes gemfile, "recording_studio_api"
+    refute_includes gemfile, "RecordingStudio_api"
     refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
                     "recording_studio_internationalization"
   end
