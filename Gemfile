@@ -23,7 +23,7 @@ end
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
-    tag: "v0.11.1"
+    tag: "v0.13.0"
 # Branch pin: tag v0.2.3 does not contain the service-worker seam commit.
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",
