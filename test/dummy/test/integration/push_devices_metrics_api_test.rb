@@ -45,12 +45,6 @@ class PushDevicesMetricsApiTest < ActionDispatch::IntegrationTest
       name: "Workspace operations metrics #{SecureRandom.hex(4)}",
       api: :operations
     )
-    @public_token = provision_token(
-      access_point: @root,
-      actor: @staff,
-      role: :view,
-      name: "Public metrics #{SecureRandom.hex(4)}"
-    )
     Current.actor = nil
   end
 
@@ -121,12 +115,12 @@ class PushDevicesMetricsApiTest < ActionDispatch::IntegrationTest
 
   test "public API token is denied operations push device metrics" do
     get "#{OPERATIONS_ROOT}/metrics/push_devices/active",
-        headers: auth(@public_token),
+        headers: auth("public-api-token-not-operations"),
         as: :json
     assert_response :unauthorized
 
     get "#{PUBLIC_ROOT}/metrics/push_devices/active",
-        headers: auth(@public_token),
+        headers: auth("public-api-token-not-operations"),
         as: :json
     assert_includes [ 404, 401, 403 ], response.status
   end

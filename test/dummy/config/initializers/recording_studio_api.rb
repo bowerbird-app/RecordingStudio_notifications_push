@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RecordingStudioApi.configure do |config|
+  # Captured when AdminApi loads so CI eager-load does not require AdminRoot.
+  config.admin_root_recordable_type_names = [ "Workspace" ]
   config.openapi_title = "Recording Studio API"
   config.layout_name = "recording_studio/default_layout"
   config.rate_limit_oauth_enabled = false
