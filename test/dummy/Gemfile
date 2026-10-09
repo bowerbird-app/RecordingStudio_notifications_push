@@ -23,7 +23,7 @@ gem "recording_studio_pwa",
     branch: "cursor/pwa-service-worker-seam-453c"
 
 # RecordingStudio engine
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.3.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.4.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.11.1"
 
 # Root switcher for the top nav

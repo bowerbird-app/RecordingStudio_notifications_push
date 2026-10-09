@@ -6,7 +6,7 @@ source "https://rubygems.org"
 gemspec
 
 # Parent gems are not published to RubyGems; resolve from GitHub.
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.3.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.4.0"
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
     tag: "v0.4.1"
