@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+class AdminRoot < ApplicationRecord
+  include RecordingStudio::Recordable
+
+  recording_studio_recordable label: "Admin", root: true, shared: false
+  RecordingStudio.enable_capability(:accessible, on: self)
+  RecordingStudio.enable_capability(:api_access_point, on: self)
+
+  validates :name, presence: true
+end

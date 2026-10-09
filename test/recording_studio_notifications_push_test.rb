@@ -4,7 +4,14 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.3.0", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.4.0", ::RecordingStudioNotificationsPush::VERSION
+    lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
+    dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
+
+    assert_includes lockfile, "recording_studio_notifications_push (0.4.0)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.4.0)"
+    assert_includes lockfile, "recording_studio_metrics (0.2.0)"
+    assert_includes dummy_lockfile, "recording_studio_metrics (0.2.0)"
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -22,6 +29,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
     assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.2"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", "~> 0.2"'
     assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.3.0", "< 1"'
     assert_includes gemspec, "RecordingStudio_notifications_push"
     assert_includes gemspec, "CHANGELOG.md"
@@ -43,6 +51,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
     assert_includes gemfile, 'tag: "v0.1.2"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_admin", tag: "v2.0.7"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_api", tag: "v0.6.11"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.2.0"'
     refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
                     "recording_studio_internationalization"
   end
@@ -99,6 +110,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes readme, "service_account_json"
     assert_includes readme, "required only for sending"
     assert_includes readme, "deliver_rollup"
+    assert_includes readme, "recording_studio_metrics"
+    assert_includes readme, "v0.2.0"
+    assert_includes readme, "/recording_studio_api/apis/operations/v1/metrics/push_devices/active"
     refute_includes readme, "ExampleService"
     refute_includes readme, "addon template"
   end

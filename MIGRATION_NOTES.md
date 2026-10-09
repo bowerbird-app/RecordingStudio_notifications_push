@@ -1,5 +1,16 @@
 # Migration notes
 
+## 0.4.0
+
+### Host app steps
+
+1. Bump to `0.4.0`. No schema or push-delivery changes.
+2. Add `recording_studio_metrics` at tag `v0.2.0`. Hosts that expose the
+   operations API should pin `recording_studio_api` `v0.6.11` and call
+   `RecordingStudioMetrics::Api.register!(api: :operations)` once.
+3. Authorize staff through Accessible `:view` on the AdminRoot recording.
+   This gem does not register Metrics API routes itself.
+
 ## 0.3.0
 
 ### Host app steps

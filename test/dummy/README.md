@@ -4,6 +4,7 @@ This Rails app exists to validate the Recording Studio push notifications
 addon. It mounts:
 
 - `RecordingStudio` at `/recording_studio` (redirects to `/`)
+- `RecordingStudioApi` at `/recording_studio_api` (operations metrics)
 - `RecordingStudioNotifications` at `/notifications`
 - `RecordingStudioNotificationsPush` at `/notifications/push`
 - PWA manifest + service-worker routes for the SW composition seam

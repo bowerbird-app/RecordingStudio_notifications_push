@@ -29,6 +29,10 @@ module RecordingStudioNotificationsPush
       config.to_prepare { RecordingStudioNotificationsPush.register! }
     end
 
+    initializer "recording_studio_notifications_push.metrics" do
+      config.to_prepare { RecordingStudioNotificationsPush::Metrics.register! }
+    end
+
     initializer "recording_studio_notifications_push.register_pwa_service_worker",
                 after: "recording_studio_notifications_push.register_channel" do
       config.to_prepare do

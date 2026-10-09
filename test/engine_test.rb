@@ -32,6 +32,11 @@ class EngineTest < Minitest::Test
     refute_nil initializer
   end
 
+  def test_metrics_initializer_registers_definitions
+    initializer = find_initializer("recording_studio_notifications_push.metrics")
+    refute_nil initializer
+  end
+
   def test_pwa_initializer_exists
     initializer = find_initializer("recording_studio_notifications_push.register_pwa_service_worker")
     refute_nil initializer
