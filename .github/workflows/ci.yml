@@ -76,7 +76,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-          cache-version: ${{ hashFiles('test/dummy/Gemfile.lock') }}
+          cache-version: ${{ hashFiles('Gemfile.lock', 'test/dummy/Gemfile.lock') }}-metrics-0-4-0
 
       - name: Install dummy app dependencies
         run: bundle install
