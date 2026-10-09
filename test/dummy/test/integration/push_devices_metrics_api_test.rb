@@ -21,9 +21,11 @@ class PushDevicesMetricsApiTest < ActionDispatch::IntegrationTest
     @admin_root = RecordingStudio.root_recording_for(@admin_workspace)
     @original_access_resolver = RecordingStudioAdmin.configuration.access_recording_resolver
     @original_site_resolver = RecordingStudioAdmin.configuration.site_admin_recording_resolver
+    @original_actor_types = RecordingStudioAccessible.configuration.access_actor_types
     admin_recording = @admin_root
     RecordingStudioAdmin.configuration.access_recording_resolver = ->(_context) { admin_recording }
     RecordingStudioAdmin.configuration.site_admin_recording_resolver = ->(_context) { admin_recording }
+    RecordingStudioAccessible.configuration.access_actor_types = [ "User", "RecordingStudioApi::ApiClient" ]
     grant!(@admin_root, @staff, :admin)
     bootstrap_owner!(@root, @staff)
 
@@ -55,6 +57,7 @@ class PushDevicesMetricsApiTest < ActionDispatch::IntegrationTest
   teardown do
     RecordingStudioAdmin.configuration.access_recording_resolver = @original_access_resolver
     RecordingStudioAdmin.configuration.site_admin_recording_resolver = @original_site_resolver
+    RecordingStudioAccessible.configuration.access_actor_types = @original_actor_types
     Current.actor = nil
   end
 
