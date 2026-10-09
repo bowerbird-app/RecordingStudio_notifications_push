@@ -12,7 +12,7 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
 
   test "dummy app validates recordable declarations" do
     assert RecordingStudio.validate_recordable_declarations!
-    assert_equal %w[AdminRoot Workspace].sort, RecordingStudio.root_recordable_types.sort
+    assert_equal [ "Workspace" ], RecordingStudio.root_recordable_types
     assert_equal [ "Workspace", "Folder" ], RecordingStudio.allowed_parent_types_for("Page")
   end
 
@@ -22,8 +22,6 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     assert connection.column_exists?(:recording_studio_recordings, :root_recording_id)
     assert connection.table_exists?(:recording_studio_accesses)
     assert connection.table_exists?(:recording_studio_access_invitations)
-    assert connection.table_exists?(:admin_roots)
-    assert connection.table_exists?(:recording_studio_api_api_clients)
     role_column = connection.columns(:recording_studio_accesses).find { |column| column.name == "role" }
     assert_equal :string, role_column.type
     refute connection.table_exists?(:recording_studio_access_boundaries)
@@ -76,7 +74,6 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
 
     assert_includes workspace_source, "enable_capability(:accessible"
     assert RecordingStudio.capability_enabled?(:accessible, for: Workspace)
-    assert RecordingStudio.capability_enabled?(:accessible, for: AdminRoot)
     refute RecordingStudio.capability_enabled?(:accessible, for: Folder)
     refute RecordingStudio.capability_enabled?(:accessible, for: Page)
     refute_includes ApplicationController.ancestors, RecordingStudio::UsesDefaultLayout

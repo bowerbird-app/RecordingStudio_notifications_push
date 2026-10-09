@@ -17,7 +17,13 @@ class PushDevicesMetricsApiTest < ActionDispatch::IntegrationTest
     Current.actor = @staff
     @workspace = Workspace.create!(name: "Metrics #{SecureRandom.hex(4)}")
     @root = RecordingStudio.root_recording_for(@workspace)
-    @admin_root = RecordingStudio.root_recording_for(AdminRoot.find_or_create_by!(name: "Admin"))
+    @admin_workspace = Workspace.create!(name: "Admin metrics #{SecureRandom.hex(4)}")
+    @admin_root = RecordingStudio.root_recording_for(@admin_workspace)
+    @original_access_resolver = RecordingStudioAdmin.configuration.access_recording_resolver
+    @original_site_resolver = RecordingStudioAdmin.configuration.site_admin_recording_resolver
+    admin_recording = @admin_root
+    RecordingStudioAdmin.configuration.access_recording_resolver = ->(_context) { admin_recording }
+    RecordingStudioAdmin.configuration.site_admin_recording_resolver = ->(_context) { admin_recording }
     grant!(@admin_root, @staff, :admin)
     bootstrap_owner!(@root, @staff)
 
@@ -47,6 +53,8 @@ class PushDevicesMetricsApiTest < ActionDispatch::IntegrationTest
   end
 
   teardown do
+    RecordingStudioAdmin.configuration.access_recording_resolver = @original_access_resolver
+    RecordingStudioAdmin.configuration.site_admin_recording_resolver = @original_site_resolver
     Current.actor = nil
   end
 
