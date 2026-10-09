@@ -191,8 +191,33 @@ gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.3.4"
 gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch: "cursor/pwa-service-worker-seam-453c"
+gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.2.0"
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.209"
 ```
+
+## Operations metrics
+
+This gem registers site-wide push device metrics. The host exposes them once:
+
+```ruby
+RecordingStudioMetrics::Api.register!(api: :operations)
+```
+
+| Method | Path |
+|---|---|
+| `GET` | `/recording_studio_api/apis/operations/v1/metrics` |
+| `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/by_platform` |
+| `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/active` |
+| `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/new_over_time` |
+
+Staff with AdminRoot `:view` can read them. The admin recording is
+`site_admin_recording_resolver`, or `access_recording_resolver` when the site
+resolver is unset. If the resolver raises, the metric is denied. A public
+token or a non-admin operations token is denied. `active` uses the existing `Installation.active`
+scope (`disabled_at` nil). `by_platform` groups the `platform` column.
+`new_over_time` is a `created_at` series.
+
+This gem does not call `RecordingStudioMetrics::Api.register!`.
 
 PWA stays on the service-worker seam branch until tag `v0.2.3` contains that
 commit. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md).

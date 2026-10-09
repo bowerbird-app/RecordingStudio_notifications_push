@@ -2,6 +2,35 @@
 
 ## Unreleased
 
+## 0.4.0
+
+Site-wide push device metrics register with Recording Studio Metrics for the
+operations API.
+
+### Added
+
+- `RecordingStudioNotificationsPush::Metrics.register!` registers
+  `:push_devices` (`blast_radius: :site`) with RecordingStudioMetrics.
+  Metrics: `push_devices.by_platform` (`platform`), `push_devices.active`
+  (`Installation.active` / `disabled_at` nil), `push_devices.new_over_time`
+  (`created_at`). Each metric is exposed on `:operations` only.
+  `api_authorize` uses `RecordingStudioNotificationsPush::Api::Access.can_view?`
+  (AdminRoot `:view`). The admin recording is `site_admin_recording_resolver`,
+  or `access_recording_resolver` when the site resolver is unset. A resolver
+  error denies the metric.
+- Runtime dependency `recording_studio_metrics` `~> 0.2` (GitHub tag `v0.2.0`).
+
+### Upgrade notes
+
+- Bump to `0.4.0`. No migration.
+- Add `recording_studio_metrics` at tag `v0.2.0`.
+- This gem does not call `RecordingStudioMetrics::Api.register!`. The host
+  registers Metrics endpoints once:
+
+```ruby
+RecordingStudioMetrics::Api.register!(api: :operations)
+```
+
 ## 0.3.0
 
 Customer-facing push devices copy now lives under
