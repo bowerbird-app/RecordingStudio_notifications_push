@@ -15,7 +15,9 @@ operations API.
   (`Installation.active` / `disabled_at` nil), `push_devices.new_over_time`
   (`created_at`). Each metric is exposed on `:operations` only.
   `api_authorize` uses `RecordingStudioNotificationsPush::Api::Access.can_view?`
-  (AdminRoot `:view`).
+  (AdminRoot `:view`). The admin recording is `site_admin_recording_resolver`,
+  or `access_recording_resolver` when the site resolver is unset. A resolver
+  error denies the metric.
 - Runtime dependency `recording_studio_metrics` `~> 0.2` (GitHub tag `v0.2.0`).
 
 ### Upgrade notes

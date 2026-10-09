@@ -210,8 +210,10 @@ RecordingStudioMetrics::Api.register!(api: :operations)
 | `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/active` |
 | `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/new_over_time` |
 
-Staff with AdminRoot `:view` can read them. A public token or a non-admin
-operations token is denied. `active` uses the existing `Installation.active`
+Staff with AdminRoot `:view` can read them. The admin recording is
+`site_admin_recording_resolver`, or `access_recording_resolver` when the site
+resolver is unset. If the resolver raises, the metric is denied. A public
+token or a non-admin operations token is denied. `active` uses the existing `Installation.active`
 scope (`disabled_at` nil). `by_platform` groups the `platform` column.
 `new_over_time` is a `created_at` series.
 

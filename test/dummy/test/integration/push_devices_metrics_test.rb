@@ -2,18 +2,6 @@
 
 require "test_helper"
 
-unless defined?(RecordingStudioAdmin)
-  module RecordingStudioAdmin
-    class Configuration
-      attr_accessor :access_recording_resolver, :site_admin_recording_resolver
-    end
-
-    def self.configuration
-      @configuration ||= Configuration.new
-    end
-  end
-end
-
 class PushDevicesMetricsTest < ActiveSupport::TestCase
   include ActiveSupport::Testing::TimeHelpers
 
@@ -36,9 +24,6 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     @root = RecordingStudio.root_recording_for(@workspace)
     @admin_workspace = Workspace.create!(name: "Admin metrics #{SecureRandom.hex(4)}")
     @admin_root = RecordingStudio.root_recording_for(@admin_workspace)
-    @original_access_resolver = RecordingStudioAdmin.configuration.access_recording_resolver
-    admin_recording = @admin_root
-    RecordingStudioAdmin.configuration.access_recording_resolver = ->(_context) { admin_recording }
     grant!(@admin_root, @staff, :admin)
     bootstrap_owner!(@root, @staff)
     seed_installations!
@@ -46,7 +31,6 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
   end
 
   teardown do
-    RecordingStudioAdmin.configuration.access_recording_resolver = @original_access_resolver
     Current.actor = nil
   end
 
@@ -83,15 +67,90 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
   end
 
   test "api_authorize allows AdminRoot staff and denies non-admins" do
-    authorize = RecordingStudioMetrics.registry.api_authorize_for(:push_devices)
-    assert_equal RecordingStudioNotificationsPush::Metrics::AUTHORIZE, authorize
+    authorize = metrics_authorize
 
-    assert authorize.call(GrantContext.new(Grant.new(@staff)))
-    refute authorize.call(GrantContext.new(Grant.new(@outsider)))
-    refute authorize.call(GrantContext.new(Grant.new(nil)))
+    with_admin_root(@admin_root) do
+      assert authorize.call(GrantContext.new(Grant.new(@staff)))
+      refute authorize.call(GrantContext.new(Grant.new(@outsider)))
+      refute authorize.call(GrantContext.new(Grant.new(nil)))
+    end
+  end
+
+  test "a granted actor is denied when Admin is absent" do
+    refute defined?(RecordingStudioAdmin)
+    assert staff_can_view_admin_root?
+
+    refute metrics_authorize.call(staff_context)
+  end
+
+  test "a nil admin resolver denies a granted actor" do
+    assert staff_can_view_admin_root?
+
+    with_admin_resolvers(access: ->(_resolver_context) {}) do
+      refute metrics_authorize.call(staff_context)
+    end
+  end
+
+  test "a raising admin resolver denies a granted actor" do
+    assert staff_can_view_admin_root?
+    resolver = ->(resolver_context) { resolver_context.controller.request }
+
+    with_admin_resolvers(access: resolver) do
+      refute metrics_authorize.call(staff_context)
+    end
+
+    refute defined?(RecordingStudioAdmin)
+  end
+
+  test "authorization uses the site admin resolver" do
+    other_workspace = Workspace.create!(name: "Other metrics #{SecureRandom.hex(4)}")
+    other_root = RecordingStudio.root_recording_for(other_workspace)
+    refute RecordingStudioAccessible.authorized?(actor: @staff, recording: other_root, role: :view)
+
+    with_admin_resolvers(access: ->(_resolver_context) { other_root }, site: ->(_resolver_context) { @admin_root }) do
+      assert metrics_authorize.call(staff_context)
+    end
   end
 
   private
+
+  def metrics_authorize
+    authorize = RecordingStudioMetrics.registry.api_authorize_for(:push_devices)
+    assert_equal RecordingStudioNotificationsPush::Metrics::AUTHORIZE, authorize
+    authorize
+  end
+
+  def staff_context
+    GrantContext.new(Grant.new(@staff))
+  end
+
+  def with_admin_root(recording)
+    access = RecordingStudioNotificationsPush::Api::Access
+    singleton = access.singleton_class
+    original = access.method(:admin_root_recording)
+    singleton.define_method(:admin_root_recording) { recording }
+    yield
+  ensure
+    singleton.define_method(:admin_root_recording, original) if original
+  end
+
+  def staff_can_view_admin_root?
+    RecordingStudioAccessible.authorized?(actor: @staff, recording: @admin_root, role: :view)
+  end
+
+  def with_admin_resolvers(access: nil, site: nil)
+    installed = false
+    raise "RecordingStudioAdmin is already loaded" if Object.const_defined?(:RecordingStudioAdmin, false)
+
+    configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(site, access)
+    admin = Module.new
+    admin.define_singleton_method(:configuration) { configuration }
+    Object.const_set(:RecordingStudioAdmin, admin)
+    installed = true
+    yield
+  ensure
+    Object.send(:remove_const, :RecordingStudioAdmin) if installed
+  end
 
   def execute(identifier, **params)
     RecordingStudioMetrics.execute(

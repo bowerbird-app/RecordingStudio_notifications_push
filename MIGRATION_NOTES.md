@@ -9,7 +9,9 @@
    operations API should pin `recording_studio_api` `v0.6.11` and call
    `RecordingStudioMetrics::Api.register!(api: :operations)` once.
 3. Authorize staff through Accessible `:view` on the AdminRoot recording.
-   This gem does not register Metrics API routes itself.
+   Push reads `site_admin_recording_resolver`, then `access_recording_resolver`.
+   If that resolver raises, the metric is denied. This gem does not register
+   Metrics API routes itself.
 
 ## 0.3.0
 
