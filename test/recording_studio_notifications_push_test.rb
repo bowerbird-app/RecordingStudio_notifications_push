@@ -46,7 +46,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications_email"'
     assert_includes gemfile, 'tag: "v0.3.4"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
-    assert_includes gemfile, "cursor/pwa-service-worker-seam-453c"
+    assert_includes gemfile, 'tag: "v0.4.0"'
+    refute_includes gemfile, "cursor/pwa-service-worker-seam-453c"
+    refute_includes gemfile, "Branch pin:"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.8.0"'
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'

@@ -198,8 +198,5 @@ and `recording_studio_notifications >= 0.3.0, < 1`. Root and dummy Gemfiles pin
 that GitHub tag. Override with `RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH` when
 testing against a local checkout.
 
-Notifications stays on branch `cursor/otp-delivery-payload-78f4` because tag
-`v0.3.4` does not contain that OTP payload commit. PWA stays on
-`cursor/pwa-service-worker-seam-453c` because tag `v0.2.3` does not contain the
-service-worker seam commit. Do not move those pins until the target tag is an
-ancestor of the pinned commit.
+Root and dummy Gemfiles pin `recording_studio_pwa` to tag `v0.4.0` (service-worker
+seam is on that tag). `recording_studio_notifications` is pinned to tag `v0.5.0`.

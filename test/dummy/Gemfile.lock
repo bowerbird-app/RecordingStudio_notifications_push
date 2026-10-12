@@ -17,10 +17,10 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_PWA.git
-  revision: 4be2d8e77c8488fc53e54447d841e5bd57315895
-  branch: cursor/pwa-service-worker-seam-453c
+  revision: dceb5581f4a36430db24c04a27fa0db18c5d95c8
+  tag: v0.4.0
   specs:
-    recording_studio_pwa (0.3.0)
+    recording_studio_pwa (0.4.0)
       flat_pack (~> 0.1.133)
       rails (~> 8.1.0)
       recording_studio (~> 4.2)
@@ -657,7 +657,7 @@ CHECKSUMS
   recording_studio_notifications (0.5.0)
   recording_studio_notifications_email (0.3.1)
   recording_studio_notifications_push (0.4.0)
-  recording_studio_pwa (0.3.0)
+  recording_studio_pwa (0.4.0)
   recording_studio_root_switchable (0.8.0)
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4
   reline (0.7.0) sha256=5b012d8e55dbf9d450f12bde2cf7d15ff546ae80b3f8f3b30e570d431815583d

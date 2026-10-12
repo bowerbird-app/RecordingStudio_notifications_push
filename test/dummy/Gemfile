@@ -17,10 +17,9 @@ else
       tag: "v0.3.4"
 end
 
-# Branch pin: tag v0.2.3 does not contain the service-worker seam commit.
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",
-    branch: "cursor/pwa-service-worker-seam-453c"
+    tag: "v0.4.0"
 
 # RecordingStudio engine
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.5.0"
