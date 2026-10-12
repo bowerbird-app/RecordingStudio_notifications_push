@@ -190,7 +190,7 @@ gem "recording_studio_notifications",
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.3.4"
-gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", branch: "cursor/pwa-service-worker-seam-453c"
+gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", tag: "v0.4.0"
 gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.2.0"
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.209"
 ```
@@ -218,9 +218,6 @@ scope (`disabled_at` nil). `by_platform` groups the `platform` column.
 `new_over_time` is a `created_at` series.
 
 This gem does not call `RecordingStudioMetrics::Api.register!`.
-
-PWA stays on the service-worker seam branch until tag `v0.2.3` contains that
-commit. See [MIGRATION_NOTES.md](MIGRATION_NOTES.md).
 
 ## Dummy credentials
 
