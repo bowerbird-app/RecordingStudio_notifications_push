@@ -38,7 +38,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_dummy_gemfile_pins_verified_github_sources
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.4.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.5.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.13.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
     assert_includes gemfile, 'tag: "v0.5.0"'
@@ -47,7 +47,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'tag: "v0.3.4"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
     assert_includes gemfile, "cursor/pwa-service-worker-seam-453c"
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.6.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.8.0"'
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
     assert_includes gemfile, 'tag: "v0.1.2"'
