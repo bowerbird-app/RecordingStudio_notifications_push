@@ -3,10 +3,10 @@ source "https://rubygems.org"
 # Use the recording_studio_notifications_push engine
 gem "recording_studio_notifications_push", path: "../.."
 
-# Parent notification stack. v0.5.0 adds Admin All notifications I18n.
+# Parent notification stack. v0.7.0 adds non-view I18n (inbox overflow, flashes).
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.5.0"
+    tag: "v0.7.0"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 if email_path && !email_path.strip.empty?
