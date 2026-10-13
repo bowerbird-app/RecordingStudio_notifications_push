@@ -39,7 +39,10 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.5.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.15.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.17.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable"'
+    assert_includes gemfile, 'tag: "v0.10.0"'
+    assert_includes gemfile, "require: false"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
     assert_includes gemfile, 'tag: "v0.7.0"'
     refute_includes gemfile, "cursor/otp-delivery-payload-78f4"
