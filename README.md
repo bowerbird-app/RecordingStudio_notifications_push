@@ -186,7 +186,7 @@ gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.5.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.15.0"
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.5.0"
+    tag: "v0.7.0"
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.3.4"
