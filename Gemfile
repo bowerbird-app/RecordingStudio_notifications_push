@@ -24,7 +24,7 @@ end
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.198"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
-    tag: "v0.17.0"
+    tag: "v0.18.0"
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",
     tag: "v0.4.0"
