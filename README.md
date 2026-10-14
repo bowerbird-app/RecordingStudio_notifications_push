@@ -182,7 +182,7 @@ over locale defaults, including `nil`.
 Until parent gems are published:
 
 ```ruby
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.5.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.6.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.17.0"
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",

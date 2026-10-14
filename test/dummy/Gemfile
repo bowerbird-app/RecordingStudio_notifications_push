@@ -22,7 +22,7 @@ gem "recording_studio_pwa",
     tag: "v0.4.0"
 
 # RecordingStudio engine
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.5.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v4.6.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.17.0"
 # Accessible 0.17 needs trashable query helpers only (not the full engine).
 gem "recording_studio_trashable",
