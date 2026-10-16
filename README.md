@@ -195,7 +195,7 @@ gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.3.4"
 gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", tag: "v0.4.0"
-gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.2.0"
+gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.3.1"
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.209"
 ```
 
@@ -219,7 +219,16 @@ Staff with AdminRoot `:view` can read them. The admin recording is
 resolver is unset. If the resolver raises, the metric is denied. A public
 token or a non-admin operations token is denied. `active` uses the existing `Installation.active`
 scope (`disabled_at` nil). `by_platform` groups the `platform` column.
-`new_over_time` is a `created_at` series.
+`new_over_time` is a `created_at` series. It takes `from`, `to`, and
+`interval` (`day`, `week`, `month`, `year`). `by_platform` and `active`
+do not take those arguments.
+
+Recording Studio MCP `0.17` lists one tool per metric that discovery
+exposes. This gem does not register those tools. An operations client that
+passes `RecordingStudioNotificationsPush::Api::Access.can_view?` sees
+`push_devices-by_platform`, `push_devices-active`, and
+`push_devices-new_over_time`. Only the timeseries tool takes `from`, `to`,
+and `interval`. A client that fails the check does not see the tools.
 
 This gem does not call `RecordingStudioMetrics::Api.register!`.
 

@@ -1,5 +1,17 @@
 # Migration notes
 
+## 0.5.0
+
+### Host app steps
+
+1. Bump to `0.5.0`. No schema or push-delivery changes.
+2. Pin `recording_studio_metrics` at tag `v0.3.1` (`>= 0.3.0, < 0.4`).
+3. Keep `RecordingStudioMetrics::Api.register!(api: :operations)` in the host.
+   This gem still registers definitions only.
+4. Recording Studio MCP `0.17` lists `push_devices-by_platform`,
+   `push_devices-active`, and `push_devices-new_over_time`. Only the last
+   tool takes `from`, `to`, and `interval`.
+
 ## 0.4.0
 
 ### Host app steps
