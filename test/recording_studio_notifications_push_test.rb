@@ -4,14 +4,16 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.4.0", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.0", ::RecordingStudioNotificationsPush::VERSION
     lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
     dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.4.0)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.4.0)"
-    assert_includes lockfile, "recording_studio_metrics (0.2.0)"
-    assert_includes dummy_lockfile, "recording_studio_metrics (0.2.0)"
+    assert_includes lockfile, "recording_studio_notifications_push (0.5.0)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.0)"
+    assert_includes lockfile, "recording_studio_metrics (0.3.0)"
+    assert_includes dummy_lockfile, "recording_studio_metrics (0.3.0)"
+    assert_includes lockfile, "tag: v0.3.1"
+    assert_includes dummy_lockfile, "tag: v0.3.1"
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -29,7 +31,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
     assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.2"'
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", "~> 0.2"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", ">= 0.3.0", "< 0.4"'
     assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.3.0", "< 1"'
     assert_includes gemspec, "RecordingStudio_notifications_push"
     assert_includes gemspec, "CHANGELOG.md"
@@ -57,7 +59,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
     assert_includes gemfile, 'tag: "v0.1.2"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.2.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.3.1"'
     refute_includes gemfile, "recording_studio_api"
     refute_includes gemfile, "RecordingStudio_api"
     refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
@@ -117,8 +119,12 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes readme, "required only for sending"
     assert_includes readme, "deliver_rollup"
     assert_includes readme, "recording_studio_metrics"
-    assert_includes readme, "v0.2.0"
+    assert_includes readme, "v0.3.1"
     assert_includes readme, "/recording_studio_api/apis/operations/v1/metrics/push_devices/active"
+    assert_includes readme, "push_devices-by_platform"
+    assert_includes readme, "push_devices-active"
+    assert_includes readme, "push_devices-new_over_time"
+    assert_includes readme, "Only the timeseries tool takes `from`, `to`,\nand `interval`."
     refute_includes readme, "ExampleService"
     refute_includes readme, "addon template"
   end

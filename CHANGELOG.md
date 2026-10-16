@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+## 0.5.0
+
+Requires Recording Studio Metrics `0.3` so hosts that also run MCP `0.17` can
+list one tool per push-device metric.
+
+### Changed
+
+- Runtime dependency `recording_studio_metrics` is `>= 0.3.0, < 0.4` (GitHub
+  tag `v0.3.1`). Hosts pinning Metrics `v0.2.0` must move to `v0.3.1`.
+
+### Added
+
+- README names the MCP `0.17` tools for the existing `:push_devices` metrics:
+  `push_devices-by_platform`, `push_devices-active`, and
+  `push_devices-new_over_time`. Only the timeseries tool takes `from`, `to`,
+  and `interval`. This gem still does not call
+  `RecordingStudioMetrics::Api.register!`.
+
+### Upgrade notes
+
+- Bump to `0.5.0`. No migration.
+- Pin `recording_studio_metrics` at tag `v0.3.1`.
+- Keep `RecordingStudioMetrics::Api.register!(api: :operations)` in the host.
+
 ## 0.4.0
 
 Site-wide push device metrics register with Recording Studio Metrics for the

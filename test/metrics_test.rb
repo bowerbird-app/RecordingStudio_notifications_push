@@ -35,6 +35,22 @@ class MetricsTest < Minitest::Test
                 RecordingStudioMetrics.registry.api_authorize_for(:push_devices)
   end
 
+  def test_only_the_timeseries_metric_takes_a_date_window
+    platform = RecordingStudioMetrics.find("push_devices.by_platform")
+    active = RecordingStudioMetrics.find("push_devices.active")
+    series = RecordingStudioMetrics.find("push_devices.new_over_time")
+
+    assert_equal [], platform.intervals
+    assert_equal [], active.intervals
+    refute platform.catalog_metadata.dig(:date_range, :supported)
+    refute active.catalog_metadata.dig(:date_range, :supported)
+
+    assert_equal %i[day week month year], series.intervals
+    assert series.catalog_metadata.dig(:date_range, :supported)
+    assert_empty series.group_by
+    assert_empty series.filters
+  end
+
   def test_authorize_hook_follows_can_view
     context = Struct.new(:access_grant).new(Struct.new(:actor).new(Object.new))
 

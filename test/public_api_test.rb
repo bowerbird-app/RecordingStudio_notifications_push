@@ -41,7 +41,7 @@ class PublicApiTest < Minitest::Test
   end
 
   def test_version_and_engine_are_public
-    assert_equal "0.4.0", RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.0", RecordingStudioNotificationsPush::VERSION
     assert_kind_of Class, RecordingStudioNotificationsPush::Engine
   end
 
@@ -57,6 +57,24 @@ class PublicApiTest < Minitest::Test
 
     called = false
     RecordingStudioNotificationsPush.stub(:register!, -> { called = true }) { prepare_callbacks.fetch(0).call }
+
+    assert called
+  end
+
+  def test_engine_registers_metrics_from_rails_prepare_callback
+    prepare_callbacks = []
+    config = Object.new
+    config.define_singleton_method(:to_prepare) { |&block| prepare_callbacks << block }
+    initializer = RecordingStudioNotificationsPush::Engine.initializers.find do |candidate|
+      candidate.name == "recording_studio_notifications_push.metrics"
+    end
+
+    RecordingStudioNotificationsPush::Engine.stub(:config, config) { initializer.block.call }
+
+    called = false
+    RecordingStudioNotificationsPush::Metrics.stub(:register!, -> { called = true }) do
+      prepare_callbacks.fetch(0).call
+    end
 
     assert called
   end
