@@ -1,5 +1,16 @@
 # Migration notes
 
+## 0.5.2
+
+### Host app steps
+
+1. Bump to `0.5.2`. No schema or push-delivery changes.
+2. Pin `recording_studio_metrics` at tag `v0.5.0` (`>= 0.3.0, < 0.6`) when
+   other gems allow Metrics `0.5`. Keep `v0.3.1` if a sibling still requires
+   `~> 0.2`.
+3. Keep `RecordingStudioMetrics::Api.register!(api: :operations)` in the host.
+   This gem still registers definitions only.
+
 ## 0.5.0
 
 ### Host app steps
