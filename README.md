@@ -195,7 +195,7 @@ gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.3.4"
 gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", tag: "v0.4.0"
-gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.3.1"
+gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.5.0"
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.209"
 ```
 

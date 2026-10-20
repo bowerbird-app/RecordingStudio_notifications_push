@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.5.2
+
+Accepts Recording Studio Metrics through `0.5`. Dummy pins Metrics `v0.5.0`
+when that tag resolves with the rest of the lock.
+
+### Changed
+
+- Runtime dependency `recording_studio_metrics` is `>= 0.3.0, < 0.6` (GitHub
+  tag `v0.5.0` in this repo). Hosts may stay on Metrics `0.3` or `0.4`.
+
+### Upgrade notes
+
+- Bump to `0.5.2`. No migration.
+- Pin `recording_studio_metrics` at tag `v0.5.0` when other host gems allow
+  Metrics `0.5`. Keep `v0.3.1` if a sibling gem still requires `~> 0.2`.
+- Keep `RecordingStudioMetrics::Api.register!(api: :operations)` in the host.
+
 ## 0.5.0
 
 Requires Recording Studio Metrics `0.3` so hosts that also run MCP `0.17` can
