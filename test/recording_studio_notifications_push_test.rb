@@ -4,12 +4,12 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.5.2", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.3", ::RecordingStudioNotificationsPush::VERSION
     lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
     dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.5.2)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.2)"
+    assert_includes lockfile, "recording_studio_notifications_push (0.5.3)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.3)"
     assert_includes lockfile, "recording_studio_metrics (0.5.0)"
     assert_includes dummy_lockfile, "recording_studio_metrics (0.5.0)"
     assert_includes lockfile, "tag: v0.5.0"
@@ -31,7 +31,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
     assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.2"'
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", ">= 0.3.0", "< 0.6"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", ">= 0.3.0", "< 1.0"'
     assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.3.0", "< 1"'
     assert_includes gemspec, "RecordingStudio_notifications_push"
     assert_includes gemspec, "CHANGELOG.md"
