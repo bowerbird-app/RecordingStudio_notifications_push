@@ -44,6 +44,7 @@ class LocalesTest < Minitest::Test
   end
 
   def test_host_translation_overrides_english
+    I18n.t("#{Copy::PREFIX}.devices.title") # load YAML before store_translations
     I18n.backend.store_translations(:en, acme_title)
     assert_equal "Acme devices", Copy.t("devices.title")
   ensure
