@@ -2,7 +2,7 @@
 
 module RecordingStudioNotificationsPush
   class DevicesController < ApplicationController
-    include RecordingStudio::UsesDefaultLayout
+    recording_studio_layout
 
     helper DevicesHelper
 

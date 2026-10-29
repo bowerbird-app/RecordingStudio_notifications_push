@@ -4,16 +4,16 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.5.3", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.4", ::RecordingStudioNotificationsPush::VERSION
     lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
     dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.5.3)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.3)"
-    assert_includes lockfile, "recording_studio_metrics (0.5.0)"
-    assert_includes dummy_lockfile, "recording_studio_metrics (0.5.0)"
-    assert_includes lockfile, "tag: v0.5.0"
-    assert_includes dummy_lockfile, "tag: v0.5.0"
+    assert_includes lockfile, "recording_studio_notifications_push (0.5.4)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.4)"
+    assert_includes lockfile, "recording_studio_metrics (0.7.0)"
+    assert_includes dummy_lockfile, "recording_studio_metrics (0.7.0)"
+    assert_includes lockfile, "tag: v0.7.0"
+    assert_includes dummy_lockfile, "tag: v0.7.0"
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -30,7 +30,9 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_gemspec_pins_dependencies
     gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
-    assert_includes gemspec, 'spec.add_dependency "recording_studio", "~> 4.2"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio", ">= 6.1.0"'
+    refute_includes gemspec, "~> 4.2"
+    refute_includes gemspec, ">= 6.3.0"
     assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", ">= 0.3.0", "< 1.0"'
     assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.3.0", "< 1"'
     assert_includes gemspec, "RecordingStudio_notifications_push"
@@ -40,26 +42,27 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_dummy_gemfile_pins_verified_github_sources
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v4.7.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.18.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.3.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.24.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable"'
-    assert_includes gemfile, 'tag: "v0.11.0"'
+    assert_includes gemfile, 'tag: "v0.12.0"'
     assert_includes gemfile, "require: false"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
-    assert_includes gemfile, 'tag: "v0.7.0"'
+    assert_includes gemfile, 'tag: "v0.14.1"'
     refute_includes gemfile, "cursor/otp-delivery-payload-78f4"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications_email"'
-    assert_includes gemfile, 'tag: "v0.3.4"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
     assert_includes gemfile, 'tag: "v0.4.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
+    assert_includes gemfile, 'tag: "v0.5.0"'
     refute_includes gemfile, "cursor/pwa-service-worker-seam-453c"
     refute_includes gemfile, "Branch pin:"
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache", tag: "v0.5.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.9.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.209"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache", tag: "v0.6.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.11.2"'
+    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.329"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
-    assert_includes gemfile, 'tag: "v0.1.2"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.5.0"'
+    assert_includes gemfile, 'tag: "v0.1.8"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.7.0"'
+    refute_includes gemfile, 'tag: "v4.7.0"'
     refute_includes gemfile, "recording_studio_api"
     refute_includes gemfile, "RecordingStudio_api"
     refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
@@ -99,7 +102,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
       File.expand_path("../app/controllers/recording_studio_notifications_push/application_controller.rb", __dir__)
     )
 
-    assert_includes controller_source, "RecordingStudio::UsesDefaultLayout"
+    assert_includes controller_source, "recording_studio_layout"
+    refute_includes controller_source, "RecordingStudio::UsesDefaultLayout"
     refute_includes controller_source, 'layout "recording_studio_notifications_push/blank"'
     refute_includes application_source, "push_application_layout"
     refute File.exist?(
@@ -187,8 +191,10 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     devices_show = File.read(
       File.expand_path("../app/views/recording_studio_notifications_push/devices/show.html.erb", __dir__)
     )
-    assert_includes devices_show, "recording_studio_page_nav"
-    assert_includes devices_show, "page_nav_anchor_url: main_app.root_path"
+    assert_includes devices_show, "flat_pack_page_nav"
+    assert_includes devices_show, "anchor_href: main_app.root_path"
+    assert_includes devices_show, "content_for(:title, push_t(\"devices.title\"))"
+    refute_includes devices_show, "recording_studio_page_nav("
     refute_includes devices_show, "FlatPack::PageNav"
     refute_includes devices_show, "PageNav::Component"
     assert_includes devices_show, "push_enable: true"

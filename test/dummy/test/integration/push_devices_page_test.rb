@@ -7,10 +7,13 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
   test "devices controller uses core default layout and installations stay off it" do
-    assert_includes RecordingStudioNotificationsPush::DevicesController.ancestors,
-                    RecordingStudio::UsesDefaultLayout
-    refute_includes RecordingStudioNotificationsPush::InstallationsController.ancestors,
-                    RecordingStudio::UsesDefaultLayout
+    devices_source = File.read(Rails.root.join("../../app/controllers/recording_studio_notifications_push/devices_controller.rb"))
+    installations_source = File.read(Rails.root.join("../../app/controllers/recording_studio_notifications_push/installations_controller.rb"))
+
+    assert_includes devices_source, "recording_studio_layout"
+    refute_includes devices_source, "UsesDefaultLayout"
+    refute_includes installations_source, "recording_studio_layout"
+    refute_includes installations_source, "UsesDefaultLayout"
   end
 
   test "push devices page registers the host PWA service worker from the mounted engine" do

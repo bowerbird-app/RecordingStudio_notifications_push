@@ -5,9 +5,9 @@ require "test_helper"
 class RecordingStudioTemplateTest < ActiveSupport::TestCase
   test "dummy app loads root switchable config and controller support" do
     assert_equal [ "all_workspaces" ], RecordingStudioRootSwitchable.configuration.scopes.keys
-    assert_equal :application_layout, RecordingStudioRootSwitchable.configuration.layout
+    assert_equal "flat_pack_sidebar", RecordingStudioRootSwitchable.configuration.layout
     assert_includes ApplicationController.ancestors, RecordingStudio::RootSwitchable::ControllerSupport
-    refute_includes ApplicationController.ancestors, RecordingStudio::UsesDefaultLayout
+    refute ApplicationController.ancestors.any? { |mod| mod.name == "RecordingStudio::UsesDefaultLayout" }
   end
 
   test "dummy app validates recordable declarations" do
@@ -24,6 +24,8 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     assert connection.table_exists?(:recording_studio_access_invitations)
     assert connection.table_exists?(:recording_studio_access_constraints)
     assert connection.table_exists?(:recording_studio_access_rules)
+    assert connection.table_exists?(:recording_studio_access_requests)
+    assert connection.table_exists?(:recording_studio_access_request_intents)
     role_column = connection.columns(:recording_studio_accesses).find { |column| column.name == "role" }
     assert_equal :string, role_column.type
     refute connection.table_exists?(:recording_studio_access_boundaries)
@@ -78,12 +80,14 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     assert RecordingStudio.capability_enabled?(:accessible, for: Workspace)
     refute RecordingStudio.capability_enabled?(:accessible, for: Folder)
     refute RecordingStudio.capability_enabled?(:accessible, for: Page)
-    refute_includes ApplicationController.ancestors, RecordingStudio::UsesDefaultLayout
+    refute ApplicationController.ancestors.any? { |mod| mod.name == "RecordingStudio::UsesDefaultLayout" }
   end
 
   test "push channel and installations table are wired" do
     assert RecordingStudioNotifications.channels.registered?(:push)
     assert ActiveRecord::Base.connection.table_exists?(:recording_studio_notifications_push_installations)
+    assert ActiveRecord::Base.connection.table_exists?(:recording_studio_notifications_email_suppressions)
+    assert ActiveRecord::Base.connection.column_exists?(:recording_studio_notifications_notifications, :inbox)
     assert_equal :push, RecordingStudioNotificationsPush.configuration.channel
   end
 

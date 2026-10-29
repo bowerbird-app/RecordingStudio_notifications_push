@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 0.5.4
+
+### Changed
+
+- Runtime dependency `recording_studio` is now `>= 6.1.0`. Development and dummy
+  apps pin core tag `v6.3.0` and FlatPack tag `v0.1.329`.
+- Companion dummy pins: notifications `v0.14.1`, PWA `v0.5.0`, notifications
+  email `v0.4.0`, Accessible `v0.24.0`, Trashable `v0.12.0`, Metrics `v0.7.0`,
+  Cache `v0.6.0`, Root Switchable `v0.11.2`, and Internationalization `v0.1.8`.
+- Dummy chrome follows core 6 layout: `recording_studio_layout`, a String
+  Root Switchable `config.layout`, and FlatPack Card `border:` / `shadow:`
+  instead of `style:`.
+- `DevicesController` uses `recording_studio_layout` instead of
+  `RecordingStudio::UsesDefaultLayout`. The devices view calls
+  `flat_pack_page_nav` (core 6 page nav) instead of
+  `recording_studio_page_nav`.
+
+### Upgrade notes
+
+- Bump to `0.5.4`. Requires Recording Studio `>= 6.1.0`. Stay on `0.5.3` if
+  you are still on Recording Studio 4.
+- Pin PWA to `v0.5.0` and notifications email to `v0.4.0` (both require
+  Recording Studio `>= 6.1.0`).
+- No migration in this gem.
+
 ## 0.5.3
 
 ### Changed

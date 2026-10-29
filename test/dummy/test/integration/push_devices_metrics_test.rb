@@ -24,7 +24,7 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     @root = RecordingStudio.root_recording_for(@workspace)
     @admin_workspace = Workspace.create!(name: "Admin metrics #{SecureRandom.hex(4)}")
     @admin_root = RecordingStudio.root_recording_for(@admin_workspace)
-    grant!(@admin_root, @staff, :admin)
+    bootstrap_owner!(@admin_root, @staff)
     bootstrap_owner!(@root, @staff)
     seed_installations!
     Current.actor = nil
