@@ -1,5 +1,17 @@
 # Migration notes
 
+## 0.6.5
+
+### Host app steps
+
+1. Bump to `0.6.5`. Requires Recording Studio `>= 6.1.0`, `< 7`. No schema change.
+2. Pin FlatPack `v0.1.332` and PWA `v0.6.1`. Dummy also pins Root Switchable
+   `v0.11.3` and Internationalization `v0.2.0`.
+3. Leave `view_component` at `4.20.0`.
+4. Delete PWA `api_key`, `enable_feature_x`, and `timeout` if a host copied the
+   old template initializer. Delete Internationalization `hooks.extend_model`
+   and `hooks.extend_controller` if a host set them.
+
 ## 0.6.2
 
 ### Host app steps

@@ -27,7 +27,7 @@ gem "recording_studio_accessible",
     tag: "v0.24.0"
 gem "recording_studio_pwa",
     github: "bowerbird-app/RecordingStudio_PWA",
-    tag: "v0.5.0"
+    tag: "v0.6.1"
 # Accessible 0.17 needs trashable query helpers only (not the full engine).
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
