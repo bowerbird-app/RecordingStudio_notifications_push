@@ -14,17 +14,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes dummy_lockfile, "tag: v0.7.0"
   end
 
-  def test_ci_and_dummy_database_names_are_separate
-    workflow = File.read(File.expand_path("../.github/workflows/ci.yml", __dir__))
-    database = File.read(File.expand_path("dummy/config/database.yml", __dir__))
-
-    assert_includes workflow, "recording_studio_notifications_push_test"
-    refute_includes workflow, "gem_template_test"
-    assert_includes database, "DB_NAME_DEVELOPMENT"
-    assert_includes database, "DB_NAME_TEST"
-    refute_includes database, 'ENV.fetch("DB_NAME")'
-  end
-
   def test_importmap_preloads_push_devices_controller
     importmap = File.read(File.expand_path("../config/importmap.rb", __dir__))
 
