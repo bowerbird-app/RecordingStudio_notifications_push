@@ -11,11 +11,18 @@ module RecordingStudioNotificationsPush
 
     def self.merge_yaml_configuration(app)
       return unless app.respond_to?(:config_for)
+      return unless yaml_configuration_file?(app)
 
       yaml = app.config_for(:recording_studio_notifications_push)
       RecordingStudioNotificationsPush.configuration.merge!(yaml) if yaml.respond_to?(:each)
-    rescue RuntimeError => e
-      raise unless e.message.match?(/Could not load configuration\. No such file/i)
+    end
+
+    def self.yaml_configuration_file?(app)
+      root = app.root if app.respond_to?(:root)
+      return false if root.blank?
+
+      root.join("config/recording_studio_notifications_push.yml").exist? ||
+        root.join("config/recording_studio_notifications_push.yml.erb").exist?
     end
 
     def self.merge_x_configuration(app)

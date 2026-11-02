@@ -5,18 +5,24 @@ require "test_helper"
 class DevicesControllerPathsTest < ActiveSupport::TestCase
   test "a missing settings route raises instead of hiding NoMethodError" do
     controller = RecordingStudioNotificationsPush::DevicesController.new
-    notifications = Object.new
-    controller.define_singleton_method(:recording_studio_notifications) { notifications }
 
-    assert_raises(NoMethodError) { controller.send(:notifications_settings_path) }
+    controller.stub(:recording_studio_notifications, Object.new) do
+      assert_raises(NoMethodError) do
+        controller.instance_exec { notifications_settings_path }
+      end
+    end
   end
 
   test "an unknown service worker route argument returns nil" do
     controller = RecordingStudioNotificationsPush::DevicesController.new
-    main_app = Object.new
-    main_app.define_singleton_method(:pwa_service_worker_path) { raise ArgumentError, "missing route" }
-    controller.define_singleton_method(:main_app) { main_app }
+    main_app = Struct.new(:label) do
+      def pwa_service_worker_path(*)
+        raise ArgumentError, "missing route"
+      end
+    end.new("app")
 
-    assert_nil controller.send(:service_worker_path)
+    controller.stub(:main_app, main_app) do
+      assert_nil controller.instance_exec { service_worker_path }
+    end
   end
 end

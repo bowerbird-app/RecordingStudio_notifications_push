@@ -12,47 +12,74 @@ class EngineTest < Minitest::Test
   end
 
   def test_load_config_merges_config_sources
-    xcfg = Struct.new(:recording_studio_notifications_push).new({ firebase_project_id: "from-x" })
-    app_config = Struct.new(:x).new(xcfg)
-    app = Struct.new(:config) do
-      def config_for(_name)
-        { vapid_public_key: "from-yaml" }
-      end
-    end.new(app_config)
+    with_config_root do |root|
+      xcfg = Struct.new(:recording_studio_notifications_push).new({ firebase_project_id: "from-x" })
+      app_config = Struct.new(:x).new(xcfg)
+      app = Struct.new(:config, :root) do
+        def config_for(_name)
+          { vapid_public_key: "from-yaml" }
+        end
+      end.new(app_config, root)
 
-    find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+      find_initializer("recording_studio_notifications_push.load_config").block.call(app)
 
-    assert_equal "from-yaml", RecordingStudioNotificationsPush.configuration.vapid_public_key
-    assert_equal "from-x", RecordingStudioNotificationsPush.configuration.firebase_project_id
+      assert_equal "from-yaml", RecordingStudioNotificationsPush.configuration.vapid_public_key
+      assert_equal "from-x", RecordingStudioNotificationsPush.configuration.firebase_project_id
+    end
   end
 
   def test_missing_configuration_file_is_ignored
-    app = Struct.new(:config).new(Struct.new(:x).new(nil))
-    app.define_singleton_method(:config_for) do |_name|
-      raise "Could not load configuration. No such file - recording_studio_notifications_push"
+    root = Pathname(Dir.mktmpdir)
+    app = Struct.new(:config, :root).new(Struct.new(:x).new(nil), root)
+    def app.config_for(_name)
+      raise "config_for should not run without a file"
     end
 
     find_initializer("recording_studio_notifications_push.load_config").block.call(app)
 
     assert_nil RecordingStudioNotificationsPush.configuration.vapid_public_key
+  ensure
+    FileUtils.remove_entry(root) if root
   end
 
   def test_invalid_configuration_yaml_raises
-    app = Struct.new(:config).new(Struct.new(:x).new(nil))
-    app.define_singleton_method(:config_for) { |_name| raise Psych::SyntaxError.new("config", 1, 1, 0, "bad", "context") }
+    with_config_root do |root|
+      app = Struct.new(:config, :root).new(Struct.new(:x).new(nil), root)
+      def app.config_for(_name)
+        raise Psych::SyntaxError.new("config", 1, 1, 0, "bad", "context")
+      end
 
-    assert_raises(Psych::SyntaxError) do
-      find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+      assert_raises(Psych::SyntaxError) do
+        find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+      end
     end
   end
 
   def test_other_configuration_runtime_errors_raise
-    app = Struct.new(:config).new(Struct.new(:x).new(nil))
-    app.define_singleton_method(:config_for) { |_name| raise "yaml permission denied" }
+    with_config_root do |root|
+      app = Struct.new(:config, :root).new(Struct.new(:x).new(nil), root)
+      def app.config_for(_name)
+        raise "yaml permission denied"
+      end
 
-    assert_raises(RuntimeError) do
-      find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+      assert_raises(RuntimeError) do
+        find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+      end
     end
+  end
+
+  def test_merge_x_configuration_raises
+    options = Object.new
+    def options.to_h
+      raise "bad x config"
+    end
+    xcfg = Struct.new(:recording_studio_notifications_push).new(options)
+    app = Struct.new(:config).new(Struct.new(:x).new(xcfg))
+
+    error = assert_raises(RuntimeError) do
+      RecordingStudioNotificationsPush::Engine.merge_x_configuration(app)
+    end
+    assert_equal "bad x config", error.message
   end
 
   def test_register_channel_initializer_exists
@@ -84,5 +111,14 @@ class EngineTest < Minitest::Test
 
   def find_initializer(name)
     RecordingStudioNotificationsPush::Engine.initializers.find { |entry| entry.name == name }
+  end
+
+  def with_config_root
+    root = Pathname(Dir.mktmpdir)
+    FileUtils.mkdir_p(root.join("config"))
+    File.write(root.join("config/recording_studio_notifications_push.yml"), "vapid_public_key: present\n")
+    yield root
+  ensure
+    FileUtils.remove_entry(root) if root
   end
 end

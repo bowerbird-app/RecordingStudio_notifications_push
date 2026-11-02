@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 0.5.9
+## 0.6.0
 
 ### Changed
 
@@ -14,7 +14,7 @@
 
 ### Upgrade notes
 
-- Bump to `0.5.9`. No migration.
+- Bump to `0.6.0`. No migration.
 - A broken `config/recording_studio_notifications_push.yml` now stops boot.
   Delete the file if you do not use it.
 - A raising admin recording resolver is no longer reported as "not allowed".
