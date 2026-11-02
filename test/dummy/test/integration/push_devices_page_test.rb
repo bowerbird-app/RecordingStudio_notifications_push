@@ -78,5 +78,20 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
       refute_includes response.body, "bg-[var(--alert-info-background-color)]"
     end
   end
-end
 
+  test "rendered head registers the service worker and the manifest" do
+    user = User.find_or_create_by!(email: "push-head-test@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+    sign_in user
+
+    get "/notifications/push/devices"
+
+    assert_response :success
+    assert_includes response.body, 'rel="manifest"'
+    assert_includes response.body, "/manifest.json"
+    assert_includes response.body, "RecordingStudioPwa.serviceWorkerReady"
+    assert_includes response.body, 'register("/service-worker.js")'
+  end
+end
