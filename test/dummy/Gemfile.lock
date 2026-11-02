@@ -18,10 +18,10 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_PWA.git
-  revision: 4fcf7d115255f8b5e148a8f8e8e7a38abd77d29b
-  tag: v0.6.1
+  revision: 0d4d01bcb4527d71f06e10ce7d01955160dbb44a
+  ref: 0d4d01bcb4527d71f06e10ce7d01955160dbb44a
   specs:
-    recording_studio_pwa (0.6.1)
+    recording_studio_pwa (0.7.0)
       flat_pack (~> 0.1.133)
       rails (~> 8.1.0)
       recording_studio (>= 6.1.0, < 7)
@@ -104,8 +104,8 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/flatpack.git
-  revision: 92d26fd873078a23313ed120af54c37e90bae82d
-  ref: 92d26fd873078a23313ed120af54c37e90bae82d
+  revision: a109067b3ec5e587c4e500fccb208fe32592028e
+  ref: a109067b3ec5e587c4e500fccb208fe32592028e
   specs:
     flat_pack (0.1.335)
       pagy (~> 9.0)
@@ -578,7 +578,7 @@ DEPENDENCIES
   recording_studio_notifications!
   recording_studio_notifications_email!
   recording_studio_notifications_push!
-  recording_studio_pwa!
+  recording_studio_pwa (>= 0.7.0, < 0.8)!
   recording_studio_root_switchable!
   recording_studio_trashable!
   rubocop-rails-omakase
@@ -719,7 +719,7 @@ CHECKSUMS
   recording_studio_notifications (0.14.7)
   recording_studio_notifications_email (0.4.0)
   recording_studio_notifications_push (0.6.7)
-  recording_studio_pwa (0.6.1)
+  recording_studio_pwa (0.7.0)
   recording_studio_root_switchable (0.11.3)
   recording_studio_trashable (0.12.0)
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4

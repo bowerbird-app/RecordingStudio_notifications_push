@@ -194,9 +194,11 @@ gem "recording_studio_notifications",
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.4.0"
-gem "recording_studio_pwa", github: "bowerbird-app/RecordingStudio_PWA", tag: "v0.6.1"
+gem "recording_studio_pwa", ">= 0.7.0", "< 0.8",
+    github: "bowerbird-app/RecordingStudio_PWA",
+    ref: "0d4d01bcb4527d71f06e10ce7d01955160dbb44a"
 gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.7.0"
-gem "flat_pack", github: "bowerbird-app/flatpack", ref: "92d26fd873078a23313ed120af54c37e90bae82d"
+gem "flat_pack", github: "bowerbird-app/flatpack", ref: "a109067b3ec5e587c4e500fccb208fe32592028e"
 ```
 
 ## Operations metrics

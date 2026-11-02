@@ -22,7 +22,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
     assert_equal Gem::Version.new("4.20.0"), Gem.loaded_specs.fetch("view_component").version
     assert_equal Gem::Version.new("0.1.335"), Gem.loaded_specs.fetch("flat_pack").version
-    assert_equal Gem::Version.new("0.6.1"), Gem.loaded_specs.fetch("recording_studio_pwa").version
+    assert_equal Gem::Version.new("0.7.0"), Gem.loaded_specs.fetch("recording_studio_pwa").version
   end
 
   def test_notifications_dependency_floor_matches_the_tested_line

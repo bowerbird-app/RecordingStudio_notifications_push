@@ -5,9 +5,14 @@
 ### Host app steps
 
 1. Bump to `0.6.7`. No schema change. Requires `flat_pack` `>= 0.1.335`, `< 0.2`.
-2. Pin FlatPack ref `92d26fd873078a23313ed120af54c37e90bae82d` (`0.1.335`).
-3. Device lists can pass `title:` and `subtitle:` to `FlatPack::List::Item`.
-4. Sidebar headers can pass `version:` instead of drawing a badge.
+2. Pin FlatPack ref `a109067b3ec5e587c4e500fccb208fe32592028e` (`0.1.335`).
+3. Pin PWA ref `0d4d01bcb4527d71f06e10ce7d01955160dbb44a` (`0.7.0`) with
+   `>= 0.7.0`, `< 0.8`.
+4. Device lists can pass `title:` and `subtitle:` to `FlatPack::List::Item`.
+5. Sidebar headers can pass `version:` instead of drawing a badge.
+6. Delete `include RecordingStudio::Capabilities::Example`. PWA `0.7.0`
+   removes that capability and the include raises `NameError`. The dummy
+   workspace does not include it.
 
 ## 0.6.6
 

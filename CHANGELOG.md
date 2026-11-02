@@ -6,8 +6,10 @@
 
 ### Changed
 
-- Development and dummy apps pin FlatPack ref `92d26fd8` (`0.1.335`), which
+- Development and dummy apps pin FlatPack ref `a109067b` (`0.1.335`), which
   adds `FlatPack::List::Item` `title` and `subtitle` and sidebar `version:`.
+- Development and dummy apps pin PWA ref `0d4d01bc` (`0.7.0`) with
+  `>= 0.7.0`, `< 0.8`.
 - Device rows use those list slots. The dummy sidebar header shows this gem's
   version.
 - The lockfile carries nokogiri `1.19.6`, loofah `2.25.3`, and
@@ -18,6 +20,7 @@
 
 - Bump to `0.6.7`. No migration. Device lists can pass `title:` and `subtitle:`
   to `FlatPack::List::Item`. Sidebar headers can pass `version:`.
+  Stay on PWA `0.7.x`.
 
 ## 0.6.6
 

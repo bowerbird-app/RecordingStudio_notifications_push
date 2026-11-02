@@ -17,9 +17,9 @@ else
       tag: "v0.4.0"
 end
 
-gem "recording_studio_pwa",
+gem "recording_studio_pwa", ">= 0.7.0", "< 0.8",
     github: "bowerbird-app/RecordingStudio_PWA",
-    tag: "v0.6.1"
+    ref: "0d4d01bcb4527d71f06e10ce7d01955160dbb44a"
 
 # RecordingStudio engine
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.3.0"
@@ -66,7 +66,7 @@ gem "recording_studio_internationalization",
     tag: "v0.2.0"
 
 # FlatPack UI component library [https://github.com/bowerbird-app/flatpack]
-gem "flat_pack", github: "bowerbird-app/flatpack", ref: "92d26fd873078a23313ed120af54c37e90bae82d"
+gem "flat_pack", github: "bowerbird-app/flatpack", ref: "a109067b3ec5e587c4e500fccb208fe32592028e"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
