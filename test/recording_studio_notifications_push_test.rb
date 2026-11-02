@@ -15,8 +15,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
 
   def test_notifications_dependency_floor_matches_the_tested_line
     dependency = Gem::Specification.find_by_name("recording_studio_notifications_push")
-      .runtime_dependencies
-      .find { |item| item.name == "recording_studio_notifications" }
+                                   .runtime_dependencies
+                                   .find { |item| item.name == "recording_studio_notifications" }
 
     assert_equal Gem::Requirement.new(">= 0.14.0", "< 1"), dependency.requirement
   end
