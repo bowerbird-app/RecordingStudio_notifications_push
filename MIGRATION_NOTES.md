@@ -1,5 +1,25 @@
 # Migration notes
 
+## 0.5.4
+
+### Host app steps
+
+1. Bump to `0.5.4`. Requires Recording Studio `>= 6.1.0`. Stay on `0.5.3` until
+   the host is on Recording Studio 6.1 or newer. No schema or push-delivery
+   changes.
+2. Pin PWA at tag `v0.5.0` and notifications email at tag `v0.4.0`. Dummy and
+   development pins in this repository also use core `v6.3.0`, FlatPack
+   `v0.1.329`, notifications `v0.14.1`, Accessible `v0.24.0`, Trashable
+   `v0.12.0`, Metrics `v0.7.0`, Cache `v0.6.0`, Root Switchable `v0.11.2`, and
+   Internationalization `v0.1.8`.
+3. Root Switchable `config.layout` must be a layout name, `nil`, `false`, or a
+   callable invoked as `call(controller:)` — not a method Symbol.
+4. `DevicesController` uses `recording_studio_layout` (core 6 `ControllerLayout`)
+   instead of `RecordingStudio::UsesDefaultLayout`. The devices view calls
+   `flat_pack_page_nav` instead of `recording_studio_page_nav`.
+5. Keep `RecordingStudioMetrics::Api.register!(api: :operations)` in the host.
+   This gem still registers definitions only.
+
 ## 0.5.2
 
 ### Host app steps
