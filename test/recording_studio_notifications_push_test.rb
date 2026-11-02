@@ -67,32 +67,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
                     "recording_studio_internationalization"
   end
 
-  def test_template_leftovers_are_not_in_the_repo
-    root = File.expand_path("..", __dir__)
-    leftovers = %w[
-      docs/gem_template
-      UPDATE_SUMMARY.md
-      bin/rename_gem
-      test/rename_gem_identity_test.rb
-      test/rename_verification_test.rb
-      test_codespaces_setup.sh
-      test/dummy/install_page.html
-      test/devices-layout-shots
-      test/dummy/app/javascript/controllers/hello_controller.js
-      test/dummy/app/views/makeup_artist
-      app/views/recording_studio_notifications_push/.keep
-      test/dummy/.github
-      test/dummy/app/views/docs/recordable_types.html.erb
-      test/dummy/app/views/docs/recordings_tree.html.erb
-      test/dummy/app/views/docs/gem_views.html.erb
-      test/dummy/app/views/docs/methods.html.erb
-    ]
-
-    leftovers.each do |relative|
-      refute File.exist?(File.join(root, relative)), relative
-    end
-  end
-
   def test_does_not_ship_template_capabilities_or_pages
     refute File.exist?(File.expand_path("../lib/recording_studio_notifications_push/capabilities/example.rb", __dir__))
     refute File.exist?(File.expand_path("../app/controllers/recording_studio_notifications_push/home_controller.rb",

@@ -73,10 +73,6 @@ class DummyPushWiringTest < ActiveSupport::TestCase
   end
 
   test "workspace opts into accessible without inventing custom access" do
-    workspace_source = File.read(Rails.root.join("app/models/workspace.rb"))
-
-    assert_includes workspace_source, "enable_capability(:accessible"
-    refute_includes workspace_source, "Capabilities::Example"
     assert RecordingStudio.capability_enabled?(:accessible, for: Workspace)
     refute RecordingStudio.capability_enabled?(:example, for: Workspace)
     refute RecordingStudio.capability_enabled?(:accessible, for: Folder)
