@@ -133,7 +133,7 @@ module ApplicationHelper
         class: "sr-only",
         tabindex: "0",
         autocomplete: "off",
-        aria: { hidden: "true" },
+        aria: { label: t("dummy.theme.label", default: "Theme") },
         data: { dummy_theme_focus_sink: true }
       ),
       dummy_language_selector(compact: false)
