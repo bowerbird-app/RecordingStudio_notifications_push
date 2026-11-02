@@ -19,6 +19,7 @@ class DocsConfigPageTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "Defaults from ENV"
+    assert_includes response.body, "recording_studio_notifications_push.rb"
     assert_includes response.body, "channel"
     assert_includes response.body, "firebase_web_config"
     assert_includes response.body, "firebase_project_id"

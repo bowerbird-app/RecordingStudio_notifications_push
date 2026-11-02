@@ -21,7 +21,11 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     get "/"
 
     assert_response :success
-    assert_select "form[action='/recording_studio_internationalization/locale']"
+    assert_select "form[action='/recording_studio_internationalization/locale']" do |forms|
+      assert_select forms, "button", count: 0
+      assert_select forms, "label", count: 0
+      assert_select forms, "select[aria-label='Language']"
+    end
     refute_includes response.body, "Change language"
     assert_includes response.body, "English"
     assert_includes response.body, "Français"

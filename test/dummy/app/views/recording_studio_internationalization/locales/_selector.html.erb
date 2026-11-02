@@ -1,9 +1,10 @@
-<%# The select submits on change. A second submit button stacks under it and doubles the top bar. %>
-<%= form_with url: recording_studio_internationalization.locale_path, method: :patch, data: { turbo: false }, **html_options do |form| %>
+<%# The select submits on change. No submit button and no stacked field label, so the top bar stays one row. The form keeps a width so the chosen language stays readable. %>
+<%= form_with url: recording_studio_internationalization.locale_path, method: :patch, data: { turbo: false }, style: "min-width: 11rem", **html_options do |form| %>
   <%= form.hidden_field :return_to, value: request.fullpath %>
   <%= render FlatPack::Select::Component.new(
         name: "locale",
-        label: t("recording_studio.internationalization.selector.label"),
+        label: nil,
+        aria: { label: t("recording_studio.internationalization.selector.label") },
         options: locales.map { |locale| [locale.name, locale.code.to_s] },
         value: I18n.locale.to_s,
         placeholder: nil
