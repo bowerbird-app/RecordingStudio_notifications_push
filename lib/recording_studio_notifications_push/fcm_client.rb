@@ -15,7 +15,8 @@ module RecordingStudioNotificationsPush
     end
 
     # Sends one FCM HTTP v1 message. Result keys: ok, status, body, disable.
-    def send_message(token:, title: nil, body: nil, url: nil, link: nil, data: nil)
+    # link: nil stays an explicit keyword so a missing open URL is not omitted.
+    def send_message(token:, title: nil, body: nil, url: nil, link: nil, data: nil) # rubocop:disable Metrics/ParameterLists
       raise DeliveryError, "FCM token is required" if token.to_s.strip.blank?
       raise DeliveryError, "FIREBASE_PROJECT_ID is required to send push notifications" if project_id.blank?
 
