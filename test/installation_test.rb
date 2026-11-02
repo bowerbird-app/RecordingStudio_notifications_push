@@ -55,6 +55,19 @@ class InstallationTest < Minitest::Test
     assert_equal "Jo test tablet", installation.display_label
   end
 
+  def test_registration_rejects_unknown_attributes
+    error = assert_raises(ArgumentError) do
+      RecordingStudioNotificationsPush::Installation.send(
+        :apply_registration!,
+        Object.new,
+        Object.new,
+        { surprise: "nope" }
+      )
+    end
+
+    assert_match(/unknown registration attribute: surprise/, error.message)
+  end
+
   def test_display_label_falls_back_to_generated_i18n_label
     installation = installation_with(label: nil, user_agent: chrome_mac_user_agent)
 
@@ -68,7 +81,7 @@ class InstallationTest < Minitest::Test
       recording_studio: {
         notifications_push: {
           labels: {
-            on: "%{browser} sur %{os}", # rubocop:disable Style/FormatStringToken
+            on: ["%", "{browser} sur %", "{os}"].join,
             browsers: { chrome: "Chrome" },
             os: { mac: "Mac" }
           }
