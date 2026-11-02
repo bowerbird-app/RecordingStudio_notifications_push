@@ -179,7 +179,7 @@ over locale defaults, including `nil`.
 
 ## Development Gemfile pins
 
-Until parent gems are published:
+Parent gems are not on RubyGems. Resolve them from these GitHub tags:
 
 ```ruby
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.3.0"

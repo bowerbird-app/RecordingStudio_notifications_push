@@ -4,12 +4,12 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.5.5", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.6", ::RecordingStudioNotificationsPush::VERSION
     lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
     dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.5.5)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.5)"
+    assert_includes lockfile, "recording_studio_notifications_push (0.5.6)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.6)"
     assert_includes lockfile, "tag: v0.7.0"
     assert_includes dummy_lockfile, "tag: v0.7.0"
   end
@@ -65,6 +65,32 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes gemfile, "RecordingStudio_api"
     refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
                     "recording_studio_internationalization"
+  end
+
+  def test_template_leftovers_are_not_in_the_repo
+    root = File.expand_path("..", __dir__)
+    leftovers = %w[
+      docs/gem_template
+      UPDATE_SUMMARY.md
+      bin/rename_gem
+      test/rename_gem_identity_test.rb
+      test/rename_verification_test.rb
+      test_codespaces_setup.sh
+      test/dummy/install_page.html
+      test/devices-layout-shots
+      test/dummy/app/javascript/controllers/hello_controller.js
+      test/dummy/app/views/makeup_artist
+      app/views/recording_studio_notifications_push/.keep
+      test/dummy/.github
+      test/dummy/app/views/docs/recordable_types.html.erb
+      test/dummy/app/views/docs/recordings_tree.html.erb
+      test/dummy/app/views/docs/gem_views.html.erb
+      test/dummy/app/views/docs/methods.html.erb
+    ]
+
+    leftovers.each do |relative|
+      refute File.exist?(File.join(root, relative)), relative
+    end
   end
 
   def test_does_not_ship_template_capabilities_or_pages

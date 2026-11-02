@@ -2,9 +2,9 @@
 
 ## Architecture
 
-- This repository is a Rails mountable engine template for building Recording Studio addons.
-- Preserve engine namespace isolation under `GemTemplate` unless the task is explicitly about renaming the gem.
-- Treat `docs/gem_template/` as architectural reference material. For current addon workflow, prefer the top-level README and the dummy app.
+- This repository is the `RecordingStudioNotificationsPush` engine: the FCM `:push` channel for Recording Studio notifications.
+- Keep engine code namespaced under `RecordingStudioNotificationsPush`.
+- Host setup lives in the top-level README, `MIGRATION_NOTES.md`, and the dummy app.
 - Keep changes small and scoped. Do not rewrite template surfaces unless the request requires it.
 
 ## UI Conventions

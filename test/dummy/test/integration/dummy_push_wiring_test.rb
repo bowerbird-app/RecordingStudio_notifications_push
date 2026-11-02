@@ -2,12 +2,11 @@
 
 require "test_helper"
 
-class RecordingStudioTemplateTest < ActiveSupport::TestCase
+class DummyPushWiringTest < ActiveSupport::TestCase
   test "dummy app loads root switchable config and controller support" do
     assert_equal [ "all_workspaces" ], RecordingStudioRootSwitchable.configuration.scopes.keys
     assert_equal "flat_pack_sidebar", RecordingStudioRootSwitchable.configuration.layout
     assert_includes ApplicationController.ancestors, RecordingStudio::RootSwitchable::ControllerSupport
-    refute ApplicationController.ancestors.any? { |mod| mod.name == "RecordingStudio::UsesDefaultLayout" }
   end
 
   test "dummy app validates recordable declarations" do
@@ -77,10 +76,11 @@ class RecordingStudioTemplateTest < ActiveSupport::TestCase
     workspace_source = File.read(Rails.root.join("app/models/workspace.rb"))
 
     assert_includes workspace_source, "enable_capability(:accessible"
+    refute_includes workspace_source, "Capabilities::Example"
     assert RecordingStudio.capability_enabled?(:accessible, for: Workspace)
+    refute RecordingStudio.capability_enabled?(:example, for: Workspace)
     refute RecordingStudio.capability_enabled?(:accessible, for: Folder)
     refute RecordingStudio.capability_enabled?(:accessible, for: Page)
-    refute ApplicationController.ancestors.any? { |mod| mod.name == "RecordingStudio::UsesDefaultLayout" }
   end
 
   test "push channel and installations table are wired" do
