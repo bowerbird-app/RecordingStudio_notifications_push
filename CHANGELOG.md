@@ -14,6 +14,9 @@
 - The devices page renders in the dummy app shell, with one title and no
   back/close bar.
 - The home page keeps an in-app inbox beside the test pings.
+- The dummy language select submits on change, with no submit button and no
+  stacked label, so the top bar stays one row.
+- The config initializer path wraps on a narrow screen.
 - Dummy popover reposition script and its CSS are gone.
 
 ### Upgrade notes
