@@ -18,11 +18,12 @@ module RecordingStudioNotificationsPush
     end
 
     def self.yaml_configuration_file?(app)
-      root = app.root if app.respond_to?(:root)
-      return false if root.blank?
+      return false unless app.respond_to?(:paths)
 
-      root.join("config/recording_studio_notifications_push.yml").exist? ||
-        root.join("config/recording_studio_notifications_push.yml.erb").exist?
+      Array(app.paths["config"]&.existent).any? do |dir|
+        File.exist?(File.join(dir, "recording_studio_notifications_push.yml")) ||
+          File.exist?(File.join(dir, "recording_studio_notifications_push.yml.erb"))
+      end
     end
 
     def self.merge_x_configuration(app)
