@@ -20,9 +20,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
 
     assert dependency.requirement.satisfied_by?(Gem::Version.new("6.3.0"))
     refute dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
+  end
+
+  def test_flat_pack_requirement_stays_on_0_1
     flat_pack = Gem::Specification.find_by_name("recording_studio_notifications_push")
                                   .runtime_dependencies
                                   .find { |item| item.name == "flat_pack" }
+
     assert_equal Gem::Requirement.new(">= 0.1.335", "< 0.2"), flat_pack.requirement
   end
 
