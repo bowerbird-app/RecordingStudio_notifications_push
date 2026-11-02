@@ -2,31 +2,28 @@
 
 ## Unreleased
 
-<<<<<<< HEAD
-## 0.6.1
-=======
-## 0.5.11
+## 0.6.2
+
+### Changed (behavior)
+
+- Icon URLs outside the allowlist are dropped. A same-origin path, or an
+  absolute `http`/`https` host in `allowed_url_hosts`, is kept.
+- FCM `webpush.fcm_options.link` is set only for absolute `https` URLs.
+- Runtime dependency `recording_studio_notifications` is `>= 0.14.0`, `< 1`.
 
 ### Changed
 
-- Click and icon URLs always go through
-  `RecordingStudioNotifications::UrlSafety`. Absolute hosts must be in
-  `allowed_url_hosts`. Same-origin paths stay allowed.
-- Control characters in a URL are still rejected here. The local check goes
-  away when this gem requires the notifications release that checks them.
-- FCM `webpush.fcm_options.link` is set only for absolute `https` URLs.
-  Relative paths stay in the data payload for the service worker.
-- Runtime dependency `recording_studio_notifications` is `>= 0.14.0`, `< 1`.
+- Click and icon URLs go through `RecordingStudioNotifications::UrlSafety`.
+- Control characters in a URL are still rejected here until a later
+  notifications release takes that check.
 
 ### Upgrade notes
 
-- Bump to `0.5.11`. Requires notifications `0.14.0` or newer. No migration.
+- Bump to `0.6.2`. Requires notifications `0.14.0` or newer. No migration.
 - Put banner icon hosts in `allowed_url_hosts`, or use a same-origin path.
-  The service worker still turns that path into an absolute URL.
 - A relative notification URL is no longer copied into `fcm_options.link`.
 
-## 0.5.10
->>>>>>> d03bdb1 (Send click and icon URLs through UrlSafety (0.5.11))
+## 0.6.1
 
 ### Changed
 
