@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.8.0
+
+### Removed
+
+- Breaking. `RecordingStudioNotificationsPush::Adapters::FcmAdapter` and
+  `RecordingStudioNotificationsPush::Channels::FcmAdapter` are gone.
+  Use `RecordingStudioNotificationsPush::FcmAdapter`. There is no compatibility
+  alias.
+
+### Upgrade notes
+
+- Bump to `0.8.0`. No migration.
+- Replace `Adapters::FcmAdapter` and `Channels::FcmAdapter` with
+  `RecordingStudioNotificationsPush::FcmAdapter`.
+
 ## 0.7.0
 
 ### Changed
