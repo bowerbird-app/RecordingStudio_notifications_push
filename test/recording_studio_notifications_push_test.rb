@@ -15,8 +15,8 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
 
   def test_recording_studio_stays_below_7
     dependency = Gem::Specification.find_by_name("recording_studio_notifications_push")
-      .runtime_dependencies
-      .find { |item| item.name == "recording_studio" }
+                                   .runtime_dependencies
+                                   .find { |item| item.name == "recording_studio" }
 
     assert dependency.requirement.satisfied_by?(Gem::Version.new("6.3.0"))
     refute dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
