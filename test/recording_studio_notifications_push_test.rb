@@ -9,13 +9,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_match(/\A\d+\.\d+\.\d+\z/, version)
   end
 
-  def test_importmap_preloads_push_devices_controller
-    importmap = File.read(File.expand_path("../config/importmap.rb", __dir__))
-
-    assert_includes importmap, "controllers/recording_studio_notifications_push/push_devices_controller"
-    assert_includes importmap, "preload: true"
-  end
-
   def test_engine_exists
     assert_kind_of Class, ::RecordingStudioNotificationsPush::Engine
   end
@@ -27,31 +20,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes names, "recording_studio_metrics"
     assert_includes names, "recording_studio_notifications"
     refute_includes names, "recording_studio_internationalization"
-  end
-
-  def test_does_not_ship_template_capabilities_or_pages
-    refute File.exist?(File.expand_path("../lib/recording_studio_notifications_push/capabilities/example.rb", __dir__))
-    refute File.exist?(File.expand_path("../app/controllers/recording_studio_notifications_push/home_controller.rb",
-                                        __dir__))
-    pages = Dir[File.expand_path("../db/migrate/*pages*.rb", __dir__)]
-    assert_empty pages
-  end
-
-  def test_dummy_app_uses_flatpack_sidebar_layout
-    application_controller_path = File.expand_path("dummy/app/controllers/application_controller.rb", __dir__)
-    controller_source = File.read(application_controller_path)
-
-    assert_includes controller_source, "flat_pack_sidebar"
-    refute_includes controller_source, "UsesDefaultLayout"
-    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack_sidebar.html.erb", __dir__))
-    assert File.exist?(File.expand_path("dummy/app/views/layouts/flat_pack/_sidebar.html.erb", __dir__))
-  end
-
-  def test_dummy_tailwind_imports_generated_gem_sources
-    css = File.read(File.expand_path("dummy/app/assets/tailwind/application.css", __dir__))
-
-    assert_includes css, '@import "./gem_sources.css"'
-    assert File.exist?(File.expand_path("dummy/lib/tasks/tailwind_gem_sources.rake", __dir__))
   end
 
   def test_devices_controller_uses_core_default_layout

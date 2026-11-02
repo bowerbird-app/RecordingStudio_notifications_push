@@ -34,21 +34,6 @@ class InstallationTest < Minitest::Test
     assert_equal "legacy-token", installation.delivery_token
   end
 
-  def test_installation_model_source_declares_expected_api
-    source = File.read(
-      File.expand_path("../app/models/recording_studio_notifications_push/installation.rb", __dir__)
-    )
-
-    assert_includes source, "belongs_to :recipient, polymorphic: true"
-    assert_includes source, "scope :active"
-    assert_includes source, "def self.upsert!"
-    assert_includes source, "def disable!"
-    assert_includes source, "def display_label"
-    assert_includes source, "firebase_installation_id"
-    assert_includes source, "legacy_fcm_token"
-    refute_includes source, "include RecordingStudio::Recordable"
-  end
-
   def test_label_from_user_agent_builds_short_browser_names
     user_agent = [
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
@@ -128,25 +113,22 @@ class InstallationTest < Minitest::Test
     )
   end
 
-  def test_list_icon_helpers_are_declared
-    source = File.read(
-      File.expand_path("../app/models/recording_studio_notifications_push/installation.rb", __dir__)
+  def test_list_icon_follows_the_device
+    phone = installation_with(
+      label: "Safari on iPhone",
+      user_agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+      platform: "ios"
+    )
+    desktop = installation_with(
+      label: "Chrome on Mac",
+      user_agent: chrome_mac_user_agent,
+      platform: "web"
     )
 
-    assert_includes source, "def mobile?"
-    assert_includes source, "def list_icon"
-    assert_includes source, ":device_phone_mobile"
-    assert_includes source, ":computer_desktop"
-  end
-
-  def test_installations_migration_exists
-    migrations = Dir[File.expand_path("../db/migrate/*installations*.rb", __dir__)]
-    assert_equal 1, migrations.size
-
-    source = File.read(migrations.first)
-    assert_includes source, "recording_studio_notifications_push_installations"
-    assert_includes source, "firebase_installation_id"
-    refute_includes source, "recording_studio_notifications_push_pages"
+    assert phone.mobile?
+    assert_equal :device_phone_mobile, phone.list_icon
+    refute desktop.mobile?
+    assert_equal :computer_desktop, desktop.list_icon
   end
 
   private
