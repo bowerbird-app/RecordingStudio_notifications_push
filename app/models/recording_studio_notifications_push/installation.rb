@@ -50,8 +50,6 @@ module RecordingStudioNotificationsPush
     private_class_method :reject_unknown_registration!
 
     def self.apply_registration!(record, recipient, registration)
-      reject_unknown_registration!(registration)
-
       record.recipient = recipient
       REGISTRATION_ATTRIBUTES.each do |attribute|
         assign_optional_string!(record, attribute, registration[attribute]) if registration.key?(attribute)

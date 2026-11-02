@@ -81,7 +81,7 @@ class InstallationTest < Minitest::Test
       recording_studio: {
         notifications_push: {
           labels: {
-            on: ["%", "{browser} sur %", "{os}"].join,
+            on: "%{browser} sur %{os}", # rubocop:disable Style/FormatStringToken
             browsers: { chrome: "Chrome" },
             os: { mac: "Mac" }
           }
