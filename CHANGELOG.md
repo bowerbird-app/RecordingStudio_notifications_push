@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.6.7
+
+### Changed
+
+- Development and dummy apps pin FlatPack ref `92d26fd8` (`0.1.335`), which
+  adds `FlatPack::List::Item` `title` and `subtitle` and sidebar `version:`.
+- Device rows use those list slots. The dummy sidebar header shows this gem's
+  version.
+- The lockfile carries nokogiri `1.19.6`, loofah `2.25.3`, and
+  rails-html-sanitizer `1.7.2`.
+- Runtime dependency `flat_pack` is `>= 0.1.335`, `< 0.2`.
+
+### Upgrade notes
+
+- Bump to `0.6.7`. No migration. Device lists can pass `title:` and `subtitle:`
+  to `FlatPack::List::Item`. Sidebar headers can pass `version:`.
+
 ## 0.6.6
 
 ### Changed (behavior)

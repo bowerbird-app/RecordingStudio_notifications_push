@@ -90,24 +90,19 @@
             }
           ) %>
         <% end %>
+        <% seen_at = installation.last_seen_at %>
         <%= render FlatPack::List::Item.new(
-          icon: installation.list_icon,
-          trailing: remove_button
-        ) do %>
-          <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
-            <%= render FlatPack::Text::Component.new(size: :sm, weight: :medium) do %>
-              <span data-installation-id="<%= installation.id %>">
-                <%= installation.display_label %>
-                <span class="hidden" data-installation-current-label> · <%= push_t("devices.current") %></span>
-              </span>
-            <% end %>
-            <% if installation.last_seen_at.present? %>
-              <%= render FlatPack::Text::Component.new(
-                text: push_t("devices.last_seen", time: time_ago_in_words(installation.last_seen_at)),
-                size: :xs,
-                style: :muted
-              ) %>
-            <% end %>
+          **{
+            icon: installation.list_icon,
+            subtitle: (seen_at.present? ? push_t("devices.last_seen", time: time_ago_in_words(seen_at)) : nil),
+            trailing: remove_button
+          }.compact
+        ) do |item| %>
+          <% item.with_title do %>
+            <span data-installation-id="<%= installation.id %>">
+              <%= installation.display_label %>
+              <span class="hidden" data-installation-current-label> · <%= push_t("devices.current") %></span>
+            </span>
           <% end %>
         <% end %>
       <% end %>

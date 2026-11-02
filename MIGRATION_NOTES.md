@@ -1,5 +1,14 @@
 # Migration notes
 
+## 0.6.7
+
+### Host app steps
+
+1. Bump to `0.6.7`. No schema change. Requires `flat_pack` `>= 0.1.335`, `< 0.2`.
+2. Pin FlatPack ref `92d26fd873078a23313ed120af54c37e90bae82d` (`0.1.335`).
+3. Device lists can pass `title:` and `subtitle:` to `FlatPack::List::Item`.
+4. Sidebar headers can pass `version:` instead of drawing a badge.
+
 ## 0.6.6
 
 ### Host app steps
