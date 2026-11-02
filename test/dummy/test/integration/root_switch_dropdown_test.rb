@@ -103,21 +103,50 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     assert_redirected_to "/"
   end
 
-  test "an ungranted user does not see a workspace in the root switcher" do
-    user = User.find_or_create_by!(email: "root-switch-hidden@example.com") do |record|
+  test "root switcher lists a granted workspace and hides an ungranted one" do
+    user = User.find_or_create_by!(email: "root-switch-mixed@example.com") do |record|
       record.password = "Password123!"
       record.password_confirmation = "Password123!"
     end
 
     sign_in user
 
-    workspace = Workspace.create!(name: "Hidden Workspace #{SecureRandom.hex(4)}")
-    RecordingStudio.root_recording_for(workspace)
+    visible = Workspace.create!(name: "Visible Workspace #{SecureRandom.hex(4)}")
+    hidden = Workspace.create!(name: "Hidden Workspace #{SecureRandom.hex(4)}")
+    grant_owner!(user, RecordingStudio.root_recording_for(visible))
+    RecordingStudio.root_recording_for(hidden)
 
-    get root_path
+    get "/recording_studio_root_switchable/v1/root_switch?scope=all_workspaces"
 
     assert_response :success
-    refute_includes response.body, workspace.name
+    assert_includes response.body, visible.name
+    refute_includes response.body, hidden.name
+  end
+
+  test "switching to an ungranted workspace is rejected" do
+    user = User.find_or_create_by!(email: "root-switch-rejected@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+
+    sign_in user
+
+    visible = Workspace.create!(name: "Allowed Workspace #{SecureRandom.hex(4)}")
+    hidden = Workspace.create!(name: "Blocked Workspace #{SecureRandom.hex(4)}")
+    grant_owner!(user, RecordingStudio.root_recording_for(visible))
+    hidden_root = RecordingStudio.root_recording_for(hidden)
+
+    patch "/recording_studio_root_switchable/v1/root_switch", params: {
+      scope: "all_workspaces",
+      root_switch: {
+        root_recording_id: hidden_root.id,
+        return_to: "/"
+      }
+    }
+
+    assert_response :unprocessable_entity
+    assert_includes response.body, visible.name
+    refute_includes response.body, hidden.name
   end
 
   private
