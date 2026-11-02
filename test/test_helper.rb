@@ -20,13 +20,9 @@ I18n.available_locales = %i[en]
 I18n.default_locale = :en
 
 module HttpResponseDouble
+  HttpMessage = Struct.new(:code, :body, :successful)
+
   def fake_http_message(code:, body:, success:)
-    response = Object.new
-    response.define_singleton_method(:code) { code }
-    response.define_singleton_method(:body) { body }
-    response.define_singleton_method(:is_a?) { |klass| klass == Net::HTTPSuccess ? success : false }
-    response
+    HttpMessage.new(code, body, success)
   end
 end
-
-Minitest::Test.include HttpResponseDouble

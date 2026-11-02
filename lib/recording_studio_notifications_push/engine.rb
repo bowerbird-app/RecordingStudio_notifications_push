@@ -4,6 +4,7 @@ module RecordingStudioNotificationsPush
   class Engine < ::Rails::Engine
     isolate_namespace RecordingStudioNotificationsPush
 
+    # @api private
     def self.pwa_registrar
       return unless defined?(RecordingStudioPwa)
       return unless RecordingStudioPwa.respond_to?(:register_service_worker_extension)

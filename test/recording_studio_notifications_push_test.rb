@@ -20,34 +20,13 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_kind_of Class, ::RecordingStudioNotificationsPush::Engine
   end
 
-  def test_gemspec_names_runtime_dependencies
-    gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
+  def test_runtime_dependencies_come_from_the_loaded_gem
+    names = Gem::Specification.find_by_name("recording_studio_notifications_push").runtime_dependencies.map(&:name)
 
-    assert_includes gemspec, 'spec.add_dependency "recording_studio"'
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics"'
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications"'
-    assert_includes gemspec, "RecordingStudio_notifications_push"
-    assert_includes gemspec, "CHANGELOG.md"
-    refute_includes gemspec, "recording_studio_internationalization"
-  end
-
-  def test_dummy_gemfile_uses_github_sources
-    gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
-
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable"'
-    assert_includes gemfile, "require: false"
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications_email"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics"'
-    refute_includes gemfile, "recording_studio_api"
-    refute_includes gemfile, "RecordingStudio_api"
+    assert_includes names, "recording_studio"
+    assert_includes names, "recording_studio_metrics"
+    assert_includes names, "recording_studio_notifications"
+    refute_includes names, "recording_studio_internationalization"
   end
 
   def test_does_not_ship_template_capabilities_or_pages

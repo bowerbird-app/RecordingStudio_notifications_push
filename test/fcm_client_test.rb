@@ -4,6 +4,7 @@ require "test_helper"
 require "json"
 
 class FcmClientTest < Minitest::Test
+  include HttpResponseDouble
   class FakeAccessToken
     def fetch
       "ya29.test"

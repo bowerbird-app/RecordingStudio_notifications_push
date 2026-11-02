@@ -6,6 +6,7 @@ require "openssl"
 require "base64"
 
 class GoogleAccessTokenTest < Minitest::Test
+  include HttpResponseDouble
   def setup
     @rsa = OpenSSL::PKey::RSA.new(2048)
     @service_account = {

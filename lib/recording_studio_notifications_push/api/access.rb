@@ -7,10 +7,12 @@ module RecordingStudioNotificationsPush
 
       ResolverContext = Struct.new(:controller)
 
+      # @api private
       def admin_loaded?
         defined?(RecordingStudioAdmin)
       end
 
+      # @api private
       def admin_configuration
         RecordingStudioAdmin.configuration
       end

@@ -86,10 +86,16 @@ module RecordingStudioNotificationsPush
       http
     end
 
+    def http_success?(response)
+      return response.successful if response.respond_to?(:successful)
+
+      response.is_a?(Net::HTTPSuccess)
+    end
+
     def parse_response(response)
       body = parse_json_body(response.body)
       {
-        ok: response.is_a?(Net::HTTPSuccess),
+        ok: http_success?(response),
         status: response.code.to_i,
         body: body,
         disable: disable_token?(body),
