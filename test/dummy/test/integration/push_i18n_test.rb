@@ -47,13 +47,19 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     }
     assert in_cog, "phones should keep the language select in the cog menu"
 
-    assert_select "[data-theme-value='system'][role='menuitemradio'][aria-checked='true']" do |items|
-      assert_select items, "svg"
+    assert_select "[role='radiogroup'][aria-label='Theme']" do
+      assert_select "[data-theme-value='system'][role='radio'][aria-checked='true']" do |items|
+        assert_select items, "svg"
+        refute_includes items.first.at_css("svg")["style"].to_s, "visibility:hidden"
+      end
+      assert_select "[data-theme-value='light'][role='radio'][aria-checked='false']" do |items|
+        assert_includes items.first.at_css("svg")["style"].to_s, "visibility:hidden"
+      end
+      assert_select "[data-theme-value='dark'][role='radio'][aria-checked='false']" do |items|
+        assert_includes items.first.at_css("svg")["style"].to_s, "visibility:hidden"
+      end
     end
-    assert_select "[data-theme-value='light'][role='menuitemradio'][aria-checked='false']" do |items|
-      assert_select items, "svg", count: 0
-    end
-    assert_select "[data-theme-value='dark'][role='menuitemradio'][aria-checked='false']"
+    assert_select "[role='menuitemradio']", count: 0
     assert_select "[data-theme-value='rounded']", count: 0
     assert_includes response.body, ">Theme<"
     refute_includes response.body, ">Shape<"
@@ -70,7 +76,6 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     assert cog_select, "the cog menu should include the language select"
     refute_includes cog_select["class"].to_s, "py-[var(--button-padding-y-sm)]"
     assert_includes cog_select["class"].to_s, "border-[var(--surface-border-color)]"
-    assert_select "[data-dummy-theme-focus-sink]", count: 0
   end
 
   test "devices page stays English until the host locale changes" do

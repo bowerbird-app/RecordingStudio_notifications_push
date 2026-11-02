@@ -94,29 +94,39 @@ module ApplicationHelper
   end
 
   def dummy_theme_menu(dropdown)
-    dummy_theme_group(dropdown, "dummy.theme.group", %w[system light dark])
+    dropdown.menu_html(dummy_theme_menu_label(t("dummy.theme.group")))
+    dropdown.menu_html(dummy_theme_radios)
     dropdown.menu_form(class: "md:hidden") { dummy_theme_language_panel }
   end
 
-  def dummy_theme_group(dropdown, label_key, values)
-    dropdown.menu_html(dummy_theme_menu_label(t(label_key)))
-    values.each { |value| dummy_theme_choice(dropdown, value) }
+  # Radios, not menuitemradio: the cog is a dialog once it contains the
+  # language form, and a menu item role is not allowed in there.
+  def dummy_theme_radios
+    tag.div(role: "radiogroup", aria: { label: t("dummy.theme.group", default: "Theme") }) do
+      safe_join(%w[system light dark].map { |value| dummy_theme_radio(value) })
+    end
   end
 
-  # System is the theme controller's choice when nothing is saved. The menu
-  # controller moves the check after connect, using the same storage key.
-  def dummy_theme_choice(dropdown, value)
+  # System is the theme controller's choice when nothing is saved. Every row
+  # keeps the check icon so the labels share one gutter; unchecked checks are
+  # hidden. The menu controller moves that visibility after connect.
+  def dummy_theme_radio(value)
     active = value == "system"
-    dropdown.menu_item(
+    item = FlatPack::Button::DropdownItem::Component.new(
       text: t("dummy.theme.#{value}", default: value.capitalize),
-      icon: ("check" if active),
-      role: "menuitemradio",
+      icon: "check",
+      role: "radio",
       aria: { checked: active.to_s },
       data: {
-        action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle",
+        action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle keydown->dummy-theme-menu#keydown",
         theme_value: value
       }
     )
+    item.plain_actions = true
+    html = render(item)
+    return html if active
+
+    html.sub("<svg", '<svg style="visibility:hidden"').html_safe
   end
 
   def dummy_theme_menu_label(text)

@@ -93,6 +93,29 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     refute_includes response.body, archived.title
   end
 
+  test "home inbox authorizes before it keeps eight rows" do
+    source = Workspace.create!(name: "Inbox Limit Source #{SecureRandom.hex(4)}")
+    other = Workspace.create!(name: "Inbox Limit Other #{SecureRandom.hex(4)}")
+    source_root = RecordingStudio.root_recording_for(source)
+    other_root = RecordingStudio.root_recording_for(other)
+    grant_owner!(@user, source_root)
+    grant_owner!(@user, other_root)
+
+    patch "/recording_studio_root_switchable/v1/root_switch", params: {
+      scope: "all_workspaces",
+      root_switch: { root_recording_id: source_root.id, return_to: "/" }
+    }
+    follow_redirect!
+
+    kept = notify_ping("Kept after newer outside rows", root_recording: source_root)
+    9.times { |index| notify_ping("Outside row #{index}", root_recording: other_root) }
+
+    get root_path
+
+    assert_response :success
+    assert_includes response.body, kept.title
+  end
+
   test "teal icon notification stores the teal thumbnail path" do
     post test_notifications_path(format: :turbo_stream),
          params: { icon: "teal" },
