@@ -19,6 +19,7 @@ module RecordingStudioNotificationsPush
 
     def self.upsert!(recipient:, firebase_installation_id:, **registration)
       raise ArgumentError, "recipient is required" if recipient.nil?
+
       reject_unknown_registration!(registration)
 
       record = find_for_registration(recipient, firebase_installation_id)
