@@ -40,8 +40,7 @@ class HomeController < ApplicationController
   def icon_metadata(icon_path)
     return {} if icon_path.blank?
 
-    absolute = "#{request.base_url}#{icon_path}"
-    { icon: absolute, image: absolute }
+    { icon: icon_path, image: icon_path }
   end
 
   def test_notification_copy(icon_key)

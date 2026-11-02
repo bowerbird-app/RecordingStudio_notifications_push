@@ -127,7 +127,7 @@ module RecordingStudioNotificationsPush
         # Urgency helps some browsers deliver while a tab is focused.
         headers: { Urgency: "high" }
       }
-      options[:fcm_options] = { link: url.to_s } if url.present?
+      options[:fcm_options] = { link: url.to_s } if Http.absolute_https?(url)
       options
     end
   end

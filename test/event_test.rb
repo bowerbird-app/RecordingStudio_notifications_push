@@ -69,19 +69,61 @@ class EventTest < Minitest::Test
     assert_equal "/push-icon-coral.png", event.icon
   end
 
-  def test_allows_absolute_http_icons_without_host_allowlist
-    event = RecordingStudioNotificationsPush::Event.wrap(
-      Notification.new(
-        id: "1",
-        title: "T",
-        metadata: {
-          icon: "http://127.0.0.1:3000/push-icon-teal.png",
-          image: "http://127.0.0.1:3000/push-icon-teal.png"
-        }
+  def test_drops_icons_on_hosts_outside_the_allowlist
+    with_allowed_hosts(["cdn.example.com"]) do
+      event = RecordingStudioNotificationsPush::Event.wrap(
+        Notification.new(
+          id: "1",
+          title: "T",
+          metadata: {
+            icon: "https://127.0.0.1/push-icon-teal.png",
+            image: "https://127.0.0.1/push-icon-teal.png"
+          }
+        )
       )
+
+      assert_nil event.icon
+      assert_nil event.image
+    end
+  end
+
+  def test_allows_icons_on_allowlisted_https_hosts
+    with_allowed_hosts(["cdn.example.com"]) do
+      event = RecordingStudioNotificationsPush::Event.wrap(
+        Notification.new(
+          id: "1",
+          title: "T",
+          url: "https://cdn.example.com/open",
+          metadata: {
+            icon: "https://cdn.example.com/push-icon-teal.png",
+            image: "https://cdn.example.com/wide.png"
+          }
+        )
+      )
+
+      assert_equal "https://cdn.example.com/open", event.url
+      assert_equal "https://cdn.example.com/push-icon-teal.png", event.icon
+      assert_equal "https://cdn.example.com/wide.png", event.image
+    end
+  end
+
+  def test_drops_urls_with_control_characters
+    event = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(id: "1", title: "T", url: "/safe\n", metadata: { icon: "/icon\u0000.png" })
     )
 
-    assert_equal "http://127.0.0.1:3000/push-icon-teal.png", event.icon
-    assert_equal "http://127.0.0.1:3000/push-icon-teal.png", event.image
+    assert_nil event.url
+    assert_nil event.icon
+  end
+
+  private
+
+  def with_allowed_hosts(hosts)
+    configuration = RecordingStudioNotifications.configuration
+    original = configuration.allowed_url_hosts
+    configuration.allowed_url_hosts = hosts
+    yield
+  ensure
+    configuration.allowed_url_hosts = original
   end
 end

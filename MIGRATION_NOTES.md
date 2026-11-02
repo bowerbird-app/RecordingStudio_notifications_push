@@ -1,5 +1,6 @@
 # Migration notes
 
+<<<<<<< HEAD
 ## 0.6.0
 
 ### Host app steps
@@ -9,6 +10,19 @@
    the file if you do not use it. A missing file still boots.
 3. A raising admin recording resolver is no longer treated as "not allowed".
    Fix the resolver. `can_view?` lets that error surface.
+=======
+## 0.5.11
+
+### Host app steps
+
+1. Bump to `0.5.11`. Requires `recording_studio_notifications` `>= 0.14.0`.
+   No schema change.
+2. Icon and image URLs follow `UrlSafety`: a same-origin path, or an absolute
+   `http`/`https` host listed in `allowed_url_hosts`. Anything else is dropped.
+3. FCM `webpush.fcm_options.link` is sent only for absolute `https` URLs.
+   Relative links stay in the data payload. The service worker already opens
+   `data.url`.
+>>>>>>> d03bdb1 (Send click and icon URLs through UrlSafety (0.5.11))
 
 ## 0.5.4
 
