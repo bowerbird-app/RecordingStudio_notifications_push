@@ -4,12 +4,11 @@ require "test_helper"
 
 class EngineTest < Minitest::Test
   def setup
-    @original_configuration = RecordingStudioNotificationsPush.instance_variable_get(:@configuration)
     RecordingStudioNotificationsPush.reset_configuration!
   end
 
   def teardown
-    RecordingStudioNotificationsPush.instance_variable_set(:@configuration, @original_configuration)
+    RecordingStudioNotificationsPush.reset_configuration!
   end
 
   def test_load_config_merges_config_sources

@@ -30,13 +30,13 @@ class GoogleAccessTokenTest < Minitest::Test
     fake_http.define_singleton_method(:open_timeout=) { |_| }
     fake_http.define_singleton_method(:read_timeout=) { |_| }
     fake_http.define_singleton_method(:write_timeout=) { |_| }
+    response = fake_http_message(
+      code: "200",
+      success: true,
+      body: JSON.generate("access_token" => "ya29.test-token", "expires_in" => 3600, "token_type" => "Bearer")
+    )
     fake_http.define_singleton_method(:request) do |request|
       captured_assertion = request.body[/assertion=([^&]+)/, 1]
-      response = Net::HTTPOK.new("1.1", "200", "OK")
-      response.instance_variable_set(:@read, true)
-      response.define_singleton_method(:body) do
-        JSON.generate("access_token" => "ya29.test-token", "expires_in" => 3600, "token_type" => "Bearer")
-      end
       response
     end
 
@@ -74,13 +74,13 @@ class GoogleAccessTokenTest < Minitest::Test
     fake_http.define_singleton_method(:open_timeout=) { |_| }
     fake_http.define_singleton_method(:read_timeout=) { |_| }
     fake_http.define_singleton_method(:write_timeout=) { |_| }
+    response = fake_http_message(
+      code: "200",
+      success: true,
+      body: JSON.generate("access_token" => "cached-token", "expires_in" => 3600)
+    )
     fake_http.define_singleton_method(:request) do |_request|
       calls += 1
-      response = Net::HTTPOK.new("1.1", "200", "OK")
-      response.instance_variable_set(:@read, true)
-      response.define_singleton_method(:body) do
-        JSON.generate("access_token" => "cached-token", "expires_in" => 3600)
-      end
       response
     end
 

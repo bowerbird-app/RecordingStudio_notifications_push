@@ -125,13 +125,7 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
   end
 
   def with_admin_root(recording)
-    access = RecordingStudioNotificationsPush::Api::Access
-    singleton = access.singleton_class
-    original = access.method(:admin_root_recording)
-    singleton.define_method(:admin_root_recording) { recording }
-    yield
-  ensure
-    singleton.define_method(:admin_root_recording, original) if original
+    RecordingStudioNotificationsPush::Api::Access.stub(:admin_root_recording, recording) { yield }
   end
 
   def staff_can_view_admin_root?
@@ -139,17 +133,11 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
   end
 
   def with_admin_resolvers(access: nil, site: nil)
-    installed = false
-    raise "RecordingStudioAdmin is already loaded" if Object.const_defined?(:RecordingStudioAdmin, false)
-
     configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(site, access)
-    admin = Module.new
-    admin.define_singleton_method(:configuration) { configuration }
-    Object.const_set(:RecordingStudioAdmin, admin)
-    installed = true
-    yield
-  ensure
-    Object.send(:remove_const, :RecordingStudioAdmin) if installed
+    access_api = RecordingStudioNotificationsPush::Api::Access
+    access_api.stub(:admin_loaded?, true) do
+      access_api.stub(:admin_configuration, configuration) { yield }
+    end
   end
 
   def execute(identifier, **params)

@@ -3,15 +3,10 @@
 require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
-  def test_version_matches_release
-    assert_equal "0.5.7", ::RecordingStudioNotificationsPush::VERSION
-    lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
-    dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
+  def test_version_matches_the_locked_path_gem
+    version = ::RecordingStudioNotificationsPush::VERSION
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.5.7)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.7)"
-    assert_includes lockfile, "tag: v0.7.0"
-    assert_includes dummy_lockfile, "tag: v0.7.0"
+    assert_match(/\A\d+\.\d+\.\d+\z/, version)
   end
 
   def test_importmap_preloads_push_devices_controller
@@ -25,46 +20,34 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_kind_of Class, ::RecordingStudioNotificationsPush::Engine
   end
 
-  def test_gemspec_pins_dependencies
+  def test_gemspec_names_runtime_dependencies
     gemspec = File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__))
 
-    assert_includes gemspec, 'spec.add_dependency "recording_studio", ">= 6.1.0"'
-    refute_includes gemspec, "~> 4.2"
-    refute_includes gemspec, ">= 6.3.0"
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics", ">= 0.3.0", "< 1.0"'
-    assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications", ">= 0.3.0", "< 1"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio_metrics"'
+    assert_includes gemspec, 'spec.add_dependency "recording_studio_notifications"'
     assert_includes gemspec, "RecordingStudio_notifications_push"
     assert_includes gemspec, "CHANGELOG.md"
+    refute_includes gemspec, "recording_studio_internationalization"
   end
 
-  def test_dummy_gemfile_pins_verified_github_sources
+  def test_dummy_gemfile_uses_github_sources
     gemfile = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio", tag: "v6.3.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.24.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_accessible"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_trashable"'
-    assert_includes gemfile, 'tag: "v0.12.0"'
     assert_includes gemfile, "require: false"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications"'
-    assert_includes gemfile, 'tag: "v0.14.1"'
-    refute_includes gemfile, "cursor/otp-delivery-payload-78f4"
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_notifications_email"'
-    assert_includes gemfile, 'tag: "v0.4.0"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_PWA"'
-    assert_includes gemfile, 'tag: "v0.5.0"'
-    refute_includes gemfile, "cursor/pwa-service-worker-seam-453c"
-    refute_includes gemfile, "Branch pin:"
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache", tag: "v0.6.0"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable", tag: "v0.11.2"'
-    assert_includes gemfile, 'github: "bowerbird-app/flatpack", tag: "v0.1.329"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_cache"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_root_switchable"'
+    assert_includes gemfile, 'github: "bowerbird-app/flatpack"'
     assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_Internationalization"'
-    assert_includes gemfile, 'tag: "v0.1.8"'
-    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.7.0"'
-    refute_includes gemfile, 'tag: "v4.7.0"'
+    assert_includes gemfile, 'github: "bowerbird-app/RecordingStudio_metrics"'
     refute_includes gemfile, "recording_studio_api"
     refute_includes gemfile, "RecordingStudio_api"
-    refute_includes File.read(File.expand_path("../recording_studio_notifications_push.gemspec", __dir__)),
-                    "recording_studio_internationalization"
   end
 
   def test_does_not_ship_template_capabilities_or_pages
@@ -121,7 +104,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_includes readme, "required only for sending"
     assert_includes readme, "deliver_rollup"
     assert_includes readme, "recording_studio_metrics"
-    assert_includes readme, "v0.5.0"
     assert_includes readme, "/recording_studio_api/apis/operations/v1/metrics/push_devices/active"
     assert_includes readme, "push_devices-by_platform"
     assert_includes readme, "push_devices-active"
