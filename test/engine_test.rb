@@ -71,6 +71,7 @@ class EngineTest < Minitest::Test
   def test_broken_configuration_yaml_raises_from_the_file
     root = Pathname(Dir.mktmpdir)
     previous_application = Rails.application
+    previous_app_class = Rails.app_class
     FileUtils.mkdir_p(root.join("config"))
     File.write(root.join("config/recording_studio_notifications_push.yml"), ":\n  - [\n")
     app = Class.new(Rails::Application).instance
@@ -81,6 +82,7 @@ class EngineTest < Minitest::Test
     end
     assert_match(/YAML syntax error/, error.message)
   ensure
+    Rails.app_class = previous_app_class
     Rails.application = previous_application
     FileUtils.remove_entry(root) if root
   end
