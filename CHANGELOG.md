@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 0.6.6
+
+### Changed (behavior)
+
+- FCM `webpush.fcm_options.link` is the absolute `https` open URL from
+  `RecordingStudioNotifications.notification_url`. The data payload still
+  carries the notification's own URL for the service worker.
+- A missing `default_url_options` host leaves that link unset. The push still
+  sends.
+- Runtime dependency `recording_studio_notifications` is `>= 0.14.7`, `< 1`.
+
+### Changed
+
+- Control characters in click and icon URLs are rejected by
+  `RecordingStudioNotifications::UrlSafety`. The local character check is gone.
+- Development pins use notifications tag `v0.14.7`.
+
+### Upgrade notes
+
+- Bump to `0.6.6`. Requires notifications `0.14.7` or newer. No migration.
+- Set `config.action_mailer.default_url_options` host and `protocol: "https"`
+  so the push click opens the notification and marks it read. An `http` open
+  URL is not copied into `fcm_options.link`. Without a host, the push still
+  sends and the service worker uses `data.url`.
+
 ## 0.6.5
 
 ### Changed

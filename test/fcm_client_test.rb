@@ -52,7 +52,7 @@ class FcmClientTest < Minitest::Test
     assert_equal "high", payload.dig("message", "webpush", "headers", "Urgency")
   end
 
-  def test_absolute_https_click_url_is_the_only_fcm_link
+  def test_https_open_link_is_the_only_fcm_link
     captured = nil
     fake_http = http_double
     response = fake_http_message(code: "200", body: "{}", success: true)
@@ -62,11 +62,34 @@ class FcmClientTest < Minitest::Test
     end
 
     Net::HTTP.stub(:new, ->(*) { fake_http }) do
-      @client.send_message(token: "fid-1", title: "Hello", url: "https://example.com/open")
+      @client.send_message(
+        token: "fid-1",
+        title: "Hello",
+        url: "/pages/1",
+        link: "https://push.example/notifications/n1/open"
+      )
     end
 
     payload = JSON.parse(captured.body)
-    assert_equal "https://example.com/open", payload.dig("message", "webpush", "fcm_options", "link")
+    assert_equal "/pages/1", payload.dig("message", "data", "url")
+    assert_equal "https://push.example/notifications/n1/open", payload.dig("message", "webpush", "fcm_options", "link")
+  end
+
+  def test_http_open_link_is_left_out_of_fcm_options
+    captured = nil
+    fake_http = http_double
+    response = fake_http_message(code: "200", body: "{}", success: true)
+    fake_http.define_singleton_method(:request) do |request|
+      captured = request
+      response
+    end
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      @client.send_message(token: "fid-1", title: "Hello", url: "/pages/1", link: "http://push.example/notifications/n1/open")
+    end
+
+    payload = JSON.parse(captured.body)
+    assert_nil payload.dig("message", "webpush", "fcm_options")
   end
 
   def http_double

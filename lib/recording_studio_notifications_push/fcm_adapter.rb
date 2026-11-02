@@ -49,8 +49,18 @@ module RecordingStudioNotificationsPush
         title: event.title,
         body: event.body,
         url: event.url,
+        link: open_link(event),
         data: message_data(event, delivery)
       }
+    end
+
+    def open_link(event)
+      return if Rails.application.nil?
+
+      url = RecordingStudioNotifications.notification_url(event.source)
+      url if Http.absolute_https?(url)
+    rescue ArgumentError
+      nil
     end
 
     def deliver_to_installation(installation, payload)

@@ -190,7 +190,7 @@ gem "recording_studio_trashable",
     require: false
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.14.1"
+    tag: "v0.14.7"
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.4.0"
