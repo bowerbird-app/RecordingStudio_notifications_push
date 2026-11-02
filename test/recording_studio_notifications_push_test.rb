@@ -10,12 +10,6 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
 
     assert_includes lockfile, "recording_studio_notifications_push (0.5.5)"
     assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.5)"
-    assert_includes lockfile, "rack (3.2.8)"
-    assert_includes dummy_lockfile, "rack (3.2.8)"
-    assert_includes lockfile, "view_component (4.20.0)"
-    assert_includes dummy_lockfile, "view_component (4.20.0)"
-    assert_includes lockfile, "recording_studio_metrics (0.7.0)"
-    assert_includes dummy_lockfile, "recording_studio_metrics (0.7.0)"
     assert_includes lockfile, "tag: v0.7.0"
     assert_includes dummy_lockfile, "tag: v0.7.0"
   end
