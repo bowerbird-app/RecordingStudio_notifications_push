@@ -66,7 +66,7 @@ gem "recording_studio_internationalization",
     tag: "v0.2.0"
 
 # FlatPack UI component library [https://github.com/bowerbird-app/flatpack]
-gem "flat_pack", github: "bowerbird-app/flatpack", ref: "a109067b3ec5e587c4e500fccb208fe32592028e"
+gem "flat_pack", github: "bowerbird-app/flatpack", ref: "a8d24dee6853c387469dcbffda202e56e44ba887"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]

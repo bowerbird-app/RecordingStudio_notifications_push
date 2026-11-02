@@ -6,7 +6,7 @@
 
 ### Changed
 
-- Development and dummy apps pin FlatPack ref `a109067b` (`0.1.335`), which
+- Development and dummy apps pin FlatPack ref `a8d24dee` (`0.1.335`), which
   adds `FlatPack::List::Item` `title` and `subtitle` and sidebar `version:`.
 - Development and dummy apps pin PWA ref `0d4d01bc` (`0.7.0`) with
   `>= 0.7.0`, `< 0.8`.
