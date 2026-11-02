@@ -11,7 +11,7 @@
   <% sidebar.items do %>
     <%# Phones open this drawer from the hamburger. The named switcher stays in the top bar from md up. %>
     <%= tag.div(class: "md:hidden") do %>
-      <%= render_recording_studio_root_switch_list %>
+      <%= dummy_drawer_workspace_switcher %>
     <% end %>
     <%= render FlatPack::Stack::Component.new(gap: :sm, role: "navigation", aria: { label: t("dummy.sidebar.nav") }) do %>
       <%= render FlatPack::Sidebar::Item::Component.new(

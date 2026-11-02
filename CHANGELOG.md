@@ -16,9 +16,12 @@
 - The home page keeps an in-app inbox beside the test pings.
 - The dummy language select submits on change, with no submit button and no
   stacked label, and uses the small button padding so it matches the top bar.
-  The theme control is the cog, and the workspace switcher keeps the current
-  workspace name. Below the `md` breakpoint the select sits in the cog menu
-  and the switcher sits in the sidebar drawer, so the top bar is one row.
+  The theme control is the cog. Its menu groups Theme (System, Light, Dark),
+  Shape (Rounded, with a check on the active choice), and Language. The
+  language select in that menu uses the default field border. The workspace
+  switcher keeps the current workspace name. Below the `md` breakpoint the
+  select sits in the cog menu and the switcher sits in the sidebar drawer,
+  on a sidebar-item row under a Workspace label, so the top bar is one row.
 - Home test results use a FlatPack list row, text, and a badge per channel.
 - The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
 - Dummy popover reposition script and its CSS are gone.

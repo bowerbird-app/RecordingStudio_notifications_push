@@ -35,6 +35,14 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     assert_includes response.body, workspace.name
     assert_includes response.body, "flat-pack-sidebar-layout"
     assert_top_bar_names_workspace(workspace.name)
+
+    label = css_select("[data-flat-pack-sidebar-section-title] p").find { |node| node.text.strip == "Workspace" }
+    assert label, "the drawer should label the workspace switcher"
+    row = css_select("[data-flat-pack-sidebar-item]").find { |node| node.text.include?(workspace.name) }
+    assert row, "the drawer should show the current workspace on a sidebar row"
+    assert_includes row["class"], "px-[var(--sidebar-item-padding-x)]"
+    assert_includes row["class"], "py-[var(--sidebar-item-padding-y)]"
+    assert_includes row["class"], "text-sm"
   end
 
   test "root switch page renders with the host sidebar" do

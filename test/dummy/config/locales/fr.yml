@@ -139,11 +139,15 @@ fr:
       install: Installation
       config: Config
       sign_out: Se déconnecter
+      workspace: Espace
     home:
       title: Notifications push
       subtitle: App dummy pour le canal push Firebase de Recording Studio.
     theme:
       label: Thème
+      group: Thème
+      shape: Forme
+      language: Langue
       rounded: Arrondi
       system: Système
       light: Clair

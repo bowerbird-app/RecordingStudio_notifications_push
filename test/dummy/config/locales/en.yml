@@ -15,11 +15,15 @@ en:
       install: Install
       config: Config
       sign_out: Sign out
+      workspace: Workspace
     home:
       title: Push notifications
       subtitle: Dummy host for the Recording Studio Firebase push channel.
     theme:
       label: Theme
+      group: Theme
+      shape: Shape
+      language: Language
       rounded: Rounded
       system: System
       light: Light

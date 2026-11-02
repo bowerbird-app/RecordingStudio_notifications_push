@@ -46,6 +46,22 @@ class PushI18nTest < ActionDispatch::IntegrationTest
       form.ancestors.any? { |ancestor| ancestor["class"].to_s.split.include?("md:hidden") }
     }
     assert in_cog, "phones should keep the language select in the cog menu"
+
+    assert_select "[data-theme-value='rounded'][aria-current='true']" do |items|
+      assert_select items, "svg"
+    end
+    assert_select "[data-theme-value='system']" do |items|
+      assert_nil items.first["aria-current"]
+    end
+    assert_includes response.body, ">Theme<"
+    assert_includes response.body, ">Shape<"
+    assert_includes response.body, ">Language<"
+
+    cog_select = css_select("[data-controller~='flat-pack--theme'] select[aria-label='Language']").first
+    assert cog_select, "the cog menu should include the language select"
+    refute_includes cog_select["class"].to_s, "py-[var(--button-padding-y-sm)]"
+    assert_includes cog_select["class"].to_s, "border-[var(--surface-border-color)]"
+    assert_select "[data-dummy-theme-focus-sink]", count: 1
   end
 
   test "devices page stays English until the host locale changes" do
