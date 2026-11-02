@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 0.6.7
+## 0.7.0
 
 ### Changed
 
@@ -12,15 +12,13 @@
   `>= 0.7.0`, `< 0.8`.
 - Device rows use those list slots. The dummy sidebar header shows this gem's
   version.
-- The lockfile carries nokogiri `1.19.6`, loofah `2.25.3`, and
-  rails-html-sanitizer `1.7.2`.
 - Runtime dependency `flat_pack` is `>= 0.1.335`, `< 0.2`.
 
 ### Upgrade notes
 
-- Bump to `0.6.7`. No migration. Device lists can pass `title:` and `subtitle:`
+- Bump to `0.7.0`. No migration. Device lists can pass `title:` and `subtitle:`
   to `FlatPack::List::Item`. Sidebar headers can pass `version:`.
-  Stay on PWA `0.7.x`.
+  Stay on PWA `0.7.x`. Requires `flat_pack` `>= 0.1.335`, `< 0.2`.
 
 ## 0.6.6
 
