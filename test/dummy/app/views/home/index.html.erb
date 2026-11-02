@@ -26,7 +26,7 @@
     ) %>
   <% end %>
 
-  <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+  <%= render FlatPack::Stack::Component.new(gap: :sm, data: { controller: "dummy-bell-refresh" }) do %>
     <%= render FlatPack::Text::Component.new(size: :sm) do %>
       Each button sends a <strong>Push demo</strong> notice with a different banner
       thumbnail (<code>/push-icon-coral.png</code> or <code>/push-icon-teal.png</code>).

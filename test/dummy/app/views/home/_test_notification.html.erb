@@ -23,7 +23,8 @@
           <% @deliveries.each do |delivery| %>
             <%= render FlatPack::Badge::Component.new(
               text: "#{delivery.channel} · #{delivery.status}",
-              size: :sm
+              size: :sm,
+              style: delivery_badge_style(delivery.status)
             ) %>
           <% end %>
         <% else %>

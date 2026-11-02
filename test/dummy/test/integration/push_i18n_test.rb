@@ -47,21 +47,30 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     }
     assert in_cog, "phones should keep the language select in the cog menu"
 
-    assert_select "[data-theme-value='rounded'][aria-current='true']" do |items|
+    assert_select "[data-theme-value='system'][role='menuitemradio'][aria-checked='true']" do |items|
       assert_select items, "svg"
     end
-    assert_select "[data-theme-value='system']" do |items|
-      assert_nil items.first["aria-current"]
+    assert_select "[data-theme-value='light'][role='menuitemradio'][aria-checked='false']" do |items|
+      assert_select items, "svg", count: 0
     end
+    assert_select "[data-theme-value='dark'][role='menuitemradio'][aria-checked='false']"
+    assert_select "[data-theme-value='rounded']", count: 0
     assert_includes response.body, ">Theme<"
-    assert_includes response.body, ">Shape<"
-    assert_includes response.body, ">Language<"
+    refute_includes response.body, ">Shape<"
+
+    language_labels = css_select("[data-controller~='flat-pack--theme'] p").select { |node|
+      node.text.strip == "Language"
+    }
+    assert_equal 1, language_labels.size
+    assert language_labels.first.ancestors.any? { |ancestor|
+      ancestor["class"].to_s.split.include?("md:hidden")
+    }, "the Language heading should sit in the phone-only menu panel"
 
     cog_select = css_select("[data-controller~='flat-pack--theme'] select[aria-label='Language']").first
     assert cog_select, "the cog menu should include the language select"
     refute_includes cog_select["class"].to_s, "py-[var(--button-padding-y-sm)]"
     assert_includes cog_select["class"].to_s, "border-[var(--surface-border-color)]"
-    assert_select "[data-dummy-theme-focus-sink]", count: 1
+    assert_select "[data-dummy-theme-focus-sink]", count: 0
   end
 
   test "devices page stays English until the host locale changes" do

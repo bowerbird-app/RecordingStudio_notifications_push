@@ -57,12 +57,28 @@ class HomeController < ApplicationController
     end
   end
 
+  # Same set the bell counts: active, in the inbox, for this root (and rootless),
+  # then the authorization check. The preview is the newest eight of that set.
   def recent_inbox_notifications
-    RecordingStudioNotifications::Notification
+    root = current_root_recording if respond_to?(:current_root_recording, true)
+    scope = RecordingStudioNotifications::Notification
       .for_recipient(current_user)
+      .active
       .visible_in_inbox
-      .order(created_at: :desc)
+      .in_inbox
+      .for_current_root_inbox(root)
+      .newest_first
       .limit(8)
+
+    scope.select { |notification| inbox_notification_visible?(notification) }
+  end
+
+  def inbox_notification_visible?(notification)
+    RecordingStudioNotifications::Services::NotificationAuthorization.visible_notification?(
+      actor: current_user,
+      notification: notification,
+      controller: self
+    )
   end
 
   def render_test_notification_success

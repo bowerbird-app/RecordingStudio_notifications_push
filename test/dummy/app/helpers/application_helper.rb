@@ -52,6 +52,14 @@ module ApplicationHelper
     ])
   end
 
+  def delivery_badge_style(status)
+    case status.to_s
+    when "delivered" then :success
+    when "failed" then :danger
+    else :default
+    end
+  end
+
   def dummy_document_attributes
     attributes = { "data-theme" => "rounded" }
     attributes.merge!(recording_studio_locale_attributes) if respond_to?(:recording_studio_locale_attributes)
@@ -87,10 +95,6 @@ module ApplicationHelper
 
   def dummy_theme_menu(dropdown)
     dummy_theme_group(dropdown, "dummy.theme.group", %w[system light dark])
-    dropdown.menu_divider
-    dummy_theme_group(dropdown, "dummy.theme.shape", %w[rounded])
-    dropdown.menu_divider
-    dropdown.menu_html(dummy_theme_menu_label(t("dummy.theme.language", default: "Language")))
     dropdown.menu_form(class: "md:hidden") { dummy_theme_language_panel }
   end
 
@@ -99,18 +103,20 @@ module ApplicationHelper
     values.each { |value| dummy_theme_choice(dropdown, value) }
   end
 
+  # System is the theme controller's choice when nothing is saved. The menu
+  # controller moves the check after connect, using the same storage key.
   def dummy_theme_choice(dropdown, value)
-    active = value == "rounded"
-    options = {
+    active = value == "system"
+    dropdown.menu_item(
       text: t("dummy.theme.#{value}", default: value.capitalize),
+      icon: ("check" if active),
+      role: "menuitemradio",
+      aria: { checked: active.to_s },
       data: {
         action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle",
         theme_value: value
       }
-    }
-    options[:icon] = "check" if active
-    options[:aria] = { current: "true" } if active
-    dropdown.menu_item(**options)
+    )
   end
 
   def dummy_theme_menu_label(text)
@@ -119,23 +125,13 @@ module ApplicationHelper
       as: :p,
       size: :xs,
       style: :muted,
-      weight: :semibold,
-      class: "px-[var(--dropdown-item-padding-x)] pt-2"
+      weight: :semibold
     )
   end
 
-  # The dialog focuses its first field on open. A clipped field takes that
-  # focus so the language select keeps its resting border.
   def dummy_theme_language_panel
     safe_join([
-      tag.input(
-        type: "text",
-        class: "sr-only",
-        tabindex: "0",
-        autocomplete: "off",
-        aria: { label: t("dummy.theme.label", default: "Theme") },
-        data: { dummy_theme_focus_sink: true }
-      ),
+      dummy_theme_menu_label(t("dummy.theme.language", default: "Language")),
       dummy_language_selector(compact: false)
     ])
   end
