@@ -19,6 +19,7 @@ module RecordingStudioNotificationsPush
 
     def self.upsert!(recipient:, firebase_installation_id:, **registration)
       raise ArgumentError, "recipient is required" if recipient.nil?
+      reject_unknown_registration!(registration)
 
       record = find_for_registration(recipient, firebase_installation_id)
       apply_registration!(record, recipient, registration)
@@ -41,9 +42,14 @@ module RecordingStudioNotificationsPush
     end
     private_class_method :find_for_registration
 
-    def self.apply_registration!(record, recipient, registration)
+    def self.reject_unknown_registration!(registration)
       unknown = registration.keys - REGISTRATION_ATTRIBUTES
       raise ArgumentError, "unknown registration attribute: #{unknown.join(', ')}" if unknown.any?
+    end
+    private_class_method :reject_unknown_registration!
+
+    def self.apply_registration!(record, recipient, registration)
+      reject_unknown_registration!(registration)
 
       record.recipient = recipient
       REGISTRATION_ATTRIBUTES.each do |attribute|
@@ -118,5 +124,3 @@ module RecordingStudioNotificationsPush
     end
   end
 end
-
-require_relative "installation/user_agent"

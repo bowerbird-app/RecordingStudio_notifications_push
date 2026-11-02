@@ -4,6 +4,7 @@ require "test_helper"
 require "active_record"
 require_relative "../app/models/recording_studio_notifications_push/application_record"
 require_relative "../app/models/recording_studio_notifications_push/installation"
+require_relative "../app/models/recording_studio_notifications_push/installation/user_agent"
 
 class InstallationTest < Minitest::Test
   class FakeInstallation
@@ -57,11 +58,10 @@ class InstallationTest < Minitest::Test
 
   def test_registration_rejects_unknown_attributes
     error = assert_raises(ArgumentError) do
-      RecordingStudioNotificationsPush::Installation.send(
-        :apply_registration!,
-        Object.new,
-        Object.new,
-        { surprise: "nope" }
+      RecordingStudioNotificationsPush::Installation.upsert!(
+        recipient: Object.new,
+        firebase_installation_id: "fid-1",
+        surprise: 1
       )
     end
 
