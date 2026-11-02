@@ -26,6 +26,35 @@ class EngineTest < Minitest::Test
     assert_equal "from-x", RecordingStudioNotificationsPush.configuration.firebase_project_id
   end
 
+  def test_missing_configuration_file_is_ignored
+    app = Struct.new(:config).new(Struct.new(:x).new(nil))
+    app.define_singleton_method(:config_for) do |_name|
+      raise "Could not load configuration. No such file - recording_studio_notifications_push"
+    end
+
+    find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+
+    assert_nil RecordingStudioNotificationsPush.configuration.vapid_public_key
+  end
+
+  def test_invalid_configuration_yaml_raises
+    app = Struct.new(:config).new(Struct.new(:x).new(nil))
+    app.define_singleton_method(:config_for) { |_name| raise Psych::SyntaxError.new("config", 1, 1, 0, "bad", "context") }
+
+    assert_raises(Psych::SyntaxError) do
+      find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+    end
+  end
+
+  def test_other_configuration_runtime_errors_raise
+    app = Struct.new(:config).new(Struct.new(:x).new(nil))
+    app.define_singleton_method(:config_for) { |_name| raise "yaml permission denied" }
+
+    assert_raises(RuntimeError) do
+      find_initializer("recording_studio_notifications_push.load_config").block.call(app)
+    end
+  end
+
   def test_register_channel_initializer_exists
     initializer = find_initializer("recording_studio_notifications_push.register_channel")
     refute_nil initializer

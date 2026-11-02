@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.5.9
+
+### Changed
+
+- Host YAML loads only when the file exists. Invalid YAML and other
+  configuration errors raise. A missing file still boots.
+- `Api::Access.can_view?` no longer turns resolver bugs into a silent deny.
+- Device route helpers rescue `ArgumentError` only. `NoMethodError` propagates.
+- FCM and Google token requests share `Http.build`.
+
+### Upgrade notes
+
+- Bump to `0.5.9`. No migration.
+- A broken `config/recording_studio_notifications_push.yml` now stops boot.
+  Delete the file if you do not use it.
+- A raising admin recording resolver is no longer reported as "not allowed".
+
 ## 0.5.8
 
 ### Changed

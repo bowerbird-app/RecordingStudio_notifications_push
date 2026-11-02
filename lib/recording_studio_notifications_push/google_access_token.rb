@@ -110,12 +110,12 @@ module RecordingStudioNotificationsPush
     # rubocop:enable Metrics/MethodLength
 
     def build_http(uri)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = uri.scheme == "https"
-      http.open_timeout = @open_timeout
-      http.read_timeout = @read_timeout
-      http.write_timeout = @write_timeout if http.respond_to?(:write_timeout=)
-      http
+      Http.build(
+        uri,
+        open_timeout: @open_timeout,
+        read_timeout: @read_timeout,
+        write_timeout: @write_timeout
+      )
     end
 
     def http_success?(response)

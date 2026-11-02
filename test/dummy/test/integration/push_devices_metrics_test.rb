@@ -91,15 +91,13 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     end
   end
 
-  test "a raising admin resolver denies a granted actor" do
+  test "a raising admin resolver is not swallowed" do
     assert staff_can_view_admin_root?
     resolver = ->(resolver_context) { resolver_context.controller.request }
 
     with_admin_resolvers(access: resolver) do
-      refute metrics_authorize.call(staff_context)
+      assert_raises(NoMethodError) { metrics_authorize.call(staff_context) }
     end
-
-    refute defined?(RecordingStudioAdmin)
   end
 
   test "authorization uses the site admin resolver" do

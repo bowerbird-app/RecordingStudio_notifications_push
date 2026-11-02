@@ -77,12 +77,12 @@ module RecordingStudioNotificationsPush
     end
 
     def build_http(uri)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.open_timeout = @configuration.open_timeout
-      http.read_timeout = @configuration.read_timeout
-      http.write_timeout = @configuration.write_timeout if http.respond_to?(:write_timeout=)
-      http
+      Http.build(
+        uri,
+        open_timeout: @configuration.open_timeout,
+        read_timeout: @configuration.read_timeout,
+        write_timeout: @configuration.write_timeout
+      )
     end
 
     def http_success?(response)

@@ -45,14 +45,25 @@ class ApiAccessTest < Minitest::Test
     end
   end
 
-  def test_can_view_is_false_when_the_resolver_raises
+  def test_can_view_lets_resolver_errors_propagate
     resolver = ->(resolver_context) { resolver_context.controller.request }
 
     with_admin_resolvers(access: resolver) do
-      refute RecordingStudioNotificationsPush::Api::Access.can_view?(view_context(Object.new))
+      assert_raises(NoMethodError) do
+        RecordingStudioNotificationsPush::Api::Access.can_view?(view_context(Object.new))
+      end
     end
+  end
 
-    refute RecordingStudioNotificationsPush::Api::Access.admin_loaded?
+  def test_can_view_lets_name_error_propagate
+    access_api = RecordingStudioNotificationsPush::Api::Access
+    configuration = -> { raise NameError, "RecordingStudioAdmin is not loaded" }
+
+    access_api.stub(:admin_loaded?, true) do
+      access_api.stub(:admin_configuration, configuration) do
+        assert_raises(NameError) { access_api.can_view?(view_context(Object.new)) }
+      end
+    end
   end
 
   private

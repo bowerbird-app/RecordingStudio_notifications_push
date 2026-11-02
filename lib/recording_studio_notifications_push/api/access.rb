@@ -33,8 +33,6 @@ module RecordingStudioNotificationsPush
 
       def can_view?(context)
         authorized_on_admin_root?(context, :view)
-      rescue StandardError
-        false
       end
 
       def authorized_on_admin_root?(context, role)

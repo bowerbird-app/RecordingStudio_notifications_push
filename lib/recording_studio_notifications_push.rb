@@ -14,6 +14,7 @@ module RecordingStudioNotificationsPush
 end
 
 require "recording_studio_notifications_push/configuration"
+require "recording_studio_notifications_push/http"
 require "recording_studio_notifications_push/event"
 require "recording_studio_notifications_push/google_access_token"
 require "recording_studio_notifications_push/fcm_client"
