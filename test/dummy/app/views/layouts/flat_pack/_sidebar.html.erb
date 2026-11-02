@@ -9,7 +9,7 @@
   <% end %>
 
   <% sidebar.items do %>
-    <nav class="py-4 space-y-1" aria-label="<%= t("dummy.sidebar.nav") %>">
+    <%= render FlatPack::Stack::Component.new(gap: :sm, role: "navigation", aria: { label: t("dummy.sidebar.nav") }) do %>
       <%= render FlatPack::Sidebar::Item::Component.new(
         text: t("dummy.sidebar.home"),
         href: main_app.root_path,
@@ -45,7 +45,7 @@
         href: main_app.docs_config_path,
         icon: :settings
       ) %>
-    </nav>
+    <% end %>
   <% end %>
 
   <% sidebar.footer do %>

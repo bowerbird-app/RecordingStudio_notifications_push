@@ -32,5 +32,9 @@ class DocsConfigPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "read_timeout"
     assert_includes response.body, "write_timeout"
     assert_includes response.body, "DeliveryError"
+    ruby = css_select("pre").find { |node| node.text.include?("config.channel = :push") }
+    assert ruby, "config page should show the Ruby initializer"
+    assert_includes ruby["class"].to_s, "whitespace-pre"
+    refute_includes ruby["class"].to_s, "break-words"
   end
 end

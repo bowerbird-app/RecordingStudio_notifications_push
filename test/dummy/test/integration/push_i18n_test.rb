@@ -24,8 +24,10 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     assert_select "form[action='/recording_studio_internationalization/locale']" do |forms|
       assert_select forms, "button", count: 0
       assert_select forms, "label", count: 0
-      assert_select forms, "select[aria-label='Language']"
-      assert_includes forms.first["style"].to_s, "min-width: 9rem"
+      assert_select forms, "select[aria-label='Language']" do |selects|
+        assert_includes selects.first["class"].to_s, "py-[var(--button-padding-y-sm)]"
+      end
+      assert_nil forms.first["style"]
     end
     refute_includes response.body, "Change language"
     assert_includes response.body, "English"

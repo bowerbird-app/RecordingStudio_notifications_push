@@ -10,6 +10,9 @@ RecordingStudio.configure do |config|
   # Shown in the shared default layout title fallback.
   config.app_name = "Push demo" if config.respond_to?(:app_name=)
 
+  # Devices and other recording_studio_layout screens use the dummy shell.
+  config.layout = "flat_pack_sidebar"
+
   # Actor resolver for events when no actor is explicitly supplied
   config.actor = -> { Current.actor }
 

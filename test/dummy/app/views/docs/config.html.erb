@@ -11,17 +11,19 @@
     description: "The install generator writes an initializer. Leave most keys commented and set FIREBASE_* in the environment unless you need an override."
   ) %>
 
-  <%= render FlatPack::SectionTitle::Component.new(title: "Initializer") %>
-  <%= render FlatPack::Text::Component.new(
-    text: "config/initializers/recording_studio_notifications_push.rb".gsub("/", "/\u200B"),
-    size: :sm,
-    style: :muted
-  ) %>
+  <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+    <%= render FlatPack::SectionTitle::Component.new(title: "Initializer", spacing: :none) %>
+    <%= render FlatPack::Text::Component.new(
+      text: "config/initializers/recording_studio_notifications_push.rb".gsub("/", "/\u200B"),
+      size: :sm,
+      style: :muted
+    ) %>
+  <% end %>
 
   <%= render FlatPack::CodeBlock::Component.new(
     title: "Ruby",
     language: :ruby,
-    wrap: true,
+    wrap: false,
     code: <<~'CODE'
       RecordingStudioNotificationsPush.configure do |config|
         # Channel key registered with RecordingStudioNotifications.

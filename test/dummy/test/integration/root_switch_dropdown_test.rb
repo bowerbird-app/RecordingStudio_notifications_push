@@ -34,6 +34,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, workspace.name
     assert_includes response.body, "flat-pack-sidebar-layout"
+    assert_top_bar_names_workspace(workspace.name)
   end
 
   test "root switch page renders with the host sidebar" do
@@ -150,6 +151,16 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def assert_top_bar_names_workspace(name)
+    theme = css_select("[data-controller~='flat-pack--theme']").first
+    assert theme, "theme control should be on the top bar"
+    assert_select theme, "[data-flat-pack--button-dropdown-target=trigger]", count: 1
+
+    trigger = css_select("[data-flat-pack--button-dropdown-target=trigger]").find { |node| node.text.include?(name) }
+    assert trigger, "top bar should show #{name}"
+    refute_includes theme.text, name
+  end
 
   def grant_owner!(user, recording)
     RecordingStudioAccessible.bootstrap_owner_access!(recording: recording, actor: user).value!

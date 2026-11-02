@@ -11,15 +11,15 @@
   <%= render FlatPack::List::Component.new(divider: true) do %>
     <% notifications.each do |notification| %>
       <% icon_url = notification.metadata.is_a?(Hash) && (notification.metadata["icon"] || notification.metadata[:icon]) %>
-      <%= render FlatPack::List::Item.new(style: "padding-inline: 0") do %>
+      <%= render FlatPack::List::Item.new do %>
         <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
           <% if icon_url.present? %>
             <%= image_tag icon_url, alt: "", width: 40, height: 40 %>
           <% end %>
-          <%= render FlatPack::Text::Component.new(size: :sm, weight: :medium) do %>
-            <%= notification.title %>
+          <%= render FlatPack::Cluster::Component.new(gap: :sm, align: :center) do %>
+            <%= render FlatPack::Text::Component.new(text: notification.title, size: :sm, weight: :medium) %>
             <% if notification.unread? %>
-              <span> · unread</span>
+              <%= render FlatPack::Badge::Component.new(text: "unread", size: :sm) %>
             <% end %>
           <% end %>
           <%= render FlatPack::Text::Component.new(
@@ -30,7 +30,9 @@
           <% if notification.body.present? %>
             <%= render FlatPack::Text::Component.new(text: notification.body, size: :sm) %>
           <% end %>
-          <%= link_to "Open details", demo_notification_path(notification) %>
+          <%= render FlatPack::Link::Component.new(href: demo_notification_path(notification)) do %>
+            Open details
+          <% end %>
         <% end %>
       <% end %>
     <% end %>

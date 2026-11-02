@@ -1,5 +1,5 @@
-<%# The select submits on change. No submit button and no stacked field label, so the top bar stays one row. The form keeps a width so the chosen language stays readable. %>
-<%= form_with url: recording_studio_internationalization.locale_path, method: :patch, **html_options, html: { style: "min-width: 9rem" } do |form| %>
+<%# The select submits on change. No submit button and no stacked field label, so the top bar stays one row. Small button padding matches the other top-bar controls. %>
+<%= form_with url: recording_studio_internationalization.locale_path, method: :patch, **html_options do |form| %>
   <%= form.hidden_field :return_to, value: request.fullpath %>
   <%= render FlatPack::Select::Component.new(
         name: "locale",
@@ -7,6 +7,7 @@
         aria: { label: t("recording_studio.internationalization.selector.label") },
         options: locales.map { |locale| [locale.name, locale.code.to_s] },
         value: I18n.locale.to_s,
-        placeholder: nil
+        placeholder: nil,
+        class: "py-[var(--button-padding-y-sm)] text-xs"
       ) %>
 <% end %>

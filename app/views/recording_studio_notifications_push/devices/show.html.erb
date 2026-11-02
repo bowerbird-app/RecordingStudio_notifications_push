@@ -67,7 +67,9 @@
         title: push_t("devices.unconfigured_title"),
         description: push_t("devices.unconfigured_body")
       ) %>
-      <%= secondary_actions %>
+      <%= render FlatPack::Cluster::Component.new(justify: :end) do %>
+        <%= secondary_actions %>
+      <% end %>
     <% end %>
   <% end %>
 
@@ -90,8 +92,7 @@
         <% end %>
         <%= render FlatPack::List::Item.new(
           icon: installation.list_icon,
-          trailing: remove_button,
-          style: "padding-inline: 0"
+          trailing: remove_button
         ) do %>
           <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
             <%= render FlatPack::Text::Component.new(size: :sm, weight: :medium) do %>

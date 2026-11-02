@@ -7,6 +7,7 @@ class DummyPushWiringTest < ActiveSupport::TestCase
   test "dummy app loads root switchable config and controller support" do
     assert_equal [ "all_workspaces" ], RecordingStudioRootSwitchable.configuration.scopes.keys
     assert_equal "flat_pack_sidebar", RecordingStudioRootSwitchable.configuration.layout
+    assert_equal "flat_pack_sidebar", RecordingStudio.configuration.layout
     assert_includes ApplicationController.ancestors, RecordingStudio::RootSwitchable::ControllerSupport
   end
 
