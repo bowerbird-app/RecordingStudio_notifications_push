@@ -25,8 +25,7 @@
         ) %>
       <% end %>
 <% end %>
-<div class="mx-auto flex w-full max-w-2xl flex-col gap-6"
-     data-controller="recording-studio-notifications-push--push-devices"
+<div data-controller="recording-studio-notifications-push--push-devices"
      data-recording-studio-notifications-push--push-devices-register-url-value="<%= installations_path %>"
      data-recording-studio-notifications-push--push-devices-unregister-url-template-value="<%= installations_path %>/:id"
      data-recording-studio-notifications-push--push-devices-vapid-key-value="<%= @vapid_public_key.to_s %>"

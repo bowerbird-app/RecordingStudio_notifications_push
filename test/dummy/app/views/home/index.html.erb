@@ -62,22 +62,10 @@
 
   <div id="test-notification-flash"></div>
 
-  <section class="flex flex-col gap-3" aria-live="polite">
-    <%= render FlatPack::PageTitle::Component.new(
-      title: "In-app inbox",
-      subtitle: "Same rows as /notifications — stay here to confirm in-app delivery.",
-      variant: :h3
-    ) %>
-    <div id="inbox-notifications" class="flex flex-col gap-3">
-      <%= render "home/inbox_notifications", notifications: @recent_inbox_notifications %>
-    </div>
-  </section>
-
-  <section class="flex flex-col gap-3" aria-live="polite">
-    <%= render FlatPack::PageTitle::Component.new(
+  <section aria-live="polite">
+    <%= render FlatPack::SectionTitle::Component.new(
       title: "Test results",
-      subtitle: "Channel delivery status for pings from this page (clears on full reload).",
-      variant: :h3
+      subtitle: "Channel delivery status for pings from this page (clears on full reload)."
     ) %>
     <div id="test-notifications" class="flex flex-col gap-3">
       <p id="test-notifications-empty" class="text-sm text-(--surface-content-color)">

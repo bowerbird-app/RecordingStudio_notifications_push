@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 0.6.4
+
+### Changed
+
+- The bell in the dummy top nav is `recording_studio_notifications_async_menu`.
+- The dummy sidebar header is FlatPack's header, with no hand-rolled buttons
+  and no version badge.
+- Config docs use `FlatPack::Table`. The home "Test results" heading is a
+  section title.
+- The devices page renders in the dummy app shell.
+- Dummy popover reposition script and its CSS are gone.
+
+### Upgrade notes
+
+- Bump to `0.6.4`. No migration. Hosts that copied
+  `sidebar_popover_reposition` can delete it. Mount the notifications bell
+  with `recording_studio_notifications_async_menu`.
+
 ## 0.6.3
 
 ### Changed

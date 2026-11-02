@@ -28,7 +28,7 @@
         <%= dummy_language_selector %>
         <%= dummy_theme_selector %>
 
-        <%= recording_studio_notifications_menu if respond_to?(:recording_studio_notifications_menu) %>
+        <%= recording_studio_notifications_async_menu(recipient: current_user) %>
 
         <%= recording_studio_root_switch_dropdown(style: :ghost, size: :md) %>
 

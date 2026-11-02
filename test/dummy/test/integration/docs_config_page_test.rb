@@ -26,6 +26,7 @@ class DocsConfigPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "firebase_service_account_json"
     assert_includes response.body, "FIREBASE_API_KEY"
     assert_includes response.body, "FIREBASE_SERVICE_ACCOUNT_JSON"
+    assert_includes response.body, "fp-table"
     assert_includes response.body, "open_timeout"
     assert_includes response.body, "read_timeout"
     assert_includes response.body, "write_timeout"

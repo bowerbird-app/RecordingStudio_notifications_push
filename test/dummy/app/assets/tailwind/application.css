@@ -27,11 +27,3 @@
 @source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_PWA-*/app/views/**/*.erb";
 @source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/recording_studio_root_switchable-*/app/**/*.{rb,erb}";
 @source "../../../../../../usr/local/ruby-*/lib/ruby/gems/*/bundler/gems/RecordingStudio_accessible-*/app/**/*.{rb,erb}";
-
-[id^="flat-pack-notification-"][id$="-popover"] .max-h-96 {
-  max-height: calc(100vh - 14rem);
-}
-
-[id^="flat-pack-notification-"][id$="-popover"]:not(.hidden) {
-  margin-top: -8px;
-}

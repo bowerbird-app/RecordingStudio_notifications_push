@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  include RecordingStudioNotifications::MenuHelper
+
   def polymorphic_label(record)
     return if record.nil?
 
@@ -18,7 +20,6 @@ module ApplicationHelper
     return unless respond_to?(:recording_studio_language_selector)
 
     recording_studio_language_selector(
-      class: "dummy-language-selector flex shrink-0 items-center gap-1.5 [&_label]:sr-only [&_button]:sr-only [&_.flat-pack-input-wrapper]:mb-0 [&_.flat-pack-select]:min-h-8 [&_.flat-pack-select]:min-w-28 [&_.flat-pack-select]:py-1 [&_.flat-pack-select]:text-sm",
       data: {
         turbo: false,
         controller: "dummy-language-selector",

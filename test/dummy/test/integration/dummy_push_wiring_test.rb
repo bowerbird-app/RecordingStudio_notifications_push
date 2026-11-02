@@ -87,6 +87,24 @@ class DummyPushWiringTest < ActiveSupport::TestCase
     assert_equal :push, RecordingStudioNotificationsPush.configuration.channel
   end
 
+  test "dummy chrome uses the notifications bell and drops the popover script" do
+    sidebar = File.read(Rails.root.join("app/views/layouts/flat_pack/_sidebar.html.erb"))
+    top_nav = File.read(Rails.root.join("app/views/layouts/flat_pack/_top_nav.html.erb"))
+    importmap = File.read(Rails.root.join("config/importmap.rb"))
+    javascript = File.read(Rails.root.join("app/javascript/application.js"))
+
+    assert_includes sidebar, "show_version: false"
+    assert_includes sidebar, 'brand_abbr: "RS"'
+    refute_includes sidebar, "collapsedToggle"
+    helper = File.read(Rails.root.join("app/helpers/application_helper.rb"))
+    assert_includes helper, "include RecordingStudioNotifications::MenuHelper"
+    assert_includes top_nav, "recording_studio_notifications_async_menu(recipient: current_user)"
+    refute_includes top_nav, "recording_studio_notifications_menu if respond_to?"
+    refute_includes importmap, "sidebar_popover_reposition"
+    refute_includes javascript, "sidebar_popover_reposition"
+    refute File.exist?(Rails.root.join("app/javascript/sidebar_popover_reposition.js"))
+  end
+
   test "push devices route is mounted" do
     assert_equal "/notifications/push/devices",
                  RecordingStudioNotificationsPush::Engine.routes.url_helpers.devices_path
