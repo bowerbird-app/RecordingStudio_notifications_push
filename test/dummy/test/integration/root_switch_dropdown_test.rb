@@ -27,7 +27,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     sign_in user
 
     workspace = Workspace.create!(name: "Dropdown Workspace")
-    RecordingStudio.root_recording_for(workspace)
+    grant_owner!(user, RecordingStudio.root_recording_for(workspace))
 
     get root_path
 
@@ -45,7 +45,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     sign_in user
 
     workspace = Workspace.create!(name: "Switch Page Workspace")
-    RecordingStudio.root_recording_for(workspace)
+    grant_owner!(user, RecordingStudio.root_recording_for(workspace))
 
     get "/recording_studio_root_switchable/v1/root_switch?scope=all_workspaces"
 
@@ -64,7 +64,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     source_workspace = Workspace.create!(name: "Source Workspace")
     target_workspace = Workspace.create!(name: "Target Workspace")
     target_root_recording = RecordingStudio.root_recording_for(target_workspace)
-    RecordingStudio.root_recording_for(source_workspace)
+    grant_owner!(user, RecordingStudio.root_recording_for(source_workspace))
+    grant_owner!(user, target_root_recording)
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
       scope: "all_workspaces",
@@ -88,7 +89,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     source_workspace = Workspace.create!(name: "Fallback Source Workspace")
     target_workspace = Workspace.create!(name: "Fallback Target Workspace")
     target_root_recording = RecordingStudio.root_recording_for(target_workspace)
-    RecordingStudio.root_recording_for(source_workspace)
+    grant_owner!(user, RecordingStudio.root_recording_for(source_workspace))
+    grant_owner!(user, target_root_recording)
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
       scope: "all_workspaces",
@@ -99,5 +101,28 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     }
 
     assert_redirected_to "/"
+  end
+
+  test "an ungranted user does not see a workspace in the root switcher" do
+    user = User.find_or_create_by!(email: "root-switch-hidden@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+
+    sign_in user
+
+    workspace = Workspace.create!(name: "Hidden Workspace #{SecureRandom.hex(4)}")
+    RecordingStudio.root_recording_for(workspace)
+
+    get root_path
+
+    assert_response :success
+    refute_includes response.body, workspace.name
+  end
+
+  private
+
+  def grant_owner!(user, recording)
+    RecordingStudioAccessible.bootstrap_owner_access!(recording: recording, actor: user).value!
   end
 end
