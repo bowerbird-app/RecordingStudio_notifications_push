@@ -41,6 +41,20 @@ class EventTest < Minitest::Test
     assert_equal "Jo likes the new heading", event.title
   end
 
+  def test_drops_protocol_relative_and_javascript_urls
+    javascript = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(id: "1", title: "T", url: "javascript:alert(1)", metadata: { icon: "javascript:alert(1)" })
+    )
+    protocol_relative = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(id: "1", title: "T", url: "//evil.example/x", metadata: { icon: "//evil.example/x" })
+    )
+
+    assert_nil javascript.url
+    assert_nil javascript.icon
+    assert_nil protocol_relative.url
+    assert_nil protocol_relative.icon
+  end
+
   def test_rejects_unsafe_urls
     event = RecordingStudioNotificationsPush::Event.wrap(
       Notification.new(id: "1", title: "T", url: "javascript:alert(1)")
