@@ -15,7 +15,8 @@
   back/close bar.
 - The home page keeps an in-app inbox beside the test pings.
 - The dummy language select submits on change, with no submit button and no
-  stacked label, so the top bar stays one row.
+  stacked label, and stays wide enough to show the language. The theme
+  control is the cog icon so the bell still fits on a phone.
 - The config initializer path wraps on a narrow screen.
 - Dummy popover reposition script and its CSS are gone.
 

@@ -35,6 +35,7 @@ module ApplicationHelper
       size: :sm,
       placement: :bottom_right,
       icon: "cog",
+      icon_only: true,
       class: "dummy-theme-selector"
     ) do |dropdown|
       dropdown.menu_item(

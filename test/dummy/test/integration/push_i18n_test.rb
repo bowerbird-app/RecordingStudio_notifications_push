@@ -25,6 +25,7 @@ class PushI18nTest < ActionDispatch::IntegrationTest
       assert_select forms, "button", count: 0
       assert_select forms, "label", count: 0
       assert_select forms, "select[aria-label='Language']"
+      assert_includes forms.first["style"].to_s, "min-width: 9rem"
     end
     refute_includes response.body, "Change language"
     assert_includes response.body, "English"

@@ -1,5 +1,5 @@
 <%# The select submits on change. No submit button and no stacked field label, so the top bar stays one row. The form keeps a width so the chosen language stays readable. %>
-<%= form_with url: recording_studio_internationalization.locale_path, method: :patch, data: { turbo: false }, style: "min-width: 11rem", **html_options do |form| %>
+<%= form_with url: recording_studio_internationalization.locale_path, method: :patch, **html_options, html: { style: "min-width: 9rem" } do |form| %>
   <%= form.hidden_field :return_to, value: request.fullpath %>
   <%= render FlatPack::Select::Component.new(
         name: "locale",
