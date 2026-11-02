@@ -11,7 +11,9 @@
   and no version badge.
 - Config docs use `FlatPack::Table`. The home "Test results" heading is a
   section title.
-- The devices page renders in the dummy app shell.
+- The devices page renders in the dummy app shell, with one title and no
+  back/close bar.
+- The home page keeps an in-app inbox beside the test pings.
 - Dummy popover reposition script and its CSS are gone.
 
 ### Upgrade notes

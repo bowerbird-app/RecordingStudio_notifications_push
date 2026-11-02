@@ -27,8 +27,9 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "/push-icon-teal.png"
     assert_includes response.body, "test-notifications"
     assert_includes response.body, "recording-studio-notifications--notification-polling"
-    refute_includes response.body, "inbox-notifications"
-    refute_includes response.body, "In-app inbox"
+    assert_includes response.body, "inbox-notifications"
+    assert_includes response.body, "In-app inbox"
+    assert_includes response.body, "Inbox is empty"
   end
 
   test "coral icon notification stores metadata icon and turbo streams results" do
@@ -42,7 +43,7 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "turbo-stream"
     assert_includes response.body, "Coral icon ping"
     assert_includes response.body, "test-notifications"
-    refute_includes response.body, "inbox-notifications"
+    assert_includes response.body, "inbox-notifications"
     assert_match(/in_app|push|email/, response.body)
 
     notification = RecordingStudioNotifications::Notification.order(created_at: :desc).first

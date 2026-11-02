@@ -16,10 +16,10 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, 'data-recording-studio-default-layout="true"'
-    refute_includes response.body, "flat-pack-sidebar-layout"
-    assert_includes response.body, "flat-pack-page-nav"
-    assert_equal 1, response.body.scan("flat-pack-page-nav").length
+    assert_includes response.body, "flat-pack-sidebar-layout"
+    refute_includes response.body, 'data-recording-studio-default-layout="true"'
+    refute_includes response.body, "flat-pack-page-nav"
+    assert_equal 1, response.body.scan(/<h1[\s>]/).length
     refute_includes response.body, "recording_studio_notifications_push/blank"
     assert_includes response.body, "Connected devices"
     refute_includes response.body, "Push Notifications"

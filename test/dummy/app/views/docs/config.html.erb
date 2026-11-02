@@ -1,4 +1,4 @@
-<div class="flex w-full flex-col gap-8">
+<%= render FlatPack::Stack::Component.new(gap: :lg) do %>
   <%= render FlatPack::PageTitle::Component.new(
     title: "Config",
     subtitle: "Firebase web values, the send key, and a few timeouts. ENV is usually enough.",
@@ -11,9 +11,11 @@
     description: "The install generator writes an initializer. Leave most keys commented and set FIREBASE_* in the environment unless you need an override."
   ) %>
 
-  <%= render FlatPack::SectionTitle::Component.new(
-    title: "Initializer",
-    subtitle: "config/initializers/recording_studio_notifications_push.rb"
+  <%= render FlatPack::SectionTitle::Component.new(title: "Initializer") %>
+  <%= render FlatPack::Text::Component.new(
+    text: "config/initializers/recording_studio_notifications_push.rb",
+    size: :sm,
+    style: :muted
   ) %>
 
   <%= render FlatPack::CodeBlock::Component.new(
@@ -91,13 +93,13 @@
     subtitle: "Registration still works. Sends do not."
   ) %>
 
-  <p class="text-sm leading-6 text-(--surface-content-color)">
+  <%= render FlatPack::Text::Component.new(size: :sm) do %>
     Leave
-    <code class="font-mono text-xs">FIREBASE_SERVICE_ACCOUNT_JSON</code>
+    <code>FIREBASE_SERVICE_ACCOUNT_JSON</code>
     blank while you build the devices UI. The first real send raises
-    <code class="font-mono text-xs">RecordingStudioNotificationsPush::DeliveryError</code>
+    <code>RecordingStudioNotificationsPush::DeliveryError</code>
     until that JSON is set.
-  </p>
+  <% end %>
 
   <%= render FlatPack::SectionTitle::Component.new(
     title: "Inspect at runtime",
@@ -121,4 +123,4 @@
       # }
     CODE
   ) %>
-</div>
+<% end %>

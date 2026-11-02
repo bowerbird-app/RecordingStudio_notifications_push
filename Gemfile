@@ -21,7 +21,7 @@ else
       tag: "v0.4.0"
 end
 
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.329"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.332"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
     tag: "v0.24.0"

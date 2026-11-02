@@ -1,11 +1,11 @@
-<div class="flex w-full flex-col gap-6">
+<%= render FlatPack::Stack::Component.new(gap: :lg) do %>
   <%= render FlatPack::PageTitle::Component.new(
     title: t("dummy.home.title"),
     subtitle: t("dummy.home.subtitle"),
     variant: :h1
   ) %>
 
-  <div class="flex flex-wrap gap-3">
+  <%= render FlatPack::Cluster::Component.new(gap: :sm) do %>
     <%= render FlatPack::Button::Component.new(
       text: "Manage devices",
       style: :secondary,
@@ -24,10 +24,22 @@
       size: :md,
       href: "/notifications/settings"
     ) %>
-  </div>
+  <% end %>
 
-  <div class="flex flex-col gap-3">
-    <div class="flex flex-wrap gap-3">
+  <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+    <%= render FlatPack::Text::Component.new(size: :sm) do %>
+      Each button sends a <strong>Push demo</strong> notice with a different banner
+      thumbnail (<code>/push-icon-coral.png</code> or <code>/push-icon-teal.png</code>).
+      Channels follow
+      <%= link_to "notification settings", "/notifications/settings" %>.
+      Enable
+      <%= link_to "this browser under push devices", "/notifications/push/devices" %>
+      first if you want the toast here.
+      On <strong>macOS Chrome</strong>, the left badge stays the Chrome app icon — custom
+      thumbnails show on Windows/Android (and sometimes as a small right-side image on macOS).
+    <% end %>
+
+    <%= render FlatPack::Cluster::Component.new(gap: :sm) do %>
       <%= form_with url: test_notifications_path(format: :turbo_stream), method: :post do %>
         <%= hidden_field_tag :icon, "coral" %>
         <%= render FlatPack::Button::Component.new(
@@ -46,31 +58,35 @@
           type: "submit"
         ) %>
       <% end %>
-    </div>
-    <p class="text-sm leading-6 text-(--surface-content-color)">
-      Each button sends a <strong>Push demo</strong> notice with a different banner
-      thumbnail (<code>/push-icon-coral.png</code> or <code>/push-icon-teal.png</code>).
-      Channels follow
-      <%= link_to "notification settings", "/notifications/settings", class: "underline" %>.
-      Enable
-      <%= link_to "this browser under push devices", "/notifications/push/devices", class: "underline" %>
-      first if you want the toast here.
-      On <strong>macOS Chrome</strong>, the left badge stays the Chrome app icon — custom
-      thumbnails show on Windows/Android (and sometimes as a small right-side image on macOS).
-    </p>
-  </div>
+    <% end %>
+  <% end %>
 
   <div id="test-notification-flash"></div>
 
-  <section aria-live="polite">
+  <%= render FlatPack::Stack::Component.new(gap: :sm, aria: { live: "polite" }) do %>
+    <%= render FlatPack::SectionTitle::Component.new(
+      title: "In-app inbox",
+      subtitle: "Same rows as the notification inbox. Stay here to confirm in-app delivery."
+    ) %>
+    <div id="inbox-notifications">
+      <%= render "home/inbox_notifications", notifications: @recent_inbox_notifications %>
+    </div>
+  <% end %>
+
+  <%= render FlatPack::Stack::Component.new(gap: :sm, aria: { live: "polite" }) do %>
     <%= render FlatPack::SectionTitle::Component.new(
       title: "Test results",
       subtitle: "Channel delivery status for pings from this page (clears on full reload)."
     ) %>
-    <div id="test-notifications" class="flex flex-col gap-3">
-      <p id="test-notifications-empty" class="text-sm text-(--surface-content-color)">
-        No test pings yet. Hit a button above.
-      </p>
+    <div id="test-notifications">
+      <%= render FlatPack::EmptyState::Component.new(
+        id: "test-notifications-empty",
+        title: "No test pings yet",
+        description: "Hit a button above.",
+        size: :sm,
+        width: :full,
+        layout: :stack
+      ) %>
     </div>
-  </section>
-</div>
+  <% end %>
+<% end %>

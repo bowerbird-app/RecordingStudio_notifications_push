@@ -24,8 +24,9 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
     get "/notifications/push/devices"
 
     assert_response :success
-    assert_includes response.body, 'data-recording-studio-default-layout="true"'
-    assert_equal 1, response.body.scan("flat-pack-page-nav").length
+    assert_includes response.body, "flat-pack-sidebar-layout"
+    refute_includes response.body, "flat-pack-page-nav"
+    assert_equal 1, response.body.scan(/<h1[\s>]/).length
     assert_includes response.body, "Connected devices"
     assert_includes response.body, "Your connected devices that can receive notifications"
     refute_includes response.body, "Browsers and phones that get push alerts"
@@ -46,7 +47,6 @@ class PushTestPushTest < ActionDispatch::IntegrationTest
 
     if firebase_ready_for_browser?
       assert_includes response.body, "Enable on this browser"
-      assert_includes response.body, "flex flex-wrap items-center gap-3"
       assert_includes response.body, 'data-recording-studio-notifications-push--push-devices-target="enablePanel"'
     else
       assert_includes response.body, "Firebase is not configured yet"

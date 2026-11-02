@@ -22,6 +22,7 @@ class PushI18nTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "form[action='/recording_studio_internationalization/locale']"
+    refute_includes response.body, "Change language"
     assert_includes response.body, "English"
     assert_includes response.body, "Français"
     assert_select "html[lang='en']"

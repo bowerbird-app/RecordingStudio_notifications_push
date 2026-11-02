@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "devise/test/integration_helpers"
 
 class DummyPushWiringTest < ActiveSupport::TestCase
   test "dummy app loads root switchable config and controller support" do
@@ -87,26 +88,29 @@ class DummyPushWiringTest < ActiveSupport::TestCase
     assert_equal :push, RecordingStudioNotificationsPush.configuration.channel
   end
 
-  test "dummy chrome uses the notifications bell and drops the popover script" do
-    sidebar = File.read(Rails.root.join("app/views/layouts/flat_pack/_sidebar.html.erb"))
-    top_nav = File.read(Rails.root.join("app/views/layouts/flat_pack/_top_nav.html.erb"))
-    importmap = File.read(Rails.root.join("config/importmap.rb"))
-    javascript = File.read(Rails.root.join("app/javascript/application.js"))
-
-    assert_includes sidebar, "show_version: false"
-    assert_includes sidebar, 'brand_abbr: "RS"'
-    refute_includes sidebar, "collapsedToggle"
-    helper = File.read(Rails.root.join("app/helpers/application_helper.rb"))
-    assert_includes helper, "include RecordingStudioNotifications::MenuHelper"
-    assert_includes top_nav, "recording_studio_notifications_async_menu(recipient: current_user)"
-    refute_includes top_nav, "recording_studio_notifications_menu if respond_to?"
-    refute_includes importmap, "sidebar_popover_reposition"
-    refute_includes javascript, "sidebar_popover_reposition"
-    refute File.exist?(Rails.root.join("app/javascript/sidebar_popover_reposition.js"))
-  end
-
   test "push devices route is mounted" do
     assert_equal "/notifications/push/devices",
                  RecordingStudioNotificationsPush::Engine.routes.url_helpers.devices_path
+  end
+end
+
+class DummyPushChromeTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
+  test "home chrome shows the notifications bell and the sidebar" do
+    user = User.find_or_create_by!(email: "chrome-bell@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+    sign_in user
+
+    get root_path
+
+    assert_response :success
+    assert_includes response.body, "flat-pack-sidebar-layout"
+    assert_includes response.body, "recording-studio-notifications--notification-polling"
+    assert_includes response.body, "Push demo"
+    refute_includes response.body, "Change language"
+    refute_includes response.body, "sidebar_popover_reposition"
   end
 end

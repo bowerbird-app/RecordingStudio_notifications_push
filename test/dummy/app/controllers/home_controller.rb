@@ -6,6 +6,10 @@ class HomeController < ApplicationController
     "teal" => "/push-icon-teal.png"
   }.freeze
 
+  def index
+    @recent_inbox_notifications = recent_inbox_notifications
+  end
+
   def create_test_notification
     icon_key = params[:icon].to_s
     icon_path = TEST_NOTIFICATION_ICONS[icon_key]
@@ -21,6 +25,7 @@ class HomeController < ApplicationController
       metadata: icon_metadata(icon_path)
     )
     @deliveries = @notification.deliveries.reload.order(:channel).to_a
+    @recent_inbox_notifications = recent_inbox_notifications
     render_test_notification_success
   rescue ArgumentError => e
     @error_message = friendly_notify_error(e)
@@ -50,6 +55,14 @@ class HomeController < ApplicationController
         "Sent with your notification settings — inbox, email, and push as enabled."
       ]
     end
+  end
+
+  def recent_inbox_notifications
+    RecordingStudioNotifications::Notification
+      .for_recipient(current_user)
+      .visible_in_inbox
+      .order(created_at: :desc)
+      .limit(8)
   end
 
   def render_test_notification_success

@@ -1,0 +1,38 @@
+<% if notifications.blank? %>
+  <%= render FlatPack::EmptyState::Component.new(
+    id: "inbox-notifications-empty",
+    title: "Inbox is empty",
+    description: "Send a test ping with the in-app channel on.",
+    size: :sm,
+    width: :full,
+    layout: :stack
+  ) %>
+<% else %>
+  <%= render FlatPack::List::Component.new(divider: true) do %>
+    <% notifications.each do |notification| %>
+      <% icon_url = notification.metadata.is_a?(Hash) && (notification.metadata["icon"] || notification.metadata[:icon]) %>
+      <%= render FlatPack::List::Item.new(style: "padding-inline: 0") do %>
+        <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+          <% if icon_url.present? %>
+            <%= image_tag icon_url, alt: "", width: 40, height: 40 %>
+          <% end %>
+          <%= render FlatPack::Text::Component.new(size: :sm, weight: :medium) do %>
+            <%= notification.title %>
+            <% if notification.unread? %>
+              <span> · unread</span>
+            <% end %>
+          <% end %>
+          <%= render FlatPack::Text::Component.new(
+            text: "#{time_ago_in_words(notification.created_at)} ago",
+            size: :xs,
+            style: :muted
+          ) %>
+          <% if notification.body.present? %>
+            <%= render FlatPack::Text::Component.new(text: notification.body, size: :sm) %>
+          <% end %>
+          <%= link_to "Open details", demo_notification_path(notification) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
