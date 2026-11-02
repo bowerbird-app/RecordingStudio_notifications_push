@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.5.5
+
+### Security
+
+- Development and dummy locks pin `rack` `3.2.8` (GHSA-2j8w-xcrc-x985,
+  GHSA-5v64-555j-wjxm, GHSA-p8x9-v4hv-2w4g, GHSA-wvg4-6p58-3gh3). `view_component`
+  stays `4.20.0`.
+
+### Upgrade notes
+
+- Bump to `0.5.5`. No migration. Re-bundle so `rack` resolves to `3.2.8` or newer.
+
 ## 0.5.4
 
 ### Changed
