@@ -119,8 +119,6 @@ module RecordingStudioNotificationsPush
     end
 
     def http_success?(response)
-      return response.successful if response.respond_to?(:successful)
-
       response.is_a?(Net::HTTPSuccess)
     end
 

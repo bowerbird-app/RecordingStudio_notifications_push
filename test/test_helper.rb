@@ -20,9 +20,11 @@ I18n.available_locales = %i[en]
 I18n.default_locale = :en
 
 module HttpResponseDouble
-  HttpMessage = Struct.new(:code, :body, :successful)
-
   def fake_http_message(code:, body:, success:)
-    HttpMessage.new(code, body, success)
+    response_class = Net::HTTPResponse::CODE_TO_OBJ.fetch(code.to_s)
+    response = response_class.new("1.1", code.to_s, success ? "OK" : "Error")
+    response.instance_variable_set(:@read, true)
+    response.body = body
+    response
   end
 end

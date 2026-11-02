@@ -86,7 +86,7 @@ module RecordingStudioNotificationsPush
     end
 
     def http_success?(response)
-      response.respond_to?(:successful) ? response.successful : response.is_a?(Net::HTTPSuccess)
+      response.is_a?(Net::HTTPSuccess)
     end
 
     def parse_response(response)
