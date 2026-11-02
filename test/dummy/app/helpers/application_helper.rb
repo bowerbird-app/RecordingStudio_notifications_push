@@ -108,8 +108,8 @@ module ApplicationHelper
   end
 
   # System is the theme controller's choice when nothing is saved. Every row
-  # keeps the check icon so the labels share one gutter; unchecked checks are
-  # hidden. The menu controller moves that visibility after connect.
+  # keeps the check icon so the labels share one gutter. The dummy stylesheet
+  # hides the icon when aria-checked is false.
   def dummy_theme_radio(value)
     active = value == "system"
     item = FlatPack::Button::DropdownItem::Component.new(
@@ -123,10 +123,7 @@ module ApplicationHelper
       }
     )
     item.plain_actions = true
-    html = render(item)
-    return html if active
-
-    html.sub("<svg", '<svg style="visibility:hidden"').html_safe
+    render(item)
   end
 
   def dummy_theme_menu_label(text)

@@ -50,13 +50,15 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     assert_select "[role='radiogroup'][aria-label='Theme']" do
       assert_select "[data-theme-value='system'][role='radio'][aria-checked='true']" do |items|
         assert_select items, "svg"
-        refute_includes items.first.at_css("svg")["style"].to_s, "visibility:hidden"
+        assert_equal "true", items.first["aria-checked"]
       end
       assert_select "[data-theme-value='light'][role='radio'][aria-checked='false']" do |items|
-        assert_includes items.first.at_css("svg")["style"].to_s, "visibility:hidden"
+        assert_select items, "svg"
+        assert_equal "false", items.first["aria-checked"]
       end
       assert_select "[data-theme-value='dark'][role='radio'][aria-checked='false']" do |items|
-        assert_includes items.first.at_css("svg")["style"].to_s, "visibility:hidden"
+        assert_select items, "svg"
+        assert_equal "false", items.first["aria-checked"]
       end
     end
     assert_select "[role='menuitemradio']", count: 0

@@ -26,8 +26,11 @@
 - Home test results use a FlatPack list row, text, and a badge per channel.
   Delivered is the success badge. Failed is the danger badge.
 - The home in-app inbox uses the same current-root set as the bell, resolved
-  through the notifications configuration. It authorizes that set, then keeps
-  eight rows. A test ping refreshes the bell as soon as it sends.
+  through the notifications configuration. It walks that set in batches, keeps
+  eight authorized rows, and stops. A test ping refreshes the bell as soon as
+  it sends.
+- Unchecked theme checks stay in the row and are hidden by the dummy
+  stylesheet, so the labels share one gutter.
 - The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
 - Dummy popover reposition script and its CSS are gone.
 - Development and dummy apps pin FlatPack `v0.1.332`.

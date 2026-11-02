@@ -46,7 +46,6 @@ export default class extends Controller {
       item.setAttribute("role", "radio")
       item.setAttribute("aria-checked", on ? "true" : "false")
       item.tabIndex = on ? 0 : -1
-      this.placeCheck(item, on)
     })
   }
 
@@ -57,12 +56,5 @@ export default class extends Controller {
 
   radios() {
     return [...this.element.querySelectorAll("[role='radiogroup'] [data-theme-value]")]
-  }
-
-  placeCheck(item, on) {
-    const icon = item.querySelector("svg")
-    if (!icon) return
-
-    icon.style.visibility = on ? "visible" : "hidden"
   }
 }
