@@ -38,6 +38,14 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     assert selector_at
     assert theme_at
     assert_operator selector_at, :<, theme_at
+    inline = css_select("form[data-controller='dummy-language-selector']").find { |form|
+      form.ancestors.any? { |ancestor| ancestor["class"].to_s.split.include?("md:block") }
+    }
+    assert inline, "desktop top bar should keep the language select"
+    in_cog = css_select("[data-controller~='flat-pack--theme'] form[data-controller='dummy-language-selector']").find { |form|
+      form.ancestors.any? { |ancestor| ancestor["class"].to_s.split.include?("md:hidden") }
+    }
+    assert in_cog, "phones should keep the language select in the cog menu"
   end
 
   test "devices page stays English until the host locale changes" do

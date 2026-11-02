@@ -157,9 +157,17 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     assert theme, "theme control should be on the top bar"
     assert_select theme, "[data-flat-pack--button-dropdown-target=trigger]", count: 1
 
-    trigger = css_select("[data-flat-pack--button-dropdown-target=trigger]").find { |node| node.text.include?(name) }
-    assert trigger, "top bar should show #{name}"
+    desktop = css_select(".fp-top-nav [data-flat-pack--button-dropdown-target=trigger]").find { |node|
+      classes = node.ancestors.map { |ancestor| ancestor["class"].to_s.split }.flatten
+      classes.include?("md:flex") && node.text.include?(name)
+    }
+    assert desktop, "desktop top bar should show #{name}"
     refute_includes theme.text, name
+
+    drawer = css_select("[class~='md:hidden']").find { |node|
+      node.text.include?(name) && !node.ancestors.include?(desktop)
+    }
+    assert drawer, "mobile sidebar drawer should show #{name}"
   end
 
   def grant_owner!(user, recording)

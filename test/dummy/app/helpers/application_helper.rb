@@ -66,6 +66,10 @@ module ApplicationHelper
           theme_value: "dark"
         }
       )
+      # Below md the top bar is icons only. The same select stays in the menu.
+      dropdown.menu_form(class: "md:hidden") do
+        dummy_language_selector
+      end
     end
   end
 
