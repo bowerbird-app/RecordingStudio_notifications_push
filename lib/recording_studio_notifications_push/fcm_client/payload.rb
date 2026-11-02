@@ -19,7 +19,7 @@ module RecordingStudioNotificationsPush
       end
 
       def fields(message)
-        message.fetch(:data, {}).merge(
+        (message[:data] || {}).merge(
           "title" => message[:title],
           "body" => message[:body],
           "url" => message[:url]

@@ -11,7 +11,11 @@ class FcmAdapterTest < Minitest::Test
     end
   end
 
-  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, :notification_type, keyword_init: true)
+  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, :notification_type, keyword_init: true) do
+    def to_param
+      id
+    end
+  end
   Delivery = Struct.new(:id)
 
   class FakeInstallation
@@ -157,6 +161,7 @@ class FcmAdapterTest < Minitest::Test
       recipient: FakeRecipient.new(id: "user-1"),
       notification_type: :generic
     )
+    draw_notification_routes
     app = application_with_mailer_host("push.example")
 
     Rails.stub(:application, app) do
@@ -191,6 +196,13 @@ class FcmAdapterTest < Minitest::Test
     assert_nil client.calls.first[:link]
     posted = RecordingStudioNotificationsPush::FcmClient::Payload.body("fid-1", client.calls.first)
     refute posted.dig(:message, :webpush).key?(:fcm_options)
+  end
+
+  def draw_notification_routes
+    routes = RecordingStudioNotifications::Engine.routes
+    return if routes.named_routes.names.include?(:open_notification)
+
+    load File.join(Gem.loaded_specs.fetch("recording_studio_notifications").full_gem_path, "config/routes.rb")
   end
 
   def application_with_mailer_host(host)
