@@ -4,14 +4,25 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.5.6", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.7", ::RecordingStudioNotificationsPush::VERSION
     lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
     dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.5.6)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.6)"
+    assert_includes lockfile, "recording_studio_notifications_push (0.5.7)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.7)"
     assert_includes lockfile, "tag: v0.7.0"
     assert_includes dummy_lockfile, "tag: v0.7.0"
+  end
+
+  def test_ci_and_dummy_database_names_are_separate
+    workflow = File.read(File.expand_path("../.github/workflows/ci.yml", __dir__))
+    database = File.read(File.expand_path("dummy/config/database.yml", __dir__))
+
+    assert_includes workflow, "recording_studio_notifications_push_test"
+    refute_includes workflow, "gem_template_test"
+    assert_includes database, "DB_NAME_DEVELOPMENT"
+    assert_includes database, "DB_NAME_TEST"
+    refute_includes database, 'ENV.fetch("DB_NAME")'
   end
 
   def test_importmap_preloads_push_devices_controller
