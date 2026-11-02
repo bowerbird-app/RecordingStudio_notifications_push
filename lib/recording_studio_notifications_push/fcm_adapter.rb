@@ -56,11 +56,16 @@ module RecordingStudioNotificationsPush
 
     def open_link(event)
       return if Rails.application.nil?
+      return if default_url_host.blank?
 
       url = RecordingStudioNotifications.notification_url(event.source)
       url if Http.absolute_https?(url)
-    rescue ArgumentError
-      nil
+    end
+
+    def default_url_host
+      routes = Rails.application.routes.default_url_options || {}
+      mailer = Rails.application.config.action_mailer.default_url_options || {}
+      routes.merge(mailer.compact_blank).symbolize_keys[:host]
     end
 
     def deliver_to_installation(installation, payload)

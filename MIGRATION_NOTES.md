@@ -11,7 +11,8 @@
 3. Set `config.action_mailer.default_url_options` to an `https` host. The open
    link is `RecordingStudioNotifications.notification_url`. The service worker
    still reads `data.url`. A missing host no longer fails the send; the open
-   link is left unset.
+   link is left unset. Any other `ArgumentError` from `notification_url` is
+   raised.
 
 ## 0.6.5
 

@@ -198,6 +198,31 @@ class FcmAdapterTest < Minitest::Test
     refute posted.dig(:message, :webpush).key?(:fcm_options)
   end
 
+  def test_notification_url_argument_errors_still_raise
+    installations = [FakeInstallation.new(fid: "fid-1")]
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: FakeClient.new([{ ok: true, status: 200, disable: false }]),
+      installation_class: FakeInstallationClass.new(installations)
+    )
+    notification = Notification.new(
+      id: "n1",
+      title: "Hello",
+      url: "/pages/1",
+      recipient: FakeRecipient.new(id: "user-1"),
+      notification_type: :generic
+    )
+
+    Rails.stub(:application, application_with_mailer_host("push.example")) do
+      RecordingStudioNotifications.stub(:notification_url, ->(*) { raise ArgumentError, "bad open url" }) do
+        error = assert_raises(ArgumentError) do
+          adapter.deliver(notification: notification, delivery: Delivery.new("d1"))
+        end
+        assert_equal "bad open url", error.message
+      end
+    end
+  end
+
   def draw_notification_routes
     routes = RecordingStudioNotifications::Engine.routes
     return if routes.named_routes.names.include?(:open_notification)

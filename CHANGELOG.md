@@ -10,7 +10,7 @@
   `RecordingStudioNotifications.notification_url`. The data payload still
   carries the notification's own URL for the service worker.
 - A missing `default_url_options` host leaves that link unset. The push still
-  sends.
+  sends. Other `ArgumentError`s from `notification_url` are raised.
 - Runtime dependency `recording_studio_notifications` is `>= 0.14.7`, `< 1`.
 
 ### Changed
