@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 0.6.3
+
+### Changed
+
+- The dummy root switcher uses Root Switchable's default access check and
+  available roots. A person only sees workspaces they can view.
+- Return-path checks rescue `ActionController::RoutingError` only, inside the
+  initializer. There is no top-level `internal_route?`.
+- The dummy application layout is `layout :application_layout`. The unused
+  `recording_studio_layout` block is gone.
+
+### Upgrade notes
+
+- Bump to `0.6.3`. No migration. This is dummy-app behavior. Hosts that copied
+  `access_check { true }` should delete it and grant view access instead.
+
 ## 0.6.2
 
 ### UrlSafety
