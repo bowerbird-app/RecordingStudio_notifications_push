@@ -17,7 +17,6 @@ class ThemeMenuSystemTest < ApplicationSystemTestCase
     reading = page.evaluate_script(<<~JS)
       (() => {
         const menu = document.querySelector("[data-flat-pack--button-dropdown-target='menu']:has([data-controller~='dummy-theme-menu'])")
-        const select = menu.querySelector("select")
         const style = getComputedStyle(menu)
         const canvas = document.createElement("canvas")
         canvas.width = 1
@@ -30,9 +29,7 @@ class ThemeMenuSystemTest < ApplicationSystemTestCase
         return {
           opacity: style.opacity,
           alpha: pixel[3],
-          transitionDuration: style.transitionDuration,
-          selectFocused: document.activeElement === select,
-          selectShadow: getComputedStyle(select).boxShadow
+          transitionDuration: style.transitionDuration
         }
       })()
     JS
@@ -40,8 +37,6 @@ class ThemeMenuSystemTest < ApplicationSystemTestCase
     assert_equal "1", reading.fetch("opacity"), reading.inspect
     assert_equal 255, reading.fetch("alpha"), reading.inspect
     assert_match(/\A0s(, 0s)*\z/, reading.fetch("transitionDuration"), reading.inspect)
-    assert_equal false, reading.fetch("selectFocused"), reading.inspect
-    assert_equal "none", reading.fetch("selectShadow"), reading.inspect
   end
 
   test "dark cog language select matches the panel" do

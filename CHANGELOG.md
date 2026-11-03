@@ -38,8 +38,6 @@
   and background alpha are both 1.
   In dark mode the language select in that menu uses the field surface and
   full-contrast text, from the same dummy layer as the rest of the menu.
-  Opening the menu focuses the panel, so the select keeps its resting
-  border until someone tabs to it or presses it.
 - The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
 - Dummy popover reposition script and its CSS are gone.
 - Development and dummy apps pin FlatPack `v0.1.332`.
