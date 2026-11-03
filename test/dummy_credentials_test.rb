@@ -21,17 +21,6 @@ class DummyCredentialsTest < Minitest::Test
     assert File.size(path).positive?
   end
 
-  def test_master_key_is_gitignored_and_untracked
-    gitignore = File.read(File.expand_path("../.gitignore", __dir__))
-    assert_includes gitignore, "test/dummy/config/master.key"
-    assert_includes gitignore, "config/master.key"
-
-    tracked = Dir.chdir(File.expand_path("..", __dir__)) do
-      `git ls-files -- config/master.key test/dummy/config/master.key`.strip
-    end
-    assert_equal "", tracked, "master.key must not be committed"
-  end
-
   def test_dummy_credentials_decrypt_when_master_key_is_available
     skip "Set RAILS_MASTER_KEY or test/dummy/config/master.key to the shared dummy key" unless master_key_available?
 

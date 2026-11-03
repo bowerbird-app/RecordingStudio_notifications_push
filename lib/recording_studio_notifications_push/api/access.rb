@@ -7,10 +7,20 @@ module RecordingStudioNotificationsPush
 
       ResolverContext = Struct.new(:controller)
 
-      def admin_root_recording
-        return unless defined?(RecordingStudioAdmin)
+      # @api private
+      def admin_loaded?
+        defined?(RecordingStudioAdmin)
+      end
 
-        config = RecordingStudioAdmin.configuration
+      # @api private
+      def admin_configuration
+        RecordingStudioAdmin.configuration
+      end
+
+      def admin_root_recording
+        return unless admin_loaded?
+
+        config = admin_configuration
         resolver = config.site_admin_recording_resolver || config.access_recording_resolver
         return unless resolver
 

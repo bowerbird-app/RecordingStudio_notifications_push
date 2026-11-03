@@ -118,9 +118,13 @@ module RecordingStudioNotificationsPush
       http
     end
 
+    def http_success?(response)
+      response.is_a?(Net::HTTPSuccess)
+    end
+
     def parse_token_response!(response)
       body = JSON.parse(response.body.to_s)
-      return body if response.is_a?(Net::HTTPSuccess) && body["access_token"].present?
+      return body if http_success?(response) && body["access_token"].present?
 
       message = body["error_description"] || body["error"] || "token exchange failed (HTTP #{response.code})"
       raise DeliveryError, "Google OAuth token exchange failed: #{message}"

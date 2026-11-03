@@ -4,6 +4,14 @@ module RecordingStudioNotificationsPush
   class Engine < ::Rails::Engine
     isolate_namespace RecordingStudioNotificationsPush
 
+    # @api private
+    def self.pwa_registrar
+      return unless defined?(RecordingStudioPwa)
+      return unless RecordingStudioPwa.respond_to?(:register_service_worker_extension)
+
+      RecordingStudioPwa
+    end
+
     initializer "recording_studio_notifications_push.assets" do |app|
       app.config.assets.paths << root.join("app/javascript") if app.config.respond_to?(:assets)
     end
@@ -36,10 +44,10 @@ module RecordingStudioNotificationsPush
     initializer "recording_studio_notifications_push.register_pwa_service_worker",
                 after: "recording_studio_notifications_push.register_channel" do
       config.to_prepare do
-        next unless defined?(RecordingStudioPwa) &&
-                    RecordingStudioPwa.respond_to?(:register_service_worker_extension)
+        registrar = Engine.pwa_registrar
+        next unless registrar
 
-        RecordingStudioPwa.register_service_worker_extension(
+        registrar.register_service_worker_extension(
           "recording_studio_notifications_push/service_worker_push"
         )
       end

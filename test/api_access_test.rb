@@ -12,7 +12,7 @@ class ApiAccessTest < Minitest::Test
   end
 
   def test_admin_root_recording_is_nil_without_admin
-    refute defined?(RecordingStudioAdmin)
+    refute RecordingStudioNotificationsPush::Api::Access.admin_loaded?
     assert_nil RecordingStudioNotificationsPush::Api::Access.admin_root_recording
   end
 
@@ -52,7 +52,7 @@ class ApiAccessTest < Minitest::Test
       refute RecordingStudioNotificationsPush::Api::Access.can_view?(view_context(Object.new))
     end
 
-    refute defined?(RecordingStudioAdmin)
+    refute RecordingStudioNotificationsPush::Api::Access.admin_loaded?
   end
 
   private
@@ -61,17 +61,11 @@ class ApiAccessTest < Minitest::Test
     ViewContext.new(Grant.new(actor))
   end
 
-  def with_admin_resolvers(access: nil, site: nil)
-    installed = false
-    raise "RecordingStudioAdmin is already loaded" if Object.const_defined?(:RecordingStudioAdmin, false)
-
+  def with_admin_resolvers(access: nil, site: nil, &block)
     configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(site, access)
-    admin = Module.new
-    admin.define_singleton_method(:configuration) { configuration }
-    Object.const_set(:RecordingStudioAdmin, admin)
-    installed = true
-    yield
-  ensure
-    Object.send(:remove_const, :RecordingStudioAdmin) if installed
+    access_api = RecordingStudioNotificationsPush::Api::Access
+    access_api.stub(:admin_loaded?, true) do
+      access_api.stub(:admin_configuration, configuration, &block)
+    end
   end
 end

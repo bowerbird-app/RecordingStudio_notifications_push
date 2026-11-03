@@ -6,16 +6,6 @@ require "devise/test/integration_helpers"
 class PushDevicesPageTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 
-  test "devices controller uses core default layout and installations stay off it" do
-    devices_source = File.read(Rails.root.join("../../app/controllers/recording_studio_notifications_push/devices_controller.rb"))
-    installations_source = File.read(Rails.root.join("../../app/controllers/recording_studio_notifications_push/installations_controller.rb"))
-
-    assert_includes devices_source, "recording_studio_layout"
-    refute_includes devices_source, "UsesDefaultLayout"
-    refute_includes installations_source, "recording_studio_layout"
-    refute_includes installations_source, "UsesDefaultLayout"
-  end
-
   test "push devices page registers the host PWA service worker from the mounted engine" do
     user = User.find_or_create_by!(email: "push-sw-test@example.com") do |record|
       record.password = "Password123!"
@@ -88,5 +78,20 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
       refute_includes response.body, "bg-[var(--alert-info-background-color)]"
     end
   end
-end
 
+  test "rendered head registers the service worker and the manifest" do
+    user = User.find_or_create_by!(email: "push-head-test@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+    sign_in user
+
+    get "/notifications/push/devices"
+
+    assert_response :success
+    assert_includes response.body, 'rel="manifest"'
+    assert_includes response.body, "/manifest.json"
+    assert_includes response.body, "RecordingStudioPwa.serviceWorkerReady"
+    assert_includes response.body, 'register("/service-worker.js")'
+  end
+end

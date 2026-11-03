@@ -92,6 +92,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "bundler-audit", require: false
   gem "brakeman", require: false
+  gem "minitest-mock"
   gem "rubocop-rails-omakase", require: false
 end
 

@@ -4,14 +4,11 @@ require "test_helper"
 
 class PublicApiTest < Minitest::Test
   def setup
-    @original_configuration = RecordingStudioNotificationsPush.instance_variable_get(:@configuration)
-    @original_adapter = RecordingStudioNotificationsPush.instance_variable_get(:@adapter)
     RecordingStudioNotificationsPush.reset_configuration!
   end
 
   def teardown
-    RecordingStudioNotificationsPush.instance_variable_set(:@configuration, @original_configuration)
-    RecordingStudioNotificationsPush.instance_variable_set(:@adapter, @original_adapter)
+    RecordingStudioNotificationsPush.reset_configuration!
   end
 
   def test_configure_supports_defaults_and_overrides
@@ -41,7 +38,7 @@ class PublicApiTest < Minitest::Test
   end
 
   def test_version_and_engine_are_public
-    assert_equal "0.5.7", RecordingStudioNotificationsPush::VERSION
+    assert_match(/\A\d+\.\d+\.\d+\z/, RecordingStudioNotificationsPush::VERSION)
     assert_kind_of Class, RecordingStudioNotificationsPush::Engine
   end
 
@@ -90,30 +87,15 @@ class PublicApiTest < Minitest::Test
     RecordingStudioNotificationsPush::Engine.stub(:config, config) { initializer.block.call }
 
     registered = nil
-    fake_pwa = Module.new do
-      define_singleton_method(:register_service_worker_extension) do |partial|
-        registered = partial
-      end
+    fake_pwa = Object.new
+    fake_pwa.define_singleton_method(:register_service_worker_extension) do |partial|
+      registered = partial
     end
 
-    previously_defined = Object.const_defined?(:RecordingStudioPwa)
-    previous = Object.const_get(:RecordingStudioPwa) if previously_defined
-    silence_warnings { Object.const_set(:RecordingStudioPwa, fake_pwa) }
-    begin
+    RecordingStudioNotificationsPush::Engine.stub(:pwa_registrar, fake_pwa) do
       prepare_callbacks.fetch(0).call
-    ensure
-      Object.send(:remove_const, :RecordingStudioPwa)
-      Object.const_set(:RecordingStudioPwa, previous) if previously_defined
     end
 
     assert_equal "recording_studio_notifications_push/service_worker_push", registered
-  end
-
-  def silence_warnings
-    verbose = $VERBOSE
-    $VERBOSE = nil
-    yield
-  ensure
-    $VERBOSE = verbose
   end
 end

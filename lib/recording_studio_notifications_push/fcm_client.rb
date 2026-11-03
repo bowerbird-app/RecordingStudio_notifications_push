@@ -14,8 +14,7 @@ module RecordingStudioNotificationsPush
       @access_token_provider = access_token_provider
     end
 
-    # Sends one FCM HTTP v1 message. Returns a result hash:
-    #   { ok: true/false, status: Integer, body: Hash, disable: Boolean }
+    # Sends one FCM HTTP v1 message. Result keys: ok, status, body, disable.
     def send_message(token:, title:, body: nil, url: nil, data: {})
       raise DeliveryError, "FCM token is required" if token.to_s.strip.blank?
       raise DeliveryError, "FIREBASE_PROJECT_ID is required to send push notifications" if project_id.blank?
@@ -86,10 +85,14 @@ module RecordingStudioNotificationsPush
       http
     end
 
+    def http_success?(response)
+      response.is_a?(Net::HTTPSuccess)
+    end
+
     def parse_response(response)
       body = parse_json_body(response.body)
       {
-        ok: response.is_a?(Net::HTTPSuccess),
+        ok: http_success?(response),
         status: response.code.to_i,
         body: body,
         disable: disable_token?(body),
@@ -99,14 +102,10 @@ module RecordingStudioNotificationsPush
 
     def disable_token?(body)
       error_status = body.dig("error", "status").to_s
-      error_code = Array(body.dig("error", "details")).filter_map { |detail| detail["errorCode"] }.first
+      error_code = Array(body.dig("error", "details")).filter_map { |detail| detail["errorCode"] }.first.to_s
       error_message = body.dig("error", "message").to_s
-
-      return true if %w[UNREGISTERED NOT_FOUND].include?(error_status)
-      return true if %w[UNREGISTERED NOT_FOUND].include?(error_code.to_s)
-      return true if error_status == "INVALID_ARGUMENT" && /not a valid fcm registration token/i.match?(error_message)
-
-      false
+      %w[UNREGISTERED NOT_FOUND].include?(error_status) || %w[UNREGISTERED NOT_FOUND].include?(error_code) ||
+        (error_status == "INVALID_ARGUMENT" && /not a valid fcm registration token/i.match?(error_message))
     end
 
     def parse_json_body(raw)

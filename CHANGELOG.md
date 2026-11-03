@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+## 0.5.8
+
+### Changed
+
+- Tests use `minitest-mock` instead of a global `Object#stub` patch.
+- Admin and PWA presence in tests goes through `Api::Access.admin_loaded?`,
+  `admin_configuration`, and `Engine.pwa_registrar`.
+- HTTP client tests use plain response doubles.
+- Version and dependency-pin literals are no longer hard-coded in tests.
+
+### Upgrade notes
+
+- Bump to `0.5.8`. No migration. `minitest-mock` is a development dependency
+  of this repo, not a runtime dependency.
+
 ## 0.5.7
 
 ### Changed

@@ -4,6 +4,8 @@ require "test_helper"
 require "json"
 
 class FcmClientTest < Minitest::Test
+  include HttpResponseDouble
+
   class FakeAccessToken
     def fetch
       "ya29.test"
@@ -27,11 +29,9 @@ class FcmClientTest < Minitest::Test
     fake_http.define_singleton_method(:open_timeout=) { |_| }
     fake_http.define_singleton_method(:read_timeout=) { |_| }
     fake_http.define_singleton_method(:write_timeout=) { |_| }
+    response = fake_http_message(code: "200", body: JSON.generate("name" => "projects/demo/messages/1"), success: true)
     fake_http.define_singleton_method(:request) do |request|
       captured = request
-      response = Net::HTTPOK.new("1.1", "200", "OK")
-      response.instance_variable_set(:@read, true)
-      response.define_singleton_method(:body) { JSON.generate("name" => "projects/demo/messages/1") }
       response
     end
 
@@ -58,19 +58,17 @@ class FcmClientTest < Minitest::Test
     fake_http.define_singleton_method(:open_timeout=) { |_| }
     fake_http.define_singleton_method(:read_timeout=) { |_| }
     fake_http.define_singleton_method(:write_timeout=) { |_| }
-    fake_http.define_singleton_method(:request) do |_request|
-      response = Net::HTTPBadRequest.new("1.1", "400", "Bad Request")
-      response.instance_variable_set(:@read, true)
-      response.define_singleton_method(:body) do
-        JSON.generate(
-          "error" => {
-            "status" => "INVALID_ARGUMENT",
-            "message" => "The registration token is not a valid FCM registration token"
-          }
-        )
-      end
-      response
-    end
+    response = fake_http_message(
+      code: "400",
+      success: false,
+      body: JSON.generate(
+        "error" => {
+          "status" => "INVALID_ARGUMENT",
+          "message" => "The registration token is not a valid FCM registration token"
+        }
+      )
+    )
+    fake_http.define_singleton_method(:request) { |_request| response }
 
     Net::HTTP.stub(:new, ->(*) { fake_http }) do
       result = @client.send_message(token: "test-fid-home-demo", title: "Hello")
@@ -85,14 +83,12 @@ class FcmClientTest < Minitest::Test
     fake_http.define_singleton_method(:open_timeout=) { |_| }
     fake_http.define_singleton_method(:read_timeout=) { |_| }
     fake_http.define_singleton_method(:write_timeout=) { |_| }
-    fake_http.define_singleton_method(:request) do |_request|
-      response = Net::HTTPNotFound.new("1.1", "404", "Not Found")
-      response.instance_variable_set(:@read, true)
-      response.define_singleton_method(:body) do
-        JSON.generate("error" => { "status" => "NOT_FOUND", "message" => "Requested entity was not found." })
-      end
-      response
-    end
+    response = fake_http_message(
+      code: "404",
+      success: false,
+      body: JSON.generate("error" => { "status" => "NOT_FOUND", "message" => "Requested entity was not found." })
+    )
+    fake_http.define_singleton_method(:request) { |_request| response }
 
     Net::HTTP.stub(:new, ->(*) { fake_http }) do
       result = @client.send_message(token: "fid-gone", title: "Hello")
