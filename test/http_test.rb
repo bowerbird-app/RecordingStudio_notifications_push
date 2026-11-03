@@ -22,4 +22,10 @@ class HttpTest < Minitest::Test
     assert_equal 1, https.open_timeout
     assert_equal 2, https.read_timeout
   end
+
+  def test_absolute_https_requires_a_host
+    assert RecordingStudioNotificationsPush::Http.absolute_https?("https://example.com/open")
+    refute RecordingStudioNotificationsPush::Http.absolute_https?("/x")
+    refute RecordingStudioNotificationsPush::Http.absolute_https?("http://example.com/open")
+  end
 end

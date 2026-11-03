@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 0.6.2
+
+### UrlSafety
+
+Click and icon URLs go through `RecordingStudioNotifications::UrlSafety`.
+This replaces the local URL check:
+
+- `javascript:` URLs and protocol-relative URLs are dropped.
+- An icon URL is kept only when it is a same-origin path, or an absolute
+  `http`/`https` URL whose host is in `allowed_url_hosts`.
+- `webpush.fcm_options.link` is set only for an absolute `https` URL. A
+  relative notification URL is no longer copied there.
+- Control characters in a URL are still rejected in this gem until a later
+  notifications release takes that check.
+
+### Changed
+
+- Runtime dependency `recording_studio_notifications` is `>= 0.14.0`, `< 1`.
+
+### Upgrade notes
+
+- Bump to `0.6.2`. Requires notifications `0.14.0` or newer. No migration.
+- Put banner icon hosts in `allowed_url_hosts`, or use a same-origin path.
+- A relative notification URL is no longer copied into `fcm_options.link`.
+
 ## 0.6.1
 
 ### Changed

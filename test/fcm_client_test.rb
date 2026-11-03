@@ -48,8 +48,34 @@ class FcmClientTest < Minitest::Test
     assert_equal "Hello", payload.dig("message", "data", "title")
     assert_equal "World", payload.dig("message", "data", "body")
     assert_equal "/x", payload.dig("message", "data", "url")
-    assert_equal "/x", payload.dig("message", "webpush", "fcm_options", "link")
+    assert_nil payload.dig("message", "webpush", "fcm_options")
     assert_equal "high", payload.dig("message", "webpush", "headers", "Urgency")
+  end
+
+  def test_absolute_https_click_url_is_the_only_fcm_link
+    captured = nil
+    fake_http = http_double
+    response = fake_http_message(code: "200", body: "{}", success: true)
+    fake_http.define_singleton_method(:request) do |request|
+      captured = request
+      response
+    end
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      @client.send_message(token: "fid-1", title: "Hello", url: "https://example.com/open")
+    end
+
+    payload = JSON.parse(captured.body)
+    assert_equal "https://example.com/open", payload.dig("message", "webpush", "fcm_options", "link")
+  end
+
+  def http_double
+    fake_http = Object.new
+    fake_http.define_singleton_method(:use_ssl=) { |_| }
+    fake_http.define_singleton_method(:open_timeout=) { |_| }
+    fake_http.define_singleton_method(:read_timeout=) { |_| }
+    fake_http.define_singleton_method(:write_timeout=) { |_| }
+    fake_http
   end
 
   def test_invalid_registration_token_marks_disable

@@ -1,5 +1,16 @@
 # Migration notes
 
+## 0.6.2
+
+### Host app steps
+
+1. Bump to `0.6.2`. Requires `recording_studio_notifications` `>= 0.14.0`.
+   No schema change.
+2. Icon URLs outside the allowlist are dropped. Keep a same-origin path, or
+   an absolute `http`/`https` host in `allowed_url_hosts`.
+3. FCM `webpush.fcm_options.link` is sent only for absolute `https` URLs.
+   Relative links stay in the data payload.
+
 ## 0.6.0
 
 ### Host app steps

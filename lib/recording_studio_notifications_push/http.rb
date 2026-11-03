@@ -14,5 +14,12 @@ module RecordingStudioNotificationsPush
       http.write_timeout = write_timeout if http.respond_to?(:write_timeout=)
       http
     end
+
+    def absolute_https?(url)
+      uri = URI.parse(url.to_s)
+      uri.is_a?(URI::HTTPS) && uri.host.present?
+    rescue URI::InvalidURIError
+      false
+    end
   end
 end
