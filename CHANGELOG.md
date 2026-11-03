@@ -29,8 +29,8 @@
   through the notifications configuration. It walks that set in batches, keeps
   eight authorized rows, and stops. A test ping refreshes the bell as soon as
   it sends.
-- Unchecked theme checks stay in the row and are hidden by the dummy
-  stylesheet, so the labels share one gutter.
+- Unchecked theme checks stay in the row. The dummy stylesheet hides them
+  inside the theme menu, so the labels share one gutter.
 - The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
 - Dummy popover reposition script and its CSS are gone.
 - Development and dummy apps pin FlatPack `v0.1.332`.

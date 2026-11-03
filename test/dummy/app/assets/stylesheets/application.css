@@ -11,7 +11,7 @@
 
 /* Unchecked theme radios keep their check icon for the gutter. */
 @layer dummy {
-  :where([role=radio][aria-checked=false]) svg {
+  :where([data-controller~="dummy-theme-menu"] [role=radio][aria-checked=false]) svg {
     visibility: hidden;
   }
 }

@@ -61,6 +61,15 @@ class PushI18nTest < ActionDispatch::IntegrationTest
         assert_equal "false", items.first["aria-checked"]
       end
     end
+    sheet = css_select("link[rel=stylesheet]").map { |node| node["href"].to_s }.find { |href|
+      href.include?("application-")
+    }
+    assert sheet, "the dummy stylesheet should be linked"
+    get sheet
+    assert_includes response.body, ':where([data-controller~="dummy-theme-menu"] [role=radio][aria-checked=false])'
+    refute_includes response.body, ":where([role=radio][aria-checked=false])"
+    get "/"
+
     assert_select "[role='menuitemradio']", count: 0
     assert_select "[data-theme-value='rounded']", count: 0
     assert_includes response.body, ">Theme<"
