@@ -4,12 +4,12 @@ require "test_helper"
 
 class RecordingStudioNotificationsPushTest < Minitest::Test
   def test_version_matches_release
-    assert_equal "0.5.5", ::RecordingStudioNotificationsPush::VERSION
+    assert_equal "0.5.6", ::RecordingStudioNotificationsPush::VERSION
     lockfile = File.read(File.expand_path("../Gemfile.lock", __dir__))
     dummy_lockfile = File.read(File.expand_path("dummy/Gemfile.lock", __dir__))
 
-    assert_includes lockfile, "recording_studio_notifications_push (0.5.5)"
-    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.5)"
+    assert_includes lockfile, "recording_studio_notifications_push (0.5.6)"
+    assert_includes dummy_lockfile, "recording_studio_notifications_push (0.5.6)"
     assert_includes lockfile, "tag: v0.7.0"
     assert_includes dummy_lockfile, "tag: v0.7.0"
   end

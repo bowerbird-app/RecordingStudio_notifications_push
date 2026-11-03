@@ -2,6 +2,35 @@
 
 ## Unreleased
 
+## 0.5.6
+
+### Removed
+
+- Template leftovers: `docs/gem_template`, `UPDATE_SUMMARY.md`, `bin/rename_gem`,
+  rename tests and Rake tasks, `test_codespaces_setup.sh`, the saved dummy
+  install page, device layout screenshots, `hello_controller.js`, empty `.keep`
+  files, nested `test/dummy/.github`, and the template docs pages for
+  recordable types, the recordings tree, gem views, and methods.
+- Tracked `test/dummy/coverage` output. `coverage/` was already gitignored.
+- The dummy `Workspace` include of `RecordingStudio::Capabilities::Example`.
+  Accessible stays on.
+
+### Changed
+
+- Copilot and architect notes name this push engine.
+- The dummy wiring test is `DummyPushWiringTest`.
+- Development pin docs no longer say parent gems are unpublished.
+
+### Notes
+
+- Tag `v0.5.1` points at `e9bbbe4`, where `VERSION` is `0.5.0`. There is no
+  `0.5.1` changelog section. That tag stays as published.
+
+### Upgrade notes
+
+- Bump to `0.5.6`. No migration. `MIGRATION_NOTES.md` still has the `0.5.4`
+  host steps.
+
 ## 0.5.5
 
 ### Security
