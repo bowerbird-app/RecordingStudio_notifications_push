@@ -118,7 +118,7 @@
 - The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
 - Dummy popover reposition script and its CSS are gone.
 - Development and dummy apps pin FlatPack `v0.1.332`.
-- The lockfile carries nokogiri `1.19.6`, loofah `2.25.3`, and
+- The lockfile carries nokogiri `1.19.7`, loofah `2.25.3`, and
   rails-html-sanitizer `1.7.2`.
 - Devices use `recording_studio_layout`, which reads
   `RecordingStudio.configuration.layout` (`flat_pack_sidebar` in the dummy).
