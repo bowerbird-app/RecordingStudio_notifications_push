@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 0.6.5
+
+### Changed
+
+- Runtime dependency `recording_studio` is `>= 6.1.0`, `< 7`.
+- Development pins: PWA `v0.6.1`.
+- Dummy pins: PWA `v0.6.1`, plus Root Switchable `v0.11.3` and Internationalization
+  `v0.2.0`.
+- `view_component` stays `4.20.0`.
+
+### Upgrade notes
+
+- Bump to `0.6.5`. No migration. Hosts on Recording Studio 7 are out of range.
+- Move PWA to `v0.6.1` with this gem. PWA no longer
+  reads `api_key`, `enable_feature_x`, or `timeout`. This gem does not set them.
+- Internationalization `v0.2.0` drops `hooks.extend_model` and
+  `hooks.extend_controller`. This dummy never used them.
+
 ## 0.6.4
 
 ### Changed
