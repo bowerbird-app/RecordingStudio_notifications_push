@@ -8,7 +8,6 @@ module RecordingStudioNotificationsPush
       def meta_asset(key)
         value = metadata_string(key)
         return unless value
-        return if unsafe_url_characters?(value)
         return value if RecordingStudioNotifications::UrlSafety.safe?(value)
 
         nil
@@ -23,10 +22,6 @@ module RecordingStudioNotificationsPush
         return value if RecordingStudioNotifications::UrlSafety.safe?(value)
 
         nil
-      end
-
-      def unsafe_url_characters?(value)
-        value.match?(/[\\\x00-\x1F\x7F]/)
       end
     end
   end

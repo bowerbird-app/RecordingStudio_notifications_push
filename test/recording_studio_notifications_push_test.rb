@@ -30,7 +30,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
                                    .runtime_dependencies
                                    .find { |item| item.name == "recording_studio_notifications" }
 
-    assert_equal Gem::Requirement.new(">= 0.14.0", "< 1"), dependency.requirement
+    assert_equal Gem::Requirement.new(">= 0.14.7", "< 1"), dependency.requirement
   end
 
   def test_runtime_dependencies_come_from_the_loaded_gem

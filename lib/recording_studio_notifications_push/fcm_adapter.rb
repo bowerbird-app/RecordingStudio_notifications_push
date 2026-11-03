@@ -49,8 +49,23 @@ module RecordingStudioNotificationsPush
         title: event.title,
         body: event.body,
         url: event.url,
+        link: open_link(event),
         data: message_data(event, delivery)
       }
+    end
+
+    def open_link(event)
+      return if Rails.application.nil?
+      return if default_url_host.blank?
+
+      url = RecordingStudioNotifications.notification_url(event.source)
+      url if Http.absolute_https?(url)
+    end
+
+    def default_url_host
+      routes = Rails.application.routes.default_url_options || {}
+      mailer = Rails.application.config.action_mailer.default_url_options || {}
+      routes.merge(mailer.compact_blank).symbolize_keys[:host]
     end
 
     def deliver_to_installation(installation, payload)

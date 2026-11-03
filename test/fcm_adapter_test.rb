@@ -11,7 +11,11 @@ class FcmAdapterTest < Minitest::Test
     end
   end
 
-  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, :notification_type, keyword_init: true)
+  Notification = Struct.new(:id, :title, :body, :url, :recipient, :metadata, :notification_type, keyword_init: true) do
+    def to_param
+      id
+    end
+  end
   Delivery = Struct.new(:id)
 
   class FakeInstallation
@@ -140,6 +144,103 @@ class FcmAdapterTest < Minitest::Test
 
     assert_equal "/push-icon-coral.png", client.calls.first.dig(:data, "icon")
     assert_equal "/push-icon-coral.png", client.calls.first.dig(:data, "image")
+  end
+
+  def test_fcm_link_is_the_https_notification_open_url
+    installations = [FakeInstallation.new(fid: "fid-1")]
+    client = FakeClient.new([{ ok: true, status: 200, disable: false }])
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: client,
+      installation_class: FakeInstallationClass.new(installations)
+    )
+    notification = Notification.new(
+      id: "n1",
+      title: "Hello",
+      url: "/pages/1",
+      recipient: FakeRecipient.new(id: "user-1"),
+      notification_type: :generic
+    )
+    draw_notification_routes
+    app = application_with_mailer_host("push.example")
+
+    Rails.stub(:application, app) do
+      assert adapter.deliver(notification: notification, delivery: Delivery.new("d1"))
+    end
+
+    assert_equal "/pages/1", client.calls.first[:url]
+    assert_match(%r{\Ahttps://push\.example/}, client.calls.first[:link].to_s)
+    assert_includes client.calls.first[:link], "n1"
+  end
+
+  def test_missing_host_delivers_without_an_open_link
+    installations = [FakeInstallation.new(fid: "fid-1")]
+    client = FakeClient.new([{ ok: true, status: 200, disable: false }])
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: client,
+      installation_class: FakeInstallationClass.new(installations)
+    )
+    notification = Notification.new(
+      id: "n1",
+      title: "Hello",
+      url: "/pages/1",
+      recipient: FakeRecipient.new(id: "user-1"),
+      notification_type: :generic
+    )
+
+    Rails.stub(:application, application_with_mailer_host(nil)) do
+      assert adapter.deliver(notification: notification, delivery: Delivery.new("d1"))
+    end
+
+    assert_nil client.calls.first[:link]
+    posted = RecordingStudioNotificationsPush::FcmClient::Payload.body("fid-1", client.calls.first)
+    refute posted.dig(:message, :webpush).key?(:fcm_options)
+  end
+
+  def test_notification_url_argument_errors_still_raise
+    installations = [FakeInstallation.new(fid: "fid-1")]
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: FakeClient.new([{ ok: true, status: 200, disable: false }]),
+      installation_class: FakeInstallationClass.new(installations)
+    )
+    notification = Notification.new(
+      id: "n1",
+      title: "Hello",
+      url: "/pages/1",
+      recipient: FakeRecipient.new(id: "user-1"),
+      notification_type: :generic
+    )
+
+    Rails.stub(:application, application_with_mailer_host("push.example")) do
+      RecordingStudioNotifications.stub(:notification_url, ->(*) { raise ArgumentError, "bad open url" }) do
+        error = assert_raises(ArgumentError) do
+          adapter.deliver(notification: notification, delivery: Delivery.new("d1"))
+        end
+        assert_equal "bad open url", error.message
+      end
+    end
+  end
+
+  def draw_notification_routes
+    routes = RecordingStudioNotifications::Engine.routes
+    return if routes.named_routes.names.include?(:open_notification)
+
+    load File.join(Gem.loaded_specs.fetch("recording_studio_notifications").full_gem_path, "config/routes.rb")
+  end
+
+  def application_with_mailer_host(host)
+    routes = Object.new
+    routes.define_singleton_method(:default_url_options) { {} }
+    mailer = Object.new
+    mailer.define_singleton_method(:default_url_options) { host.present? ? { host: host, protocol: "https" } : {} }
+    config = Object.new
+    config.define_singleton_method(:action_mailer) { mailer }
+    app = Object.new
+    app.define_singleton_method(:routes) { routes }
+    app.define_singleton_method(:config) { config }
+    app
   end
 
   def test_raises_when_no_installations

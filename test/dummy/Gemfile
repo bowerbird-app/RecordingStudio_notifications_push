@@ -3,10 +3,10 @@ source "https://rubygems.org"
 # Use the recording_studio_notifications_push engine
 gem "recording_studio_notifications_push", path: "../.."
 
-# Parent notification stack. v0.14.1 supports Recording Studio 6.1+.
+# Parent notification stack. v0.14.7 checks URL control characters and builds notification_url.
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.14.1"
+    tag: "v0.14.7"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 if email_path && !email_path.strip.empty?

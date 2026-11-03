@@ -47,7 +47,6 @@ module RecordingStudioNotificationsPush
       value = attribute(:url) if value.blank?
       value = value.to_s.presence
       return unless value
-      return if unsafe_url_characters?(value)
 
       safe_url(value)
     rescue URI::InvalidURIError

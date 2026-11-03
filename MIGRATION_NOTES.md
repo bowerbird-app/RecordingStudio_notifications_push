@@ -1,5 +1,19 @@
 # Migration notes
 
+## 0.6.6
+
+### Host app steps
+
+1. Bump to `0.6.6`. Requires `recording_studio_notifications` `>= 0.14.7`.
+   No schema change. Pin tag `v0.14.7` until the gem is on RubyGems.
+2. Click and icon URLs rely on `UrlSafety` for control characters. Delete any
+   host copy of the old local character check.
+3. Set `config.action_mailer.default_url_options` to an `https` host. The open
+   link is `RecordingStudioNotifications.notification_url`. The service worker
+   still reads `data.url`. A missing host no longer fails the send; the open
+   link is left unset. Any other `ArgumentError` from `notification_url` is
+   raised.
+
 ## 0.6.5
 
 ### Host app steps

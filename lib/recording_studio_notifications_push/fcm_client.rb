@@ -15,28 +15,17 @@ module RecordingStudioNotificationsPush
     end
 
     # Sends one FCM HTTP v1 message. Result keys: ok, status, body, disable.
-    def send_message(token:, title:, body: nil, url: nil, data: {})
+    # link: nil stays an explicit keyword so a missing open URL is not omitted.
+    def send_message(token:, title: nil, body: nil, url: nil, link: nil, data: nil) # rubocop:disable Metrics/ParameterLists
       raise DeliveryError, "FCM token is required" if token.to_s.strip.blank?
       raise DeliveryError, "FIREBASE_PROJECT_ID is required to send push notifications" if project_id.blank?
 
-      response = post_json(messages_uri, build_payload(token:, title:, body:, url:, data:))
+      message = { title: title, body: body, url: url, link: link, data: data }
+      response = post_json(messages_uri, Payload.body(token, message))
       parse_response(response)
     end
 
     private
-
-    # Data-only web payloads. When a service worker handles `push`, Chrome does
-    # not auto-display an FCM `notification` block — the worker must call
-    # showNotification. Including both blocks duplicated banners before dedupe.
-    def build_payload(token:, title:, body:, url:, data:)
-      {
-        message: {
-          token: token.to_s,
-          data: stringify_data(data.merge("title" => title, "body" => body, "url" => url).compact),
-          webpush: webpush_options(url)
-        }.compact
-      }
-    end
 
     def project_id
       @configuration.firebase_project_id.to_s.strip.presence ||
@@ -113,22 +102,7 @@ module RecordingStudioNotificationsPush
     rescue JSON::ParserError
       { "raw" => raw.to_s }
     end
-
-    def stringify_data(hash)
-      hash.each_with_object({}) do |(key, value), result|
-        next if value.nil?
-
-        result[key.to_s] = value.is_a?(String) ? value : value.to_s
-      end
-    end
-
-    def webpush_options(url)
-      options = {
-        # Urgency helps some browsers deliver while a tab is focused.
-        headers: { Urgency: "high" }
-      }
-      options[:fcm_options] = { link: url.to_s } if Http.absolute_https?(url)
-      options
-    end
   end
 end
+
+require_relative "fcm_client/payload"
