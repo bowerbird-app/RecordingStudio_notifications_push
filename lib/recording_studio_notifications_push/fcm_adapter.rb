@@ -13,33 +13,10 @@ module RecordingStudioNotificationsPush
       @installation_class = installation_class
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def deliver(notification:, delivery:)
       event = Event.wrap(notification, delivery: delivery)
-      recipient = event.recipient
-      raise DeliveryError, "notification recipient is required" if recipient.nil?
-
-      installations = installation_class.active.for_recipient(recipient).to_a
-      raise DeliveryError, "no active push installations for recipient" if installations.empty?
-
-      payload = build_send_payload(event, delivery)
-      successes = 0
-      last_error = nil
-
-      installations.each do |installation|
-        outcome = deliver_to_installation(installation, payload)
-        if outcome[:ok]
-          successes += 1
-        else
-          last_error = outcome[:error]
-        end
-      end
-
-      return true if successes.positive?
-
-      raise DeliveryError, last_error.presence || "push delivery failed for all installations"
+      deliver_each(installations_for(event), build_send_payload(event, delivery))
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def available_for?(recipient:, **)
       return false if recipient.nil?
@@ -48,6 +25,24 @@ module RecordingStudioNotificationsPush
     end
 
     private
+
+    def installations_for(event)
+      recipient = event.recipient
+      raise DeliveryError, "notification recipient is required" if recipient.nil?
+
+      installations = installation_class.active.for_recipient(recipient).to_a
+      raise DeliveryError, "no active push installations for recipient" if installations.empty?
+
+      installations
+    end
+
+    def deliver_each(installations, payload)
+      outcomes = installations.map { |installation| deliver_to_installation(installation, payload) }
+      return true if outcomes.any? { |outcome| outcome[:ok] }
+
+      last_error = outcomes.reverse.find { |outcome| outcome[:error] }&.dig(:error)
+      raise DeliveryError, last_error.presence || "push delivery failed for all installations"
+    end
 
     def build_send_payload(event, delivery)
       {

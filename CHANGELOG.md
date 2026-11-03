@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.6.1
+
+### Changed
+
+- Push payload URL checks live in `Event::Url`, and delivery field reads live
+  in `Event::Payload`.
+- FCM fan-out goes through `FcmAdapter#deliver_each`.
+- Google OAuth JWTs are built by `GoogleAccessToken::Assertion`.
+- Device user-agent labels live in `Installation::UserAgent`.
+- `Installation.disable!` still accepts `reason:` and still does not store it.
+- `Installation.upsert!` still accepts the same keyword arguments. An unknown
+  keyword raises `ArgumentError`.
+
+### Upgrade notes
+
+- Bump to `0.6.1`. No migration. Do not pass extra keywords to `upsert!`.
+
 ## 0.6.0
 
 ### Changed

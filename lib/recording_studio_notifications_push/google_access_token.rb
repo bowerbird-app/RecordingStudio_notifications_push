@@ -8,7 +8,7 @@ require "uri"
 
 module RecordingStudioNotificationsPush
   # Exchanges a Firebase service-account JSON key for an OAuth access token.
-  class GoogleAccessToken # rubocop:disable Metrics/ClassLength
+  class GoogleAccessToken
     TOKEN_URI = "https://oauth2.googleapis.com/token"
     SCOPE = "https://www.googleapis.com/auth/firebase.messaging"
     EXPIRY_SKEW = 60
@@ -65,49 +65,31 @@ module RecordingStudioNotificationsPush
     end
 
     def build_jwt
-      now = Time.now.to_i
-      encoded_header = urlsafe_encode64(JSON.generate({ alg: "RS256", typ: "JWT" }))
-      encoded_claims = urlsafe_encode64(JSON.generate(jwt_claims(now)))
-      signing_input = "#{encoded_header}.#{encoded_claims}"
-      signature = urlsafe_encode64(rsa_key.sign(OpenSSL::Digest.new("SHA256"), signing_input))
-      "#{signing_input}.#{signature}"
+      Assertion.new(@credentials).to_s
     end
 
-    def jwt_claims(now)
-      {
-        iss: @credentials.fetch("client_email"),
-        scope: SCOPE,
-        aud: @credentials.fetch("token_uri"),
-        iat: now,
-        exp: now + 3600
-      }
-    end
-
-    def rsa_key
-      @rsa_key ||= OpenSSL::PKey::RSA.new(@credentials.fetch("private_key"))
-    rescue OpenSSL::PKey::RSAError => e
-      raise ArgumentError, "service account private_key is invalid: #{e.message}"
-    end
-
-    # rubocop:disable Metrics/MethodLength
     def exchange_jwt!(assertion)
-      uri = URI.parse(@credentials.fetch("token_uri"))
-      http = build_http(uri)
-      request = Net::HTTP::Post.new(uri.request_uri)
-      request["Content-Type"] = "application/x-www-form-urlencoded"
-      request.set_form_data(
-        "grant_type" => "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        "assertion" => assertion
-      )
-
-      response = http.request(request)
+      response = build_http(token_uri).request(token_request(assertion))
       parse_token_response!(response)
     rescue JSON::ParserError
       raise DeliveryError, "Google OAuth token exchange returned invalid JSON"
     rescue Timeout::Error, Errno::ECONNREFUSED, Errno::ECONNRESET, SocketError => e
       raise DeliveryError, "Google OAuth token exchange network error: #{e.message}"
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def token_uri
+      URI.parse(@credentials.fetch("token_uri"))
+    end
+
+    def token_request(assertion)
+      request = Net::HTTP::Post.new(token_uri.request_uri)
+      request["Content-Type"] = "application/x-www-form-urlencoded"
+      request.set_form_data(
+        "grant_type" => "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        "assertion" => assertion
+      )
+      request
+    end
 
     def build_http(uri)
       Http.build(
@@ -128,10 +110,6 @@ module RecordingStudioNotificationsPush
 
       message = body["error_description"] || body["error"] || "token exchange failed (HTTP #{response.code})"
       raise DeliveryError, "Google OAuth token exchange failed: #{message}"
-    end
-
-    def urlsafe_encode64(value)
-      Base64.urlsafe_encode64(value, padding: false)
     end
   end
 end

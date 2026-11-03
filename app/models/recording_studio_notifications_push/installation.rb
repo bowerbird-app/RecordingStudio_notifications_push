@@ -17,31 +17,47 @@ module RecordingStudioNotificationsPush
       where(recipient_type: recipient.class.base_class.name, recipient_id: recipient.id)
     }
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
-    def self.upsert!(recipient:, firebase_installation_id:, legacy_fcm_token: nil,
-                     user_agent: nil, platform: nil, label: nil)
+    def self.upsert!(recipient:, firebase_installation_id:, **registration)
       raise ArgumentError, "recipient is required" if recipient.nil?
 
+      reject_unknown_registration!(registration)
+
+      record = find_for_registration(recipient, firebase_installation_id)
+      apply_registration!(record, recipient, registration)
+      record.save!
+      record
+    end
+
+    REGISTRATION_ATTRIBUTES = %i[legacy_fcm_token user_agent platform label].freeze
+    private_constant :REGISTRATION_ATTRIBUTES
+
+    def self.find_for_registration(recipient, firebase_installation_id)
       fid = firebase_installation_id.to_s.strip
       raise ArgumentError, "firebase_installation_id is required" if fid.blank?
 
-      record = find_or_initialize_by(
+      find_or_initialize_by(
         recipient_type: recipient.class.base_class.name,
         recipient_id: recipient.id,
         firebase_installation_id: fid
       )
+    end
+    private_class_method :find_for_registration
 
+    def self.reject_unknown_registration!(registration)
+      unknown = registration.keys - REGISTRATION_ATTRIBUTES
+      raise ArgumentError, "unknown registration attribute: #{unknown.join(', ')}" if unknown.any?
+    end
+    private_class_method :reject_unknown_registration!
+
+    def self.apply_registration!(record, recipient, registration)
       record.recipient = recipient
-      assign_optional_string!(record, :legacy_fcm_token, legacy_fcm_token)
-      assign_optional_string!(record, :user_agent, user_agent)
-      assign_optional_string!(record, :platform, platform)
-      assign_optional_string!(record, :label, label)
+      REGISTRATION_ATTRIBUTES.each do |attribute|
+        assign_optional_string!(record, attribute, registration[attribute]) if registration.key?(attribute)
+      end
       record.disabled_at = nil
       record.last_seen_at = Time.current
-      record.save!
-      record
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    private_class_method :apply_registration!
 
     def self.assign_optional_string!(record, attribute, value)
       record.public_send("#{attribute}=", value.to_s.presence) unless value.nil?
@@ -56,8 +72,11 @@ module RecordingStudioNotificationsPush
       disabled_at.nil?
     end
 
+    # +reason+ is the caller's explanation (removed, missing token, FCM error).
+    # It is not stored. Keep passing it so a later audit row can record it
+    # without a call-site change.
     def disable!(reason: nil)
-      _ = reason # reserved for future disable-reason audit rows
+      _ = reason
       return self if disabled_at.present?
 
       update!(disabled_at: Time.current)
@@ -84,46 +103,23 @@ module RecordingStudioNotificationsPush
     end
 
     def self.user_agent_like?(value)
-      value.start_with?("Mozilla/") || value.length > 48
+      UserAgent.user_agent_like?(value)
     end
 
     def self.label_from_user_agent(user_agent)
-      agent = user_agent.to_s
-      return if agent.blank?
-
-      browser = browser_name_from_user_agent(agent)
-      os = os_name_from_user_agent(agent)
-      return unless browser && os
-
-      Copy.t("labels.on", browser: browser, os: os)
+      UserAgent.label(user_agent)
     end
 
     def self.mobile_device?(user_agent: nil, platform: nil, label: nil)
-      haystack = [user_agent, platform, label].map { |value| value.to_s.downcase }.join(" ")
-      return true if haystack.match?(/\b(iphone|ipod|ipad|android|ios|mobile)\b/)
-      return true if haystack.match?(/\bon (iphone|ipad|android)\b/)
-
-      false
+      UserAgent.mobile?(user_agent: user_agent, platform: platform, label: label)
     end
 
     def self.browser_name_from_user_agent(user_agent)
-      return Copy.t("labels.browsers.edge") if user_agent.match?(%r{Edg/})
-      return Copy.t("labels.browsers.chrome") if user_agent.match?(%r{Chrome/})
-      return Copy.t("labels.browsers.firefox") if user_agent.match?(%r{Firefox/})
-      return Copy.t("labels.browsers.safari") if user_agent.match?(%r{Safari/}) && !user_agent.match?(%r{Chrome/})
-
-      Copy.t("labels.browsers.browser")
+      UserAgent.browser_name(user_agent)
     end
 
     def self.os_name_from_user_agent(user_agent)
-      return Copy.t("labels.os.ipad") if user_agent.match?(/iPad/)
-      return Copy.t("labels.os.iphone") if user_agent.match?(/iPhone|iPod/)
-      return Copy.t("labels.os.mac") if user_agent.match?(/Mac OS X|Macintosh/)
-      return Copy.t("labels.os.windows") if user_agent.match?(/Windows/)
-      return Copy.t("labels.os.android") if user_agent.match?(/Android/)
-      return Copy.t("labels.os.linux") if user_agent.match?(/Linux/)
-
-      Copy.t("labels.os.device")
+      UserAgent.os_name(user_agent)
     end
   end
 end

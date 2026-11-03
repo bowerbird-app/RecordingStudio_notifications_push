@@ -4,6 +4,7 @@ require "test_helper"
 require "active_record"
 require_relative "../app/models/recording_studio_notifications_push/application_record"
 require_relative "../app/models/recording_studio_notifications_push/installation"
+require_relative "../app/models/recording_studio_notifications_push/installation/user_agent"
 
 class InstallationTest < Minitest::Test
   class FakeInstallation
@@ -53,6 +54,18 @@ class InstallationTest < Minitest::Test
     )
 
     assert_equal "Jo test tablet", installation.display_label
+  end
+
+  def test_registration_rejects_unknown_attributes
+    error = assert_raises(ArgumentError) do
+      RecordingStudioNotificationsPush::Installation.upsert!(
+        recipient: Object.new,
+        firebase_installation_id: "fid-1",
+        surprise: 1
+      )
+    end
+
+    assert_match(/unknown registration attribute: surprise/, error.message)
   end
 
   def test_display_label_falls_back_to_generated_i18n_label
