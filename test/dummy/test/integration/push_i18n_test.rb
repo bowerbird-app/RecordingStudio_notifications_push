@@ -47,6 +47,14 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     }
     assert in_cog, "phones should keep the language select in the cog menu"
 
+    assert_select "[data-controller='flat-pack--theme']"
+    assert_select "[data-controller~='dummy-theme-menu']", count: 1
+    theme_heading = css_select("p").find { |node| node.text.strip == "Theme" }
+    assert theme_heading
+    assert theme_heading.ancestors.any? { |ancestor|
+      ancestor["class"].to_s.split.include?("px-[var(--dropdown-item-padding-x)]")
+    }, "the Theme heading should share the language panel inset"
+
     assert_select "[role='radiogroup'][aria-label='Theme'][data-controller~='dummy-theme-menu']" do
       assert_select "[data-theme-value='system'][role='radio'][aria-checked='true']" do |items|
         assert_select items, "svg"

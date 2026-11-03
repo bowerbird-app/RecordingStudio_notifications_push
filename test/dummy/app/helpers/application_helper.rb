@@ -94,7 +94,7 @@ module ApplicationHelper
   end
 
   def dummy_theme_menu(dropdown)
-    dropdown.menu_html(dummy_theme_menu_label(t("dummy.theme.group")))
+    dropdown.menu_html(dummy_theme_menu_label(t("dummy.theme.group"), inset: true))
     dropdown.menu_html(dummy_theme_radios)
     dropdown.menu_form(class: "md:hidden") { dummy_theme_language_panel }
   end
@@ -132,14 +132,18 @@ module ApplicationHelper
     render(item)
   end
 
-  def dummy_theme_menu_label(text)
-    render FlatPack::Text::Component.new(
+  def dummy_theme_menu_label(text, inset: false)
+    label = render FlatPack::Text::Component.new(
       text: text,
       as: :p,
       size: :xs,
       style: :muted,
       weight: :semibold
     )
+    return label unless inset
+
+    # The language panel already has the item inset. Match it so the headings share a line.
+    tag.div(class: "px-[var(--dropdown-item-padding-x)]") { label }
   end
 
   def dummy_theme_language_panel

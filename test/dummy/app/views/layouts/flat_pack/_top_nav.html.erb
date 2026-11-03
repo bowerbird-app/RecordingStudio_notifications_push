@@ -36,7 +36,7 @@
         <%# The theme controller rewrites the first dropdown label it finds. Keep it on the cog so the workspace switcher keeps its name. %>
         <%= tag.div(
           data: {
-            controller: "flat-pack--theme dummy-theme-menu",
+            controller: "flat-pack--theme",
             flat_pack__theme_themes_value: themes.to_json
           }
         ) do %>
