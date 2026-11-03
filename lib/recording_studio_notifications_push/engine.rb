@@ -4,6 +4,38 @@ module RecordingStudioNotificationsPush
   class Engine < ::Rails::Engine
     isolate_namespace RecordingStudioNotificationsPush
 
+    def self.load_host_configuration(app)
+      merge_yaml_configuration(app)
+      merge_x_configuration(app)
+    end
+
+    def self.merge_yaml_configuration(app)
+      return unless app.respond_to?(:config_for)
+      return unless yaml_configuration_file?(app)
+
+      yaml = app.config_for(:recording_studio_notifications_push)
+      RecordingStudioNotificationsPush.configuration.merge!(yaml) if yaml.respond_to?(:each)
+    end
+
+    def self.yaml_configuration_file?(app)
+      return false unless app.respond_to?(:paths)
+
+      Array(app.paths["config"]&.existent).any? do |dir|
+        File.exist?(File.join(dir, "recording_studio_notifications_push.yml")) ||
+          File.exist?(File.join(dir, "recording_studio_notifications_push.yml.erb"))
+      end
+    end
+
+    def self.merge_x_configuration(app)
+      return unless app.config.respond_to?(:x)
+
+      x_config = app.config.x
+      return unless x_config.respond_to?(:recording_studio_notifications_push)
+
+      options = x_config.recording_studio_notifications_push
+      RecordingStudioNotificationsPush.configuration.merge!(options.to_h) if options.respond_to?(:to_h)
+    end
+
     # @api private
     def self.pwa_registrar
       return unless defined?(RecordingStudioPwa)
@@ -23,13 +55,7 @@ module RecordingStudioNotificationsPush
     end
 
     initializer "recording_studio_notifications_push.load_config" do |app|
-      yaml = app.config_for(:recording_studio_notifications_push) if app.respond_to?(:config_for)
-      RecordingStudioNotificationsPush.configuration.merge!(yaml) if yaml.respond_to?(:each)
-
-      options = app.config.x.recording_studio_notifications_push if app.config.respond_to?(:x)
-      RecordingStudioNotificationsPush.configuration.merge!(options.to_h) if options.respond_to?(:to_h)
-    rescue StandardError => e
-      Rails.logger&.warn("[RecordingStudioNotificationsPush] configuration was not loaded: #{e.message}")
+      Engine.load_host_configuration(app)
     end
 
     initializer "recording_studio_notifications_push.register_channel",

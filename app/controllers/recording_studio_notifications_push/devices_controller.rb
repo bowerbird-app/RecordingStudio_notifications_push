@@ -30,7 +30,7 @@ module RecordingStudioNotificationsPush
       return unless main_app.respond_to?(:pwa_service_worker_path)
 
       main_app.pwa_service_worker_path(format: :js)
-    rescue ArgumentError, NoMethodError
+    rescue ArgumentError
       nil
     end
 
@@ -38,7 +38,7 @@ module RecordingStudioNotificationsPush
       return unless respond_to?(:recording_studio_notifications, true)
 
       recording_studio_notifications.settings_path
-    rescue NoMethodError, ArgumentError
+    rescue ArgumentError
       nil
     end
   end

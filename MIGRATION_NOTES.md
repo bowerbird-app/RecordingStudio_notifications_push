@@ -1,5 +1,15 @@
 # Migration notes
 
+## 0.6.0
+
+### Host app steps
+
+1. Bump to `0.6.0`. No schema change.
+2. A broken `config/recording_studio_notifications_push.yml` stops boot. Delete
+   the file if you do not use it. A missing file still boots.
+3. A raising admin recording resolver is no longer treated as "not allowed".
+   Fix the resolver. `can_view?` lets that error surface.
+
 ## 0.5.4
 
 ### Host app steps
