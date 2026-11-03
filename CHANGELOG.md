@@ -12,6 +12,8 @@
 - Device rows use those list slots. The dummy sidebar header shows this gem's
   version.
 - Runtime dependency `flat_pack` is `>= 0.1.335`, `< 0.2`.
+- Development and dummy locks stay on `view_component` `4.20.0` and nokogiri
+  `1.19.7`. FlatPack `v0.1.335` allows `view_component` `>= 4.14`, `< 5`.
 
 ### Upgrade notes
 
