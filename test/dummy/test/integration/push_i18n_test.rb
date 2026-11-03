@@ -76,8 +76,10 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     get sheet
     assert_includes response.body, ':where([data-controller~="dummy-theme-menu"] [role=radio][aria-checked=false])'
     refute_includes response.body, ":where([role=radio][aria-checked=false])"
-    assert_includes response.body, '.fp-button-dropdown__menu:has([data-controller~="dummy-theme-menu"])'
-    assert_includes response.body, "opacity: 1 !important"
+    assert_includes response.body, "--duration-base: 0ms"
+    assert_includes response.body, "background-color: var(--surface-background-color)"
+    assert_includes response.body, "color: var(--surface-content-color)"
+    refute_includes response.body, "opacity: 1 !important"
     get "/"
 
     assert_select "[role='menuitemradio']", count: 0

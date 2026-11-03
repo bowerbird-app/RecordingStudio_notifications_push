@@ -9,18 +9,24 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-/* Unchecked theme radios keep their check icon for the gutter. */
+/* Unchecked theme radios keep their check icon for the gutter.
+   The open menu's fade is an inline transition on --duration-base. Zero that
+   token on the theme menu so the panel is opaque on the first frame. */
 @layer dummy {
   :where([data-controller~="dummy-theme-menu"] [role=radio][aria-checked=false]) svg {
     visibility: hidden;
   }
+
+  :where([data-flat-pack--button-dropdown-target="menu"]:has([data-controller~="dummy-theme-menu"])) {
+    --duration-base: 0ms;
+  }
 }
 
-/* FlatPack fades the open menu with an inline opacity transition. Until that
-   finishes, the heading shows through the panel. The surface token is already
-   solid. !important wins over the inline transition. */
-.fp-button-dropdown__menu:has([data-controller~="dummy-theme-menu"]) {
-  opacity: 1 !important;
-  background-color: var(--surface-background-color) !important;
-  transition: none !important;
+/* Dark color-scheme paints a native select grey, with dim text, over the field
+   classes. The cog select keeps the same surface and full-contrast text as a
+   light field. The chevron stays muted. */
+:where([data-flat-pack--button-dropdown-target="menu"]:has([data-controller~="dummy-theme-menu"]) select) {
+  background-color: var(--surface-background-color);
+  color: var(--surface-content-color);
+  -webkit-text-fill-color: var(--surface-content-color);
 }
