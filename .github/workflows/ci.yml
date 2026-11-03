@@ -98,6 +98,15 @@ jobs:
         run: bundle exec rails tailwindcss:build
         working-directory: test/dummy
 
+      - name: Install Chrome for system tests
+        run: |
+          if ! command -v google-chrome >/dev/null 2>&1 && ! command -v google-chrome-stable >/dev/null 2>&1; then
+            sudo apt-get update
+            wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt-get install -y /tmp/chrome.deb
+          fi
+          command -v google-chrome || command -v google-chrome-stable
+
       - name: Run tests
         run: bundle exec rake test:all
         env:
