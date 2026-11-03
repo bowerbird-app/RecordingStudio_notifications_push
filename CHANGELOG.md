@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## 0.5.7
+
+### Changed
+
+- CI Postgres database name is `recording_studio_notifications_push_test`.
+- Dummy development and test databases read `DB_NAME_DEVELOPMENT` and
+  `DB_NAME_TEST`, so one shared `DB_NAME` cannot point both at the same
+  database.
+- Credential tests no longer assert a `gem_template` API key. The encrypted
+  credentials file is unchanged.
+
+### Upgrade notes
+
+- Bump to `0.5.7`. No migration. Set `DB_NAME_DEVELOPMENT` and `DB_NAME_TEST`
+  if you overrode the dummy database name with `DB_NAME`.
+
 ## 0.5.6
 
 ### Removed
