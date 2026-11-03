@@ -110,12 +110,4 @@ module RecordingStudioNotificationsPush
       @installation_class || Installation
     end
   end
-
-  module Adapters
-    FcmAdapter = RecordingStudioNotificationsPush::FcmAdapter
-  end
-
-  module Channels
-    FcmAdapter = RecordingStudioNotificationsPush::FcmAdapter
-  end
 end

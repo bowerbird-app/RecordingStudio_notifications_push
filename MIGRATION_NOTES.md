@@ -1,5 +1,14 @@
 # Migration notes
 
+## 0.8.0
+
+### Host app steps
+
+1. Bump to `0.8.0`. Breaking. No schema change.
+2. Replace `RecordingStudioNotificationsPush::Adapters::FcmAdapter` and
+   `RecordingStudioNotificationsPush::Channels::FcmAdapter` with
+   `RecordingStudioNotificationsPush::FcmAdapter`. Those aliases are gone.
+
 ## 0.7.0
 
 ### Host app steps

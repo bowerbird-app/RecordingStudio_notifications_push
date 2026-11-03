@@ -37,6 +37,12 @@ class PublicApiTest < Minitest::Test
     end
   end
 
+  def test_fcm_adapter_aliases_are_removed
+    refute RecordingStudioNotificationsPush.const_defined?(:Adapters, false)
+    refute RecordingStudioNotificationsPush.const_defined?(:Channels, false)
+    assert_kind_of Class, RecordingStudioNotificationsPush::FcmAdapter
+  end
+
   def test_version_and_engine_are_public
     assert_match(/\A\d+\.\d+\.\d+\z/, RecordingStudioNotificationsPush::VERSION)
     assert_kind_of Class, RecordingStudioNotificationsPush::Engine
