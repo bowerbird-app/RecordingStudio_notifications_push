@@ -47,7 +47,7 @@ class PushI18nTest < ActionDispatch::IntegrationTest
     }
     assert in_cog, "phones should keep the language select in the cog menu"
 
-    assert_select "[role='radiogroup'][aria-label='Theme']" do
+    assert_select "[role='radiogroup'][aria-label='Theme'][data-controller~='dummy-theme-menu']" do
       assert_select "[data-theme-value='system'][role='radio'][aria-checked='true']" do |items|
         assert_select items, "svg"
         assert_equal "true", items.first["aria-checked"]

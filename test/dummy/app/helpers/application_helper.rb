@@ -102,7 +102,13 @@ module ApplicationHelper
   # Radios, not menuitemradio: the cog is a dialog once it contains the
   # language form, and a menu item role is not allowed in there.
   def dummy_theme_radios
-    tag.div(role: "radiogroup", aria: { label: t("dummy.theme.group", default: "Theme") }) do
+    # The dropdown moves its menu to document.body while open, so the controller
+    # token has to travel with the radios. That keeps the hide rule in scope.
+    tag.div(
+      role: "radiogroup",
+      aria: { label: t("dummy.theme.group", default: "Theme") },
+      data: { controller: "dummy-theme-menu" }
+    ) do
       safe_join(%w[system light dark].map { |value| dummy_theme_radio(value) })
     end
   end

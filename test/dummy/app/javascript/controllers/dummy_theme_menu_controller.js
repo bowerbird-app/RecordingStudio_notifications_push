@@ -50,11 +50,17 @@ export default class extends Controller {
   }
 
   choose(item) {
-    this.application.getControllerForElementAndIdentifier(this.element, "flat-pack--theme")
+    const host = document.querySelector(".dummy-theme-selector")?.closest("[data-controller~='flat-pack--theme']")
+    if (!host) return
+
+    this.application.getControllerForElementAndIdentifier(host, "flat-pack--theme")
       ?.switch({ currentTarget: item })
   }
 
   radios() {
-    return [...this.element.querySelectorAll("[role='radiogroup'] [data-theme-value]")]
+    const group = this.element.matches("[role='radiogroup']")
+      ? this.element
+      : this.element.querySelector("[role='radiogroup']")
+    return group ? [...group.querySelectorAll("[data-theme-value]")] : []
   }
 }
