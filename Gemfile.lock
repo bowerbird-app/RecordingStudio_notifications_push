@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/RecordingStudio_PWA.git
-  revision: 0d4d01bcb4527d71f06e10ce7d01955160dbb44a
-  ref: 0d4d01bcb4527d71f06e10ce7d01955160dbb44a
+  revision: e58e8b01aee64c5524e93f55d72f9122bd93f691
+  tag: v0.7.0
   specs:
     recording_studio_pwa (0.7.0)
       flat_pack (~> 0.1.133)
@@ -72,8 +72,8 @@ GIT
 
 GIT
   remote: https://github.com/bowerbird-app/flatpack.git
-  revision: a8d24dee6853c387469dcbffda202e56e44ba887
-  ref: a8d24dee6853c387469dcbffda202e56e44ba887
+  revision: 408d66fa1062218f6e22d9fe1a61a1ceb59869d1
+  tag: v0.1.335
   specs:
     flat_pack (0.1.335)
       pagy (~> 9.0)
@@ -362,7 +362,7 @@ GEM
     unicode-emoji (4.1.0)
     uri (1.1.2)
     useragent (0.16.11)
-    view_component (4.20.0)
+    view_component (4.21.0)
       actionview (>= 7.1.0)
       activesupport (>= 7.1.0)
       prism (>= 1.0)
@@ -511,7 +511,7 @@ CHECKSUMS
   unicode-emoji (4.1.0) sha256=4997d2d5df1ed4252f4830a9b6e86f932e2013fbff2182a9ce9ccabda4f325a5
   uri (1.1.2) sha256=89292e98eabbef6248b0a0ed5e7e398e152f83f17560023a6d94a7f492b169fb
   useragent (0.16.11) sha256=700e6413ad4bb954bb63547fa098dddf7b0ebe75b40cc6f93b8d54255b173844
-  view_component (4.20.0) sha256=b720a646364487b57040a2b15dcb845ef86f9e65db6a9bf845374bab9fca2dd2
+  view_component (4.21.0) sha256=d390f3efa833d3afa89f6cb7840c50fe04feb88dc7bf91e328721d67a51e280f
   warden (1.2.9) sha256=46684f885d35a69dbb883deabf85a222c8e427a957804719e143005df7a1efd0
   websocket-driver (0.8.2) sha256=97c556b019bf3410b4961002ac501621e9322d3f8a7bc02161a09301cc4c4146
   websocket-extensions (0.1.5) sha256=1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241

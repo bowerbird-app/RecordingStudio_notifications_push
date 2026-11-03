@@ -6,10 +6,9 @@
 
 ### Changed
 
-- Development and dummy apps pin FlatPack ref `a8d24dee` (`0.1.335`), which
-  adds `FlatPack::List::Item` `title` and `subtitle` and sidebar `version:`.
-- Development and dummy apps pin PWA ref `0d4d01bc` (`0.7.0`) with
-  `>= 0.7.0`, `< 0.8`.
+- Development and dummy apps pin FlatPack tag `v0.1.335`, which adds
+  `FlatPack::List::Item` `title` and `subtitle` and sidebar `version:`.
+- Development and dummy apps pin PWA tag `v0.7.0` with `>= 0.7.0`, `< 0.8`.
 - Device rows use those list slots. The dummy sidebar header shows this gem's
   version.
 - Runtime dependency `flat_pack` is `>= 0.1.335`, `< 0.2`.

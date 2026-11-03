@@ -5,9 +5,8 @@
 ### Host app steps
 
 1. Bump to `0.7.0`. No schema change. Requires `flat_pack` `>= 0.1.335`, `< 0.2`.
-2. Pin FlatPack ref `a8d24dee6853c387469dcbffda202e56e44ba887` (`0.1.335`).
-3. Pin PWA ref `0d4d01bcb4527d71f06e10ce7d01955160dbb44a` (`0.7.0`) with
-   `>= 0.7.0`, `< 0.8`.
+2. Pin FlatPack tag `v0.1.335`.
+3. Pin PWA tag `v0.7.0` with `>= 0.7.0`, `< 0.8`.
 4. Device lists can pass `title:` and `subtitle:` to `FlatPack::List::Item`.
 5. Sidebar headers can pass `version:` instead of drawing a badge.
 

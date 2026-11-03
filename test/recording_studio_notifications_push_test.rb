@@ -22,6 +22,17 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
   end
 
+  def test_development_gemfiles_pin_flatpack_and_pwa_by_tag
+    [File.expand_path("../Gemfile", __dir__), File.expand_path("../test/dummy/Gemfile", __dir__)].each do |path|
+      source = File.read(path)
+
+      assert_includes source, 'gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.335"'
+      assert_includes source, 'github: "bowerbird-app/RecordingStudio_PWA"'
+      assert_includes source, 'tag: "v0.7.0"'
+      refute_includes source, "ref:"
+    end
+  end
+
   def test_flat_pack_requirement_stays_on_0_1
     flat_pack = Gem::Specification.find_by_name("recording_studio_notifications_push")
                                   .runtime_dependencies
