@@ -15,3 +15,12 @@
     visibility: hidden;
   }
 }
+
+/* FlatPack fades the open menu with an inline opacity transition. Until that
+   finishes, the heading shows through the panel. The surface token is already
+   solid. !important wins over the inline transition. */
+.fp-button-dropdown__menu:has([data-controller~="dummy-theme-menu"]) {
+  opacity: 1 !important;
+  background-color: var(--surface-background-color) !important;
+  transition: none !important;
+}

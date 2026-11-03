@@ -32,7 +32,8 @@
 - Unchecked theme checks stay in the row. The dummy stylesheet hides them
   inside the theme menu, so the labels share one gutter. The Theme heading
   uses the same item inset as the Language heading. The theme menu controller
-  sits on the radio group.
+  sits on the radio group. The theme menu does not fade in, so the panel stays
+  on the solid surface color.
 - The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
 - Dummy popover reposition script and its CSS are gone.
 - Development and dummy apps pin FlatPack `v0.1.332`.
