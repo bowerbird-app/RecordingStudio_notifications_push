@@ -1,4 +1,4 @@
-<div class="flex w-full flex-col gap-8">
+<%= render FlatPack::Stack::Component.new(gap: :lg) do %>
   <%= render FlatPack::PageTitle::Component.new(
     title: "Config",
     subtitle: "Firebase web values, the send key, and a few timeouts. ENV is usually enough.",
@@ -11,14 +11,19 @@
     description: "The install generator writes an initializer. Leave most keys commented and set FIREBASE_* in the environment unless you need an override."
   ) %>
 
-  <%= render FlatPack::SectionTitle::Component.new(
-    title: "Initializer",
-    subtitle: "config/initializers/recording_studio_notifications_push.rb"
-  ) %>
+  <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+    <%= render FlatPack::SectionTitle::Component.new(title: "Initializer", spacing: :none) %>
+    <%= render FlatPack::Text::Component.new(
+      text: "config/initializers/recording_studio_notifications_push.rb".gsub("/", "/\u200B"),
+      size: :sm,
+      style: :muted
+    ) %>
+  <% end %>
 
   <%= render FlatPack::CodeBlock::Component.new(
     title: "Ruby",
     language: :ruby,
+    wrap: false,
     code: <<~'CODE'
       RecordingStudioNotificationsPush.configure do |config|
         # Channel key registered with RecordingStudioNotifications.
@@ -50,59 +55,21 @@
     subtitle: "What each knob does."
   ) %>
 
-  <div class="overflow-x-auto">
-    <table class="w-full min-w-[40rem] border-collapse text-left text-sm">
-      <thead>
-        <tr class="border-b border-(--surface-border-color)">
-          <th class="py-2 pr-4 font-medium text-(--surface-content-color)">Setting</th>
-          <th class="py-2 pr-4 font-medium text-(--surface-content-color)">Default</th>
-          <th class="py-2 font-medium text-(--surface-content-color)">What it does</th>
-        </tr>
-      </thead>
-      <tbody class="text-(--surface-content-color)">
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">channel</td>
-          <td class="py-2 pr-4 font-mono text-xs">:push</td>
-          <td class="py-2">Name registered with the parent notifications gem.</td>
-        </tr>
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">firebase_web_config</td>
-          <td class="py-2 pr-4 font-mono text-xs">FIREBASE_*</td>
-          <td class="py-2">Browser Firebase config used to get a messaging token.</td>
-        </tr>
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">firebase_project_id</td>
-          <td class="py-2 pr-4 font-mono text-xs">FIREBASE_PROJECT_ID</td>
-          <td class="py-2">FCM HTTP v1 project. Falls back to the web config projectId.</td>
-        </tr>
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">vapid_public_key</td>
-          <td class="py-2 pr-4 font-mono text-xs">FIREBASE_VAPID_PUBLIC_KEY</td>
-          <td class="py-2">Web Push certificate key for getToken.</td>
-        </tr>
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">firebase_service_account_json</td>
-          <td class="py-2 pr-4 font-mono text-xs">FIREBASE_SERVICE_ACCOUNT_JSON</td>
-          <td class="py-2">Full service-account JSON. Required to send. UI can register without it.</td>
-        </tr>
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">open_timeout</td>
-          <td class="py-2 pr-4 font-mono text-xs">5</td>
-          <td class="py-2">Seconds to open the FCM / OAuth HTTP connection.</td>
-        </tr>
-        <tr class="border-b border-(--surface-border-color)">
-          <td class="py-2 pr-4 font-mono text-xs">read_timeout</td>
-          <td class="py-2 pr-4 font-mono text-xs">15</td>
-          <td class="py-2">Seconds to wait for an FCM / OAuth response.</td>
-        </tr>
-        <tr>
-          <td class="py-2 pr-4 font-mono text-xs">write_timeout</td>
-          <td class="py-2 pr-4 font-mono text-xs">15</td>
-          <td class="py-2">Seconds to write the request body.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <% push_settings = [
+    { setting: "channel", default: ":push", detail: "Name registered with the parent notifications gem." },
+    { setting: "firebase_web_config", default: "FIREBASE_*", detail: "Browser Firebase config used to get a messaging token." },
+    { setting: "firebase_project_id", default: "FIREBASE_PROJECT_ID", detail: "FCM HTTP v1 project. Falls back to the web config projectId." },
+    { setting: "vapid_public_key", default: "FIREBASE_VAPID_PUBLIC_KEY", detail: "Web Push certificate key for getToken." },
+    { setting: "firebase_service_account_json", default: "FIREBASE_SERVICE_ACCOUNT_JSON", detail: "Full service-account JSON. Required to send. UI can register without it." },
+    { setting: "open_timeout", default: "5", detail: "Seconds to open the FCM / OAuth HTTP connection." },
+    { setting: "read_timeout", default: "15", detail: "Seconds to wait for an FCM / OAuth response." },
+    { setting: "write_timeout", default: "15", detail: "Seconds to write the request body." }
+  ] %>
+  <%= render FlatPack::Table::Component.new(data: push_settings, min_width: :md) do |table| %>
+    <% table.column(title: "Setting", html: ->(row) { tag.code(row[:setting]) }) %>
+    <% table.column(title: "Default", html: ->(row) { tag.code(row[:default]) }) %>
+    <% table.column(title: "What it does", html: ->(row) { row[:detail] }) %>
+  <% end %>
 
   <%= render FlatPack::SectionTitle::Component.new(
     title: "Environment keys",
@@ -112,6 +79,7 @@
   <%= render FlatPack::CodeBlock::Component.new(
     title: "Environment",
     language: :bash,
+    wrap: true,
     code: <<~'CODE'
       FIREBASE_API_KEY=…
       FIREBASE_APP_ID=…
@@ -129,13 +97,13 @@
     subtitle: "Registration still works. Sends do not."
   ) %>
 
-  <p class="text-sm leading-6 text-(--surface-content-color)">
+  <%= render FlatPack::Text::Component.new(size: :sm) do %>
     Leave
-    <code class="font-mono text-xs">FIREBASE_SERVICE_ACCOUNT_JSON</code>
+    <code>FIREBASE_SERVICE_ACCOUNT_JSON</code>
     blank while you build the devices UI. The first real send raises
-    <code class="font-mono text-xs">RecordingStudioNotificationsPush::DeliveryError</code>
+    <code>RecordingStudioNotificationsPush::DeliveryError</code>
     until that JSON is set.
-  </p>
+  <% end %>
 
   <%= render FlatPack::SectionTitle::Component.new(
     title: "Inspect at runtime",
@@ -145,6 +113,7 @@
   <%= render FlatPack::CodeBlock::Component.new(
     title: "Console",
     language: :ruby,
+    wrap: true,
     code: <<~'CODE'
       RecordingStudioNotificationsPush.configuration.to_h
       # => {
@@ -159,4 +128,4 @@
       # }
     CODE
   ) %>
-</div>
+<% end %>

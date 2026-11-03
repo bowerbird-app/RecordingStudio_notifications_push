@@ -57,12 +57,42 @@ class HomeController < ApplicationController
     end
   end
 
+  # Same set the bell counts. Walk newest first in short batches and stop at
+  # eight authorized rows, so hidden rows do not crowd out a visible one.
   def recent_inbox_notifications
-    RecordingStudioNotifications::Notification
+    root = RecordingStudioNotifications.configuration.resolve_current_root(controller: self)
+    scope = RecordingStudioNotifications::Notification
       .for_recipient(current_user)
+      .active
       .visible_in_inbox
-      .order(created_at: :desc)
-      .limit(8)
+      .in_inbox
+      .for_current_root_inbox(root)
+      .newest_first
+    visible = []
+    offset = 0
+
+    while visible.size < 8
+      batch = scope.offset(offset).limit(8).to_a
+      break if batch.empty?
+
+      batch.each do |notification|
+        next unless inbox_notification_visible?(notification)
+
+        visible << notification
+        break if visible.size == 8
+      end
+      offset += batch.size
+    end
+
+    visible
+  end
+
+  def inbox_notification_visible?(notification)
+    RecordingStudioNotifications::Services::NotificationAuthorization.visible_notification?(
+      actor: current_user,
+      notification: notification,
+      controller: self
+    )
   end
 
   def render_test_notification_success

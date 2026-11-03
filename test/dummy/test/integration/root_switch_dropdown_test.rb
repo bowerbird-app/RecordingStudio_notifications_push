@@ -34,6 +34,15 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_includes response.body, workspace.name
     assert_includes response.body, "flat-pack-sidebar-layout"
+    assert_top_bar_names_workspace(workspace.name)
+
+    label = css_select("[data-flat-pack-sidebar-section-title] p").find { |node| node.text.strip == "Workspace" }
+    assert label, "the drawer should label the workspace switcher"
+    row = css_select("[data-flat-pack-sidebar-item]").find { |node| node.text.include?(workspace.name) }
+    assert row, "the drawer should show the current workspace on a sidebar row"
+    assert_includes row["class"], "px-[var(--sidebar-item-padding-x)]"
+    assert_includes row["class"], "py-[var(--sidebar-item-padding-y)]"
+    assert_includes row["class"], "text-sm"
   end
 
   test "root switch page renders with the host sidebar" do
@@ -150,6 +159,24 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def assert_top_bar_names_workspace(name)
+    theme = css_select("[data-controller~='flat-pack--theme']").first
+    assert theme, "theme control should be on the top bar"
+    assert_select theme, "[data-flat-pack--button-dropdown-target=trigger]", count: 1
+
+    desktop = css_select(".fp-top-nav [data-flat-pack--button-dropdown-target=trigger]").find { |node|
+      classes = node.ancestors.map { |ancestor| ancestor["class"].to_s.split }.flatten
+      classes.include?("md:flex") && node.text.include?(name)
+    }
+    assert desktop, "desktop top bar should show #{name}"
+    refute_includes theme.text, name
+
+    drawer = css_select("[class~='md:hidden']").find { |node|
+      node.text.include?(name) && !node.ancestors.include?(desktop)
+    }
+    assert drawer, "mobile sidebar drawer should show #{name}"
+  end
 
   def grant_owner!(user, recording)
     RecordingStudioAccessible.bootstrap_owner_access!(recording: recording, actor: user).value!

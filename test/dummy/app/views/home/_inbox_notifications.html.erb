@@ -1,34 +1,40 @@
 <% if notifications.blank? %>
-  <p id="inbox-notifications-empty" class="text-sm text-(--surface-content-color)">
-    Inbox is empty. Send a test ping with the in-app channel on.
-  </p>
+  <%= render FlatPack::EmptyState::Component.new(
+    id: "inbox-notifications-empty",
+    title: "Inbox is empty",
+    description: "Send a test ping with the in-app channel on.",
+    size: :sm,
+    width: :full,
+    layout: :stack
+  ) %>
 <% else %>
-  <% notifications.each do |notification| %>
-    <% icon_url = notification.metadata.is_a?(Hash) && (notification.metadata["icon"] || notification.metadata[:icon]) %>
-    <article class="flex gap-3 border-b border-(--surface-border-color) pb-3">
-      <% if icon_url.present? %>
-        <img src="<%= icon_url %>" alt="" width="40" height="40"
-             class="mt-0.5 h-10 w-10 shrink-0 rounded-md border border-(--surface-border-color) object-cover">
-      <% end %>
-      <div class="flex min-w-0 flex-1 flex-col gap-1">
-        <div class="flex flex-wrap items-baseline justify-between gap-2">
-          <p class="text-sm font-medium text-(--surface-content-color)">
-            <%= notification.title %>
+  <%= render FlatPack::List::Component.new(divider: true) do %>
+    <% notifications.each do |notification| %>
+      <% icon_url = notification.metadata.is_a?(Hash) && (notification.metadata["icon"] || notification.metadata[:icon]) %>
+      <%= render FlatPack::List::Item.new do %>
+        <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+          <% if icon_url.present? %>
+            <%= image_tag icon_url, alt: "", width: 40, height: 40 %>
+          <% end %>
+          <%= render FlatPack::Cluster::Component.new(gap: :sm, align: :center) do %>
+            <%= render FlatPack::Text::Component.new(text: notification.title, size: :sm, weight: :medium) %>
             <% if notification.unread? %>
-              <span class="text-xs font-normal"> · unread</span>
+              <%= render FlatPack::Badge::Component.new(text: "unread", size: :sm) %>
             <% end %>
-          </p>
-          <p class="text-xs text-(--surface-content-color)">
-            <%= time_ago_in_words(notification.created_at) %> ago
-          </p>
-        </div>
-        <% if notification.body.present? %>
-          <p class="text-sm text-(--surface-content-color)"><%= notification.body %></p>
+          <% end %>
+          <%= render FlatPack::Text::Component.new(
+            text: "#{time_ago_in_words(notification.created_at)} ago",
+            size: :xs,
+            style: :muted
+          ) %>
+          <% if notification.body.present? %>
+            <%= render FlatPack::Text::Component.new(text: notification.body, size: :sm) %>
+          <% end %>
+          <%= render FlatPack::Link::Component.new(href: demo_notification_path(notification)) do %>
+            Open details
+          <% end %>
         <% end %>
-        <p class="text-xs text-(--surface-content-color)">
-          <%= link_to "Open details", demo_notification_path(notification), class: "underline" %>
-        </p>
-      </div>
-    </article>
+      <% end %>
+    <% end %>
   <% end %>
 <% end %>

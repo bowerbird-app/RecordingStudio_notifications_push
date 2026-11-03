@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  include RecordingStudioNotifications::MenuHelper
+
   def polymorphic_label(record)
     return if record.nil?
 
@@ -14,56 +16,47 @@ module ApplicationHelper
     "#{record.class.name} ##{record.id}"
   end
 
-  def dummy_language_selector
+  def dummy_language_selector(compact: true)
     return unless respond_to?(:recording_studio_language_selector)
 
-    recording_studio_language_selector(
-      class: "dummy-language-selector flex shrink-0 items-center gap-1.5 [&_label]:sr-only [&_button]:sr-only [&_.flat-pack-input-wrapper]:mb-0 [&_.flat-pack-select]:min-h-8 [&_.flat-pack-select]:min-w-28 [&_.flat-pack-select]:py-1 [&_.flat-pack-select]:text-sm",
-      data: {
-        turbo: false,
-        controller: "dummy-language-selector",
-        action: "change->dummy-language-selector#submit"
-      }
-    )
+    locales = RecordingStudioInternationalization.configuration.available_locales
+    return if locales.count < 2
+
+    render "recording_studio_internationalization/locales/selector",
+      locales: locales,
+      html_options: dummy_language_form_options,
+      compact: compact
   end
 
   def dummy_theme_selector
-    render FlatPack::Button::Dropdown::Component.new(
-      text: t("dummy.theme.label", default: "Theme"),
-      style: :ghost,
-      size: :sm,
-      placement: :bottom_right,
-      icon: "cog",
-      class: "dummy-theme-selector"
-    ) do |dropdown|
-      dropdown.menu_item(
-        text: t("dummy.theme.rounded", default: "Rounded"),
-        data: {
-          action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle",
-          theme_value: "rounded"
-        }
-      )
-      dropdown.menu_item(
-        text: t("dummy.theme.system", default: "System"),
-        data: {
-          action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle",
-          theme_value: "system"
-        }
-      )
-      dropdown.menu_item(
-        text: t("dummy.theme.light", default: "Light"),
-        data: {
-          action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle",
-          theme_value: "light"
-        }
-      )
-      dropdown.menu_item(
-        text: t("dummy.theme.dark", default: "Dark"),
-        data: {
-          action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle",
-          theme_value: "dark"
-        }
-      )
+    render FlatPack::Button::Dropdown::Component.new(**dummy_theme_dropdown_options) do |dropdown|
+      dummy_theme_menu(dropdown)
+    end
+  end
+
+  # Phones open the drawer from the hamburger. The row uses the same padding
+  # and text size as a sidebar item, with a short label above it.
+  def dummy_drawer_workspace_switcher
+    return unless respond_to?(:recording_studio_root_switch_list_for)
+
+    list = recording_studio_root_switch_list_for
+    return if list.blank?
+
+    safe_join([
+      render(FlatPack::Sidebar::SectionTitle::Component.new(title: t("dummy.sidebar.workspace"))),
+      render(FlatPack::Sidebar::Group::Component.new(title: list.menu_rows.current_label, open: false)) do |group|
+        group.items do
+          render RecordingStudioRootSwitchable::RootSwitch::RowsComponent.new(menu_rows: list.menu_rows)
+        end
+      end
+    ])
+  end
+
+  def delivery_badge_style(status)
+    case status.to_s
+    when "delivered" then :success
+    when "failed" then :danger
+    else :default
     end
   end
 
@@ -74,5 +67,89 @@ module ApplicationHelper
       attributes[:data] = (attributes[:data] || {}).merge(flat_pack_copy_data)
     end
     attributes
+  end
+
+  private
+
+  def dummy_language_form_options
+    {
+      data: {
+        turbo: false,
+        controller: "dummy-language-selector",
+        action: "change->dummy-language-selector#submit"
+      }
+    }
+  end
+
+  def dummy_theme_dropdown_options
+    {
+      text: t("dummy.theme.label", default: "Theme"),
+      style: :ghost,
+      size: :sm,
+      placement: :bottom_right,
+      icon: "cog",
+      icon_only: true,
+      class: "dummy-theme-selector"
+    }
+  end
+
+  def dummy_theme_menu(dropdown)
+    dropdown.menu_html(dummy_theme_menu_label(t("dummy.theme.group"), inset: true))
+    dropdown.menu_html(dummy_theme_radios)
+    dropdown.menu_form(class: "md:hidden") { dummy_theme_language_panel }
+  end
+
+  # Radios, not menuitemradio: the cog is a dialog once it contains the
+  # language form, and a menu item role is not allowed in there.
+  def dummy_theme_radios
+    # The dropdown moves its menu to document.body while open, so the controller
+    # token has to travel with the radios. That keeps the hide rule in scope.
+    tag.div(
+      role: "radiogroup",
+      aria: { label: t("dummy.theme.group", default: "Theme") },
+      data: { controller: "dummy-theme-menu" }
+    ) do
+      safe_join(%w[system light dark].map { |value| dummy_theme_radio(value) })
+    end
+  end
+
+  # System is the theme controller's choice when nothing is saved. Every row
+  # keeps the check icon so the labels share one gutter. The dummy stylesheet
+  # hides the icon when aria-checked is false.
+  def dummy_theme_radio(value)
+    active = value == "system"
+    item = FlatPack::Button::DropdownItem::Component.new(
+      text: t("dummy.theme.#{value}", default: value.capitalize),
+      icon: "check",
+      role: "radio",
+      aria: { checked: active.to_s },
+      data: {
+        action: "click->flat-pack--theme#switch click->flat-pack--button-dropdown#toggle keydown->dummy-theme-menu#keydown",
+        theme_value: value
+      }
+    )
+    item.plain_actions = true
+    render(item)
+  end
+
+  def dummy_theme_menu_label(text, inset: false)
+    label = render FlatPack::Text::Component.new(
+      text: text,
+      as: :p,
+      size: :xs,
+      style: :muted,
+      weight: :semibold
+    )
+    return label unless inset
+
+    # The language panel already has the item inset. Match it so the headings share a line.
+    tag.div(class: "px-[var(--dropdown-item-padding-x)]") { label }
+  end
+
+  def dummy_theme_language_panel
+    safe_join([
+      dummy_theme_menu_label(t("dummy.theme.language", default: "Language")),
+      dummy_language_selector(compact: false)
+    ])
   end
 end

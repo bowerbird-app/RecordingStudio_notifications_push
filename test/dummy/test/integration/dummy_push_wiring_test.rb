@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "devise/test/integration_helpers"
 
 class DummyPushWiringTest < ActiveSupport::TestCase
   test "dummy app loads root switchable config and controller support" do
     assert_equal [ "all_workspaces" ], RecordingStudioRootSwitchable.configuration.scopes.keys
     assert_equal "flat_pack_sidebar", RecordingStudioRootSwitchable.configuration.layout
+    assert_equal "flat_pack_sidebar", RecordingStudio.configuration.layout
     assert_includes ApplicationController.ancestors, RecordingStudio::RootSwitchable::ControllerSupport
   end
 
@@ -90,5 +92,26 @@ class DummyPushWiringTest < ActiveSupport::TestCase
   test "push devices route is mounted" do
     assert_equal "/notifications/push/devices",
                  RecordingStudioNotificationsPush::Engine.routes.url_helpers.devices_path
+  end
+end
+
+class DummyPushChromeTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
+  test "home chrome shows the notifications bell and the sidebar" do
+    user = User.find_or_create_by!(email: "chrome-bell@example.com") do |record|
+      record.password = "Password123!"
+      record.password_confirmation = "Password123!"
+    end
+    sign_in user
+
+    get root_path
+
+    assert_response :success
+    assert_includes response.body, "flat-pack-sidebar-layout"
+    assert_includes response.body, "recording-studio-notifications--notification-polling"
+    assert_includes response.body, "Push demo"
+    refute_includes response.body, "Change language"
+    refute_includes response.body, "sidebar_popover_reposition"
   end
 end

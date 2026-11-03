@@ -2,6 +2,56 @@
 
 ## Unreleased
 
+## 0.6.4
+
+### Changed
+
+- The bell in the dummy top nav is `recording_studio_notifications_async_menu`.
+- The dummy sidebar header is FlatPack's header, with no hand-rolled buttons
+  and no version badge.
+- Config docs use `FlatPack::Table`. The home "Test results" heading is a
+  section title.
+- The devices page renders in the dummy app shell, with one title and no
+  back/close bar.
+- The home page keeps an in-app inbox beside the test pings.
+- The dummy language select submits on change, with no submit button and no
+  stacked label, and uses the small button padding so it matches the top bar.
+  The theme control is the cog. Its menu is a Theme radio group (System,
+  Light, Dark), with a check on the saved choice. System is checked when
+  nothing is saved. The language heading and select sit in the phone-only
+  panel and use the default field border. The workspace switcher keeps the
+  current workspace name. Below the `md` breakpoint the select sits in the
+  cog menu and the switcher sits in the sidebar drawer, on a sidebar-item
+  row under a Workspace label, so the top bar is one row.
+- Home test results use a FlatPack list row, text, and a badge per channel.
+  Delivered is the success badge. Failed is the danger badge.
+- The home in-app inbox uses the same current-root set as the bell, resolved
+  through the notifications configuration. It walks that set in batches, keeps
+  eight authorized rows, and stops. A test ping refreshes the bell as soon as
+  it sends.
+- Unchecked theme checks stay in the row. The dummy stylesheet hides them
+  inside the theme menu, so the labels share one gutter. The Theme heading
+  uses the same item inset as the Language heading. The theme menu controller
+  sits on the radio group. The theme menu sets `--duration-base` to `0ms`, so
+  the panel is opaque on the first frame and stays on the solid surface color.
+  The dummy system test opens the cog and checks that the panel opacity
+  and background alpha are both 1.
+  In dark mode the language select in that menu uses the field surface and
+  full-contrast text, from the same dummy layer as the rest of the menu.
+- The config initializer path wraps on a narrow screen. The Ruby sample scrolls instead of breaking mid-token.
+- Dummy popover reposition script and its CSS are gone.
+- Development and dummy apps pin FlatPack `v0.1.332`.
+- The lockfile carries nokogiri `1.19.6`, loofah `2.25.3`, and
+  rails-html-sanitizer `1.7.2`.
+- Devices use `recording_studio_layout`, which reads
+  `RecordingStudio.configuration.layout` (`flat_pack_sidebar` in the dummy).
+
+### Upgrade notes
+
+- Bump to `0.6.4`. No migration. Hosts that copied
+  `sidebar_popover_reposition` can delete it. Mount the notifications bell
+  with `recording_studio_notifications_async_menu`.
+
 ## 0.6.3
 
 ### Changed

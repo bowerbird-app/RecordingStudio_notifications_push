@@ -1,13 +1,5 @@
 <%
   content_for(:title, push_t("devices.title"))
-  flat_pack_page_nav(
-    round: true,
-    style: :default,
-    back_href: main_app.root_path,
-    back_tooltip: push_t("devices.title"),
-    anchor_href: main_app.root_path,
-    anchor_tooltip: push_t("devices.title")
-  )
   installations_payload = @installations.map { |installation|
     {
       id: installation.id,
@@ -25,19 +17,23 @@
         ) %>
       <% end %>
 <% end %>
-<div class="mx-auto flex w-full max-w-2xl flex-col gap-6"
-     data-controller="recording-studio-notifications-push--push-devices"
-     data-recording-studio-notifications-push--push-devices-register-url-value="<%= installations_path %>"
-     data-recording-studio-notifications-push--push-devices-unregister-url-template-value="<%= installations_path %>/:id"
-     data-recording-studio-notifications-push--push-devices-vapid-key-value="<%= @vapid_public_key.to_s %>"
-     data-recording-studio-notifications-push--push-devices-firebase-config-value="<%= (@firebase_web_config || {}).to_json %>"
-     data-recording-studio-notifications-push--push-devices-firebase-ready-value="<%= @firebase_ready %>"
-     data-recording-studio-notifications-push--push-devices-installations-value="<%= installations_payload.to_json %>"
-     data-recording-studio-notifications-push--push-devices-copy-value="<%= push_js_copy.to_json %>"
-     <% if @service_worker_path.present? %>
-       data-recording-studio-notifications-push--push-devices-service-worker-path-value="<%= @service_worker_path %>"
-     <% end %>>
-
+<%= render FlatPack::Stack::Component.new(
+      gap: :md,
+      data: {
+        controller: "recording-studio-notifications-push--push-devices",
+        recording_studio_notifications_push__push_devices_register_url_value: installations_path,
+        recording_studio_notifications_push__push_devices_unregister_url_template_value: "#{installations_path}/:id",
+        recording_studio_notifications_push__push_devices_vapid_key_value: @vapid_public_key.to_s,
+        recording_studio_notifications_push__push_devices_firebase_config_value: (@firebase_web_config || {}).to_json,
+        recording_studio_notifications_push__push_devices_firebase_ready_value: @firebase_ready,
+        recording_studio_notifications_push__push_devices_installations_value: installations_payload.to_json,
+        recording_studio_notifications_push__push_devices_copy_value: push_js_copy.to_json
+      }.tap { |attrs|
+        if @service_worker_path.present?
+          attrs[:recording_studio_notifications_push__push_devices_service_worker_path_value] = @service_worker_path
+        end
+      }
+    ) do %>
   <%= render FlatPack::PageTitle::Component.new(
     title: push_t("devices.title"),
     subtitle: push_t("devices.subtitle"),
@@ -45,7 +41,7 @@
   ) %>
 
   <% if @firebase_ready %>
-    <div class="flex flex-wrap items-center gap-3">
+    <%= render FlatPack::Cluster::Component.new(gap: :sm, align: :center) do %>
       <div data-recording-studio-notifications-push--push-devices-target="enablePanel">
         <%= render FlatPack::Button::Component.new(
           text: push_t("devices.enable_browser"),
@@ -56,19 +52,25 @@
         ) %>
       </div>
       <%= secondary_actions %>
-    </div>
-    <p class="hidden text-sm text-(--surface-muted-content-color)"
-       data-recording-studio-notifications-push--push-devices-target="status"
-       role="status"></p>
-  <% else %>
-    <%= render FlatPack::Alert::Component.new(
-      style: :warning,
-      title: push_t("devices.unconfigured_title"),
-      description: push_t("devices.unconfigured_body")
+    <% end %>
+    <%= render FlatPack::Text::Component.new(
+      size: :sm,
+      style: :muted,
+      class: "hidden",
+      role: "status",
+      data: { recording_studio_notifications_push__push_devices_target: "status" }
     ) %>
-    <div class="flex flex-wrap items-center gap-3">
-      <%= secondary_actions %>
-    </div>
+  <% else %>
+    <%= render FlatPack::Stack::Component.new(gap: :md) do %>
+      <%= render FlatPack::Alert::Component.new(
+        style: :warning,
+        title: push_t("devices.unconfigured_title"),
+        description: push_t("devices.unconfigured_body")
+      ) %>
+      <%= render FlatPack::Cluster::Component.new(justify: :end) do %>
+        <%= secondary_actions %>
+      <% end %>
+    <% end %>
   <% end %>
 
   <% if @installations.any? %>
@@ -92,20 +94,23 @@
           icon: installation.list_icon,
           trailing: remove_button
         ) do %>
-          <div data-installation-id="<%= installation.id %>">
-            <p class="truncate text-sm font-medium text-(--surface-content-color)">
-              <%= installation.display_label %>
-              <span class="hidden text-xs font-normal text-(--surface-muted-content-color)"
-                    data-installation-current-label> · <%= push_t("devices.current") %></span>
-            </p>
-            <% if installation.last_seen_at.present? %>
-              <p class="mt-1 text-xs text-(--surface-muted-content-color)">
-                <%= push_t("devices.last_seen", time: time_ago_in_words(installation.last_seen_at)) %>
-              </p>
+          <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+            <%= render FlatPack::Text::Component.new(size: :sm, weight: :medium) do %>
+              <span data-installation-id="<%= installation.id %>">
+                <%= installation.display_label %>
+                <span class="hidden" data-installation-current-label> · <%= push_t("devices.current") %></span>
+              </span>
             <% end %>
-          </div>
+            <% if installation.last_seen_at.present? %>
+              <%= render FlatPack::Text::Component.new(
+                text: push_t("devices.last_seen", time: time_ago_in_words(installation.last_seen_at)),
+                size: :xs,
+                style: :muted
+              ) %>
+            <% end %>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>
   <% end %>
-</div>
+<% end %>

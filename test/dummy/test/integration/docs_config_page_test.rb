@@ -19,6 +19,7 @@ class DocsConfigPageTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "Defaults from ENV"
+    assert_includes response.body, "recording_studio_notifications_push.rb"
     assert_includes response.body, "channel"
     assert_includes response.body, "firebase_web_config"
     assert_includes response.body, "firebase_project_id"
@@ -26,9 +27,14 @@ class DocsConfigPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "firebase_service_account_json"
     assert_includes response.body, "FIREBASE_API_KEY"
     assert_includes response.body, "FIREBASE_SERVICE_ACCOUNT_JSON"
+    assert_includes response.body, "fp-table"
     assert_includes response.body, "open_timeout"
     assert_includes response.body, "read_timeout"
     assert_includes response.body, "write_timeout"
     assert_includes response.body, "DeliveryError"
+    ruby = css_select("pre").find { |node| node.text.include?("config.channel = :push") }
+    assert ruby, "config page should show the Ruby initializer"
+    assert_includes ruby["class"].to_s, "whitespace-pre"
+    refute_includes ruby["class"].to_s, "break-words"
   end
 end

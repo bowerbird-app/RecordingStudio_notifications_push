@@ -1,27 +1,36 @@
 <%
-  channel_labels = @deliveries.map { |delivery|
-    status = delivery.status.to_s
-    "#{delivery.channel} (#{status})"
-  }
   icon_url = @notification.metadata.is_a?(Hash) && (@notification.metadata["icon"] || @notification.metadata[:icon])
 %>
-<article class="flex gap-3 border-b border-(--surface-border-color) pb-3">
-  <% if icon_url.present? %>
-    <img src="<%= icon_url %>" alt="" width="40" height="40"
-         class="mt-0.5 h-10 w-10 shrink-0 rounded-md border border-(--surface-border-color) object-cover">
-  <% end %>
-  <div class="flex min-w-0 flex-1 flex-col gap-1">
-    <div class="flex flex-wrap items-baseline justify-between gap-2">
-      <p class="text-sm font-medium text-(--surface-content-color)"><%= @notification.title %></p>
-      <p class="text-xs text-(--surface-content-color)">
-        <%= time_ago_in_words(@notification.created_at) %> ago
-      </p>
-    </div>
-    <% if @notification.body.present? %>
-      <p class="text-sm text-(--surface-content-color)"><%= @notification.body %></p>
+<%= render FlatPack::List::Component.new(divider: true) do %>
+  <%= render FlatPack::List::Item.new do %>
+    <%= render FlatPack::Stack::Component.new(gap: :sm) do %>
+      <% if icon_url.present? %>
+        <%= image_tag icon_url, alt: "", width: 40, height: 40 %>
+      <% end %>
+      <%= render FlatPack::Cluster::Component.new(gap: :sm, align: :center, justify: :between) do %>
+        <%= render FlatPack::Text::Component.new(text: @notification.title, size: :sm, weight: :medium) %>
+        <%= render FlatPack::Text::Component.new(
+          text: "#{time_ago_in_words(@notification.created_at)} ago",
+          size: :xs,
+          style: :muted
+        ) %>
+      <% end %>
+      <% if @notification.body.present? %>
+        <%= render FlatPack::Text::Component.new(text: @notification.body, size: :sm) %>
+      <% end %>
+      <%= render FlatPack::Cluster::Component.new(gap: :sm, align: :center) do %>
+        <% if @deliveries.any? %>
+          <% @deliveries.each do |delivery| %>
+            <%= render FlatPack::Badge::Component.new(
+              text: "#{delivery.channel} · #{delivery.status}",
+              size: :sm,
+              style: delivery_badge_style(delivery.status)
+            ) %>
+          <% end %>
+        <% else %>
+          <%= render FlatPack::Badge::Component.new(text: "none", size: :sm) %>
+        <% end %>
+      <% end %>
     <% end %>
-    <p class="text-xs text-(--surface-content-color)">
-      Channels: <%= channel_labels.presence&.join(", ") || "none" %>
-    </p>
-  </div>
-</article>
+  <% end %>
+<% end %>
