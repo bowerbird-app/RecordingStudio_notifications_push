@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 0.7.0
+
+### Changed
+
+- Development and dummy apps pin FlatPack tag `v0.1.335`, which adds
+  `FlatPack::List::Item` `title` and `subtitle` and sidebar `version:`.
+- Development and dummy apps pin PWA tag `v0.7.0` with `>= 0.7.0`, `< 0.8`.
+- Device rows use those list slots. The dummy sidebar header shows this gem's
+  version.
+- Runtime dependency `flat_pack` is `>= 0.1.335`, `< 0.2`.
+- Development and dummy locks stay on `view_component` `4.20.0` and nokogiri
+  `1.19.7`. FlatPack `v0.1.335` allows `view_component` `>= 4.14`, `< 5`.
+
+### Upgrade notes
+
+- Bump to `0.7.0`. No migration. Device lists can pass `title:` and `subtitle:`
+  to `FlatPack::List::Item`. Sidebar headers can pass `version:`.
+  Stay on PWA `0.7.x`. Requires `flat_pack` `>= 0.1.335`, `< 0.2`.
+
 ## 0.6.6
 
 ### Changed (behavior)

@@ -21,13 +21,13 @@ else
       tag: "v0.4.0"
 end
 
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.332"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.335"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
     tag: "v0.24.0"
-gem "recording_studio_pwa",
+gem "recording_studio_pwa", ">= 0.7.0", "< 0.8",
     github: "bowerbird-app/RecordingStudio_PWA",
-    tag: "v0.6.1"
+    tag: "v0.7.0"
 # Accessible 0.17 needs trashable query helpers only (not the full engine).
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",

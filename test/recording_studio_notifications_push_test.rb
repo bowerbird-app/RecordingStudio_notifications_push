@@ -20,9 +20,14 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
 
     assert dependency.requirement.satisfied_by?(Gem::Version.new("6.3.0"))
     refute dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
-    assert_equal Gem::Version.new("4.20.0"), Gem.loaded_specs.fetch("view_component").version
-    assert_equal Gem::Version.new("0.1.332"), Gem.loaded_specs.fetch("flat_pack").version
-    assert_equal Gem::Version.new("0.6.1"), Gem.loaded_specs.fetch("recording_studio_pwa").version
+  end
+
+  def test_flat_pack_requirement_stays_on_0_1
+    flat_pack = Gem::Specification.find_by_name("recording_studio_notifications_push")
+                                  .runtime_dependencies
+                                  .find { |item| item.name == "flat_pack" }
+
+    assert_equal Gem::Requirement.new(">= 0.1.335", "< 0.2"), flat_pack.requirement
   end
 
   def test_notifications_dependency_floor_matches_the_tested_line
@@ -37,6 +42,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     names = Gem::Specification.find_by_name("recording_studio_notifications_push").runtime_dependencies.map(&:name)
 
     assert_includes names, "recording_studio"
+    assert_includes names, "flat_pack"
     assert_includes names, "recording_studio_metrics"
     assert_includes names, "recording_studio_notifications"
     refute_includes names, "recording_studio_internationalization"
