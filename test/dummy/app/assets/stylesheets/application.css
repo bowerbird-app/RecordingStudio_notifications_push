@@ -20,13 +20,18 @@
   :where([data-flat-pack--button-dropdown-target="menu"]:has([data-controller~="dummy-theme-menu"])) {
     --duration-base: 0ms;
   }
-}
 
-/* Dark color-scheme paints a native select grey, with dim text, over the field
-   classes. The cog select keeps the same surface and full-contrast text as a
-   light field. The chevron stays muted. */
-:where([data-flat-pack--button-dropdown-target="menu"]:has([data-controller~="dummy-theme-menu"]) select) {
-  background-color: var(--surface-background-color);
-  color: var(--surface-content-color);
-  -webkit-text-fill-color: var(--surface-content-color);
+  /* The open dialog is focused so the language select can stay at rest.
+     The panel itself should not draw a ring. */
+  :where([data-flat-pack--button-dropdown-target="menu"]:has([data-controller~="dummy-theme-menu"])):focus {
+    outline: none;
+  }
+
+  /* Dark color-scheme paints a native select grey, with dim text, over the
+     field classes. The cog select keeps the field surface and full-contrast
+     text. The chevron stays muted. */
+  :where([data-flat-pack--button-dropdown-target="menu"]:has([data-controller~="dummy-theme-menu"]) select) {
+    background-color: var(--surface-background-color);
+    color: var(--surface-content-color);
+  }
 }
