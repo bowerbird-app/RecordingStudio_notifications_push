@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 0.8.1
+
+### Changed
+
+- Engine controllers include `RecordingStudio::ControllerLayout`. Devices
+  resolve layout through `recording_studio_layout` and
+  `RecordingStudio::Layout.accept` on this gem's `configuration.layout`
+  (default `nil`, then Recording Studio's layout, then Default Layout).
+- Development pins: FlatPack `v0.1.341`, Metrics `v0.7.2`, Trashable
+  `v0.12.2`, notifications email `v0.5.1`. Dummy also pins Cache `v0.6.2`
+  and Root Switchable `v0.11.4`.
+- Runtime dependency `flat_pack` is `>= 0.1.341`, `< 0.2`.
+- Development and dummy locks stay on `view_component` `4.20.0`.
+- Root lockfile moves bcrypt, devise, and puma past published advisories.
+- The devices page no longer sets an unused unregister URL template. The
+  unused `push_copy` helper is gone.
+
+### Upgrade notes
+
+- Bump to `0.8.1`. No migration. Requires `flat_pack` `>= 0.1.341`. Hosts
+  can set `RecordingStudioNotificationsPush.configuration.layout`. `nil`
+  keeps the Recording Studio layout. Test push stays
+  `POST /installations/:id/test_push`; the devices page has no send-test
+  control.
+
 ## 0.8.0
 
 ### Removed

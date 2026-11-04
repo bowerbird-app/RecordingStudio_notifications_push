@@ -6,10 +6,6 @@ module RecordingStudioNotificationsPush
       Copy.t(key, **)
     end
 
-    def push_copy(override, key, **)
-      Copy.value(override, key, **)
-    end
-
     def push_js_copy
       Copy.js_payload
     end

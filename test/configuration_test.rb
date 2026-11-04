@@ -29,6 +29,26 @@ class ConfigurationTest < Minitest::Test
     assert_equal :push, configuration.channel
     assert_equal 5, configuration.open_timeout
     assert_equal 15, configuration.read_timeout
+    assert_nil configuration.layout
+  end
+
+  def test_layout_accepts_nil_false_and_layout_names
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+
+    configuration.layout = "flat_pack_sidebar"
+    assert_equal "flat_pack_sidebar", configuration.layout
+
+    configuration.layout = false
+    assert_equal false, configuration.layout
+
+    configuration.layout = nil
+    assert_nil configuration.layout
+  end
+
+  def test_layout_rejects_a_method_symbol
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+
+    assert_raises(ArgumentError) { configuration.layout = :application_layout }
   end
 
   def test_loads_firebase_web_config_from_env

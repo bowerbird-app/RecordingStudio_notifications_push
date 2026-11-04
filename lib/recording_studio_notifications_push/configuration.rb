@@ -14,6 +14,7 @@ module RecordingStudioNotificationsPush
     }.freeze
 
     attr_accessor :channel, :open_timeout, :read_timeout, :write_timeout
+    attr_reader :layout
     attr_writer :firebase_project_id, :firebase_web_config, :vapid_public_key,
                 :firebase_service_account_json
 
@@ -22,6 +23,11 @@ module RecordingStudioNotificationsPush
       @open_timeout = 5
       @read_timeout = 15
       @write_timeout = 15
+      @layout = nil
+    end
+
+    def layout=(value)
+      @layout = RecordingStudio::Layout.accept(value)
     end
 
     def merge!(attributes)

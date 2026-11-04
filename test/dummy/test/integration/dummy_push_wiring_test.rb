@@ -93,6 +93,15 @@ class DummyPushWiringTest < ActiveSupport::TestCase
     assert_equal "/notifications/push/devices",
                  RecordingStudioNotificationsPush::Engine.routes.url_helpers.devices_path
   end
+
+  test "engine controllers include Recording Studio layout" do
+    assert_includes RecordingStudioNotificationsPush::ApplicationController.ancestors,
+                    RecordingStudio::ControllerLayout
+    assert_respond_to RecordingStudioNotificationsPush::ApplicationController, :recording_studio_layout
+    assert_respond_to RecordingStudioNotificationsPush::DevicesController, :recording_studio_layout
+    refute RecordingStudioNotificationsPush::DevicesHelper.instance_methods(false).include?(:push_copy)
+    assert_nil RecordingStudioNotificationsPush.configuration.layout
+  end
 end
 
 class DummyPushChromeTest < ActionDispatch::IntegrationTest

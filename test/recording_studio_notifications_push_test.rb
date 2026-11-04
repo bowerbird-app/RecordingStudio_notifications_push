@@ -27,7 +27,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
                                   .runtime_dependencies
                                   .find { |item| item.name == "flat_pack" }
 
-    assert_equal Gem::Requirement.new(">= 0.1.335", "< 0.2"), flat_pack.requirement
+    assert_equal Gem::Requirement.new(">= 0.1.341", "< 0.2"), flat_pack.requirement
   end
 
   def test_notifications_dependency_floor_matches_the_tested_line
