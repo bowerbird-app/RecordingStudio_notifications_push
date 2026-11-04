@@ -4,7 +4,10 @@ module RecordingStudioNotificationsPush
   parent_controller = defined?(::ApplicationController) ? ::ApplicationController : ActionController::Base
 
   class ApplicationController < parent_controller
+    include RecordingStudio::ControllerLayout
+
     protect_from_forgery with: :exception
+    recording_studio_layout { RecordingStudioNotificationsPush.configuration.layout }
 
     before_action :require_push_actor!
 

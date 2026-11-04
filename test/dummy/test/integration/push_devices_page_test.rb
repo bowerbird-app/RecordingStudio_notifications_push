@@ -27,6 +27,9 @@ class PushDevicesPageTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "navigator.serviceWorker"
     assert_includes response.body, "/service-worker.js"
     refute_includes response.body, "PWA service worker route is not mounted"
+    refute_includes response.body, "unregister-url-template"
+    refute_includes response.body, "Send a test push"
+    refute_includes response.body, "Show a local notification"
   end
 
   test "push devices page has no notification help modal" do

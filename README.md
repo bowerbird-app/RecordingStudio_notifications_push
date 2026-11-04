@@ -11,8 +11,10 @@ background delivery, retries, and delivery status. This gem:
 - registers a `:push` channel adapter
 - stores **device installations** in one ActiveRecord table (not a recordable)
 - sends FCM HTTP v1 messages with a service-account OAuth token
-- exposes a Flatpack devices page on Recording Studio's default layout and a
-  PWA service-worker extension
+- exposes a Flatpack devices page. Engine screens include
+  `RecordingStudio::ControllerLayout` and default to Recording Studio's
+  Default Layout when the host does not set a layout. A PWA service-worker
+  extension is registered when that gem is present.
 
 This channel does **not** implement rollups / `deliver_rollup`.
 
@@ -140,13 +142,14 @@ RecordingStudioNotifications.notify(
 ## Device registration
 
 Authenticated users visit `/notifications/push/devices` to enable the current
-browser. The screen is titled Connected devices. It uses Recording Studio's
-default layout for back and close. When Firebase web config is missing, the page shows a warning Alert
-and keeps Manage notifications. It does not accept a
-pasted installation id. When Firebase is ready, the Stimulus controller
-reads web config from the page, requests notification permission, obtains a
-token via Firebase Messaging (importmap pins), and POSTs an installation
-JSON record.
+browser. The screen is titled Connected devices. It uses
+`recording_studio_layout` (this gem's `configuration.layout`, then Recording
+Studio's layout, then Default Layout). When Firebase web config is missing,
+the page shows a warning Alert and keeps Manage notifications. It does not
+accept a pasted installation id. It does not send a test push from the page.
+When Firebase is ready, the Stimulus controller reads web config from the
+page, requests notification permission, obtains a token via Firebase
+Messaging (importmap pins), and POSTs an installation JSON record.
 
 Installations are keyed by polymorphic recipient + `firebase_installation_id`
 (FID-first targeting). `legacy_fcm_token` is optional for older clients.
@@ -186,19 +189,19 @@ gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.3.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.24.0"
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
-    tag: "v0.12.0",
+    tag: "v0.12.2",
     require: false
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
     tag: "v0.14.7"
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
-    tag: "v0.4.0"
+    tag: "v0.5.1"
 gem "recording_studio_pwa", ">= 0.7.0", "< 0.8",
     github: "bowerbird-app/RecordingStudio_PWA",
     tag: "v0.7.0"
-gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.7.0"
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.335"
+gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.7.2"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.341"
 ```
 
 ## Operations metrics

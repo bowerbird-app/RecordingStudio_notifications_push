@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["enablePanel", "status"]
   static values = {
     registerUrl: String,
-    unregisterUrlTemplate: String,
     vapidKey: String,
     firebaseConfig: Object,
     firebaseReady: Boolean,

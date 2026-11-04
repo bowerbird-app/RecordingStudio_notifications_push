@@ -4,6 +4,9 @@ RecordingStudioNotificationsPush.configure do |config|
   # Channel key registered with RecordingStudioNotifications (default :push).
   # config.channel = :push
 
+  # nil uses RecordingStudio.configuration.layout, then Default Layout.
+  # config.layout = nil
+
   # Browser registration uses the web keys. service_account_json is required
   # only to send. Delivery raises DeliveryError when it is missing at send time.
   config.firebase_project_id =

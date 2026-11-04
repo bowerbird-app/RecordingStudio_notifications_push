@@ -2,7 +2,7 @@
 
 module RecordingStudioNotificationsPush
   class DevicesController < ApplicationController
-    recording_studio_layout
+    recording_studio_layout { RecordingStudioNotificationsPush.configuration.layout }
 
     helper DevicesHelper
 

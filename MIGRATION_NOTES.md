@@ -1,5 +1,18 @@
 # Migration notes
 
+## 0.8.1
+
+### Host app steps
+
+1. Bump to `0.8.1`. No schema change. Requires `flat_pack` `>= 0.1.341`, `< 0.2`.
+2. Pin FlatPack tag `v0.1.341`. Dummy hosts that pin Cache and Root Switchable
+   can move to `v0.6.2` and `v0.11.4`. Metrics `v0.7.2`, Trashable `v0.12.2`,
+   notifications email `v0.5.1` if you use those pins.
+3. Optional: set `RecordingStudioNotificationsPush.configuration.layout`.
+   `nil` uses `RecordingStudio.configuration.layout`, then Default Layout.
+4. `POST /installations/:id/test_push` stays API-only. The devices page does
+   not offer a send-test control.
+
 ## 0.8.0
 
 ### Host app steps
@@ -273,8 +286,9 @@
    (`showNotification`), not an in-page HTML toast.
 4. Enable push on **each** browser under `/notifications/push/devices` — FCM
    only reaches registered installations for that account.
-5. New route `POST /installations/:id/test_push` backs the devices-page
-   diagnostics. It is scoped to the current actor's own active installations.
+5. New route `POST /installations/:id/test_push` sends one FCM message for
+   diagnostics. It is API-only and scoped to the current actor's own active
+   installations. The devices page does not expose a send-test control.
 
 ## 0.1.0 (from gem template)
 

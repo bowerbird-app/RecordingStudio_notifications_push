@@ -48,16 +48,11 @@ the native Chrome OS banner — not an in-page HTML alert.
 
 ## Diagnosing a missing notification
 
-An FCM `200` only means FCM accepted the message. The devices page exposes two
-checks that separate the failure modes:
-
-| Check | Path exercised | What a silent result means |
-|---|---|---|
-| Show a local notification | service worker only, no FCM | browser or OS is hiding notifications |
-| Send a test push | `POST /installations/:id/test_push` → FCM → service worker | FCM reports its own verdict inline |
-
-`RecordingStudioNotificationsPush::TestPush` powers the second check and returns
-`accepted`, `status`, and `error`.
+An FCM `200` only means FCM accepted the message. The devices page does not
+send a test push or show a local banner. Use `POST /installations/:id/test_push`
+on an installation you own. `RecordingStudioNotificationsPush::TestPush`
+returns `accepted`, `status`, and `error` so you can tell FCM refusal from a
+browser that never displayed the message.
 
 ## PWA seam
 
