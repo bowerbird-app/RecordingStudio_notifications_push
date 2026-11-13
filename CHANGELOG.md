@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Changed
+
+- Development and dummy apps pin the current ecosystem tags, including
+  Recording Studio `v6.7.0`, FlatPack `v0.1.357`, Accessible `v0.32.0`,
+  notifications `v0.15.0`, PWA `v0.8.2` (`>= 0.8.0`, `< 1.0`), Metrics
+  `v0.8.0`, Trashable `v0.14.0`, and notifications email `v0.5.2`. Dummy
+  also pins Cache `v0.6.3`, Root Switchable `v0.15.0`, and
+  Internationalization `v0.2.2`.
+- The dummy app sets `config.allow_unauthorized_writes` so Recording Studio
+  6.5 still accepts seed and declaration writes. The dummy installs Trashable
+  `purge_at` on `recording_studio_recordings`.
+
 ## 0.8.2
 
 ### Changed
