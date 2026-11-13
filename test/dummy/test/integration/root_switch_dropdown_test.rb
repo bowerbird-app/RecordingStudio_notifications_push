@@ -42,7 +42,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     assert row, "the drawer should show the current workspace on a sidebar row"
     assert_includes row["class"], "px-[var(--sidebar-item-padding-x)]"
     assert_includes row["class"], "py-[var(--sidebar-item-padding-y)]"
-    assert_includes row["class"], "text-sm"
+    assert_includes row["class"], "fp-type-control"
   end
 
   test "root switch page renders with the host sidebar" do

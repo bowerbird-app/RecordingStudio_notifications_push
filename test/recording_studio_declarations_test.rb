@@ -7,6 +7,10 @@ require_relative "dummy/config/environment"
 require "rails/test_help"
 
 class RecordingStudioDeclarationsTest < ActiveSupport::TestCase
+  test "trashable 0.14 purge_at column is installed on recordings" do
+    assert_includes RecordingStudio::Recording.column_names, "purge_at"
+  end
+
   test "dummy recordable declarations validate and expose parent/root introspection" do
     assert RecordingStudio.validate_recordable_declarations!
     assert_equal ["Workspace"], RecordingStudio.root_recordable_types

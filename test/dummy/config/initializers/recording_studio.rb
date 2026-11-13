@@ -16,6 +16,11 @@ RecordingStudio.configure do |config|
   # Actor resolver for events when no actor is explicitly supplied
   config.actor = -> { Current.actor }
 
+  # Recording Studio 6.5 denies record! when authorize_write is unset.
+  # This demo records children in seeds and declaration tests before an
+  # Accessible grant exists, so it keeps the previous open writes.
+  config.allow_unauthorized_writes = true
+
   # Emit ActiveSupport::Notifications events
   config.event_notifications_enabled = true
 

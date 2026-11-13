@@ -6,11 +6,11 @@ source "https://rubygems.org"
 gemspec
 
 # Parent gems are not published to RubyGems; resolve from GitHub.
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.3.0"
-gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.7.2"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.7.0"
+gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.8.0"
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.14.7"
+    tag: "v0.15.0"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 if email_path && !email_path.strip.empty?
@@ -18,20 +18,20 @@ if email_path && !email_path.strip.empty?
 else
   gem "recording_studio_notifications_email",
       github: "bowerbird-app/RecordingStudio_notifications_email",
-      tag: "v0.5.1"
+      tag: "v0.5.2"
 end
 
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.341"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.357"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
-    tag: "v0.24.0"
-gem "recording_studio_pwa", ">= 0.7.0", "< 0.8",
+    tag: "v0.32.0"
+gem "recording_studio_pwa", ">= 0.8.0", "< 1.0",
     github: "bowerbird-app/RecordingStudio_PWA",
-    tag: "v0.7.0"
-# Accessible 0.17 needs trashable query helpers only (not the full engine).
+    tag: "v0.8.2"
+# Accessible needs trashable query helpers only (not the full engine).
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
-    tag: "v0.12.2",
+    tag: "v0.14.0",
     require: false
 
 gem "view_component", "4.20.0"
