@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.8.2
+
+### Changed
+
+- Runtime dependency `flat_pack` is `>= 0.1.341`, `< 1.0`.
+- Runtime dependency `recording_studio` is `~> 6.0`, `>= 6.1.0`.
+
+### Upgrade notes
+
+- Bump to `0.8.2`. No migration. FlatPack stays on `0.x` from `0.1.341`.
+  Recording Studio stays on `6.x` from `6.1.0`.
+
 ## 0.8.1
 
 ### Changed

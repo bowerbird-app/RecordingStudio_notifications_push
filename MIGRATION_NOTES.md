@@ -1,5 +1,12 @@
 # Migration notes
 
+## 0.8.2
+
+### Host app steps
+
+1. Bump to `0.8.2`. No schema change. Requires `flat_pack` `>= 0.1.341`, `< 1.0`
+   and `recording_studio` `~> 6.0`, `>= 6.1.0`.
+
 ## 0.8.1
 
 ### Host app steps
