@@ -341,4 +341,56 @@ class FcmAdapterTest < Minitest::Test
     assert_equal "123456 is your code.", client.calls.first[:body]
     assert_nil notification.body
   end
+
+  def test_a_missing_token_disables_that_installation_and_still_sends_to_the_others
+    blank = FakeInstallation.new(fid: nil)
+    ready = FakeInstallation.new(fid: "fid-ok")
+    client = FakeClient.new([{ ok: true, status: 200, disable: false }])
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: client,
+      installation_class: FakeInstallationClass.new([blank, ready])
+    )
+
+    assert adapter.deliver(
+      notification: Notification.new(
+        id: "n1",
+        title: "Hello",
+        recipient: FakeRecipient.new(id: "user-1"),
+        notification_type: :generic
+      ),
+      delivery: Delivery.new("d1")
+    )
+
+    assert blank.disabled_at
+    assert ready.seen
+    tokens = client.calls.map { |call| call[:token] }
+    assert_equal ["fid-ok"], tokens
+  end
+
+  def test_delivery_fails_when_every_installation_is_missing_a_token
+    blank = FakeInstallation.new(fid: " ")
+    client = FakeClient.new([])
+    adapter = RecordingStudioNotificationsPush::FcmAdapter.new(
+      configuration: @configuration,
+      client: client,
+      installation_class: FakeInstallationClass.new([blank])
+    )
+
+    error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
+      adapter.deliver(
+        notification: Notification.new(
+          id: "n1",
+          title: "Hello",
+          recipient: FakeRecipient.new(id: "user-1"),
+          notification_type: :generic
+        ),
+        delivery: Delivery.new("d1")
+      )
+    end
+
+    assert_match(/missing_token/, error.message)
+    assert blank.disabled_at
+    assert_empty client.calls
+  end
 end

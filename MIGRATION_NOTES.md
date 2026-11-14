@@ -1,5 +1,14 @@
 # Migration notes
 
+## 0.8.3
+
+### Host app steps
+
+1. Bump to `0.8.3`. No schema change.
+2. Re-run `bin/rails generate recording_studio_notifications_push:migrations`
+   only if the installations migration is not in the host app yet. An existing
+   copy is skipped. Each new file the generator copies gets its own timestamp.
+
 ## 0.8.2
 
 ### Host app steps

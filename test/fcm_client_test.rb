@@ -155,4 +155,122 @@ class FcmClientTest < Minitest::Test
     end
     assert_match(/FIREBASE_PROJECT_ID/, error.message)
   end
+
+  def test_requires_a_token
+    error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
+      @client.send_message(token: "  ", title: "Hello")
+    end
+    assert_match(/FCM token is required/, error.message)
+  end
+
+  def test_project_id_can_come_from_the_web_config
+    @configuration.firebase_project_id = nil
+    @configuration.firebase_web_config = { "projectId" => "from-web-config" }
+    captured = nil
+    fake_http = http_double
+    response = fake_http_message(code: "200", body: "{}", success: true)
+    fake_http.define_singleton_method(:request) do |request|
+      captured = request
+      response
+    end
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      assert @client.send_message(token: "fid-1", title: "Hello")[:ok]
+    end
+
+    assert_includes captured.path, "/v1/projects/from-web-config/messages:send"
+  end
+
+  def test_unregistered_error_code_marks_the_token_disabled
+    fake_http = http_double
+    response = fake_http_message(
+      code: "403",
+      success: false,
+      body: JSON.generate(
+        "error" => {
+          "status" => "PERMISSION_DENIED",
+          "message" => "permission denied",
+          "details" => [{ "errorCode" => "UNREGISTERED" }]
+        }
+      )
+    )
+    fake_http.define_singleton_method(:request) { |_request| response }
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      result = @client.send_message(token: "fid-gone", title: "Hello")
+      refute result[:ok]
+      assert result[:disable]
+      assert_equal "permission denied", result[:error_message]
+    end
+  end
+
+  def test_non_json_response_is_returned_as_raw_text
+    fake_http = http_double
+    response = fake_http_message(code: "502", success: false, body: "<html>bad gateway</html>")
+    fake_http.define_singleton_method(:request) { |_request| response }
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      result = @client.send_message(token: "fid-1", title: "Hello")
+      refute result[:ok]
+      refute result[:disable]
+      assert_equal "<html>bad gateway</html>", result[:body]["raw"]
+    end
+  end
+
+  def test_network_errors_are_delivery_errors
+    fake_http = http_double
+    fake_http.define_singleton_method(:request) { |_request| raise Errno::ECONNREFUSED }
+
+    Net::HTTP.stub(:new, ->(*) { fake_http }) do
+      error = assert_raises(RecordingStudioNotificationsPush::DeliveryError) do
+        @client.send_message(token: "fid-1", title: "Hello")
+      end
+      assert_match(/FCM network error/, error.message)
+    end
+  end
+
+  def test_send_message_exchanges_a_service_account_when_no_token_provider_is_injected
+    rsa = OpenSSL::PKey::RSA.new(2048)
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+    configuration.firebase_project_id = "demo-project"
+    configuration.firebase_service_account_json = {
+      "client_email" => "push-tests@example.iam.gserviceaccount.com",
+      "private_key" => rsa.to_pem,
+      "token_uri" => "https://oauth2.googleapis.com/token"
+    }
+    client = RecordingStudioNotificationsPush::FcmClient.new(configuration: configuration)
+    token_requests = []
+    fcm_requests = []
+
+    Net::HTTP.stub(:new, lambda { |host, _port|
+      fake = http_double
+      if host == "oauth2.googleapis.com"
+        response = fake_http_message(
+          code: "200",
+          success: true,
+          body: JSON.generate("access_token" => "ya29.from-exchange", "expires_in" => 3600)
+        )
+        fake.define_singleton_method(:request) do |request|
+          token_requests << request
+          response
+        end
+      else
+        body = JSON.generate("name" => "projects/demo/messages/1")
+        response = fake_http_message(code: "200", success: true, body: body)
+        fake.define_singleton_method(:request) do |request|
+          fcm_requests << request
+          response
+        end
+      end
+      fake
+    }) do
+      assert client.send_message(token: "fid-from-test", title: "Hello")[:ok]
+      assert client.send_message(token: "fid-from-test", title: "Hello again")[:ok]
+    end
+
+    assert_equal 1, token_requests.size
+    assert_equal "Bearer ya29.from-exchange", fcm_requests.first["Authorization"]
+    assert_includes fcm_requests.first.path, "/v1/projects/demo-project/messages:send"
+    assert_equal 2, fcm_requests.size
+  end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "bundler/gem_tasks"
+require "fileutils"
 require "rake/testtask"
 
 DUMMY_TEST_FILES = [
@@ -40,8 +41,7 @@ end
 
 def dummy_bundle_base_env
   {
-    "BUNDLE_GEMFILE" => DUMMY_GEMFILE,
-    "DISABLE_SIMPLECOV" => "true"
+    "BUNDLE_GEMFILE" => DUMMY_GEMFILE
   }
 end
 
@@ -66,8 +66,13 @@ namespace :test do
     end
   end
 
+  desc "Drop merged SimpleCov results so the next full run starts clean"
+  task :reset_coverage do
+    FileUtils.rm_rf(File.expand_path("coverage", __dir__))
+  end
+
   desc "Run gem and dummy app tests"
-  task all: %i[test dummy]
+  task all: %i[reset_coverage test dummy]
 end
 
 namespace :app do

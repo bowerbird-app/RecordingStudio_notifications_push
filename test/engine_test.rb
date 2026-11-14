@@ -116,6 +116,65 @@ class EngineTest < Minitest::Test
     refute_nil initializer
   end
 
+  def test_asset_initializer_appends_javascript_when_the_host_has_assets
+    paths = []
+    assets = Object.new
+    assets.define_singleton_method(:paths) { paths }
+    config = Object.new
+    config.define_singleton_method(:assets) { assets }
+    app = Object.new
+    app.define_singleton_method(:config) { config }
+
+    find_initializer("recording_studio_notifications_push.assets").block.call(app)
+
+    assert_includes paths.map(&:to_s),
+                    RecordingStudioNotificationsPush::Engine.root.join("app/javascript").to_s
+  end
+
+  def test_asset_initializer_skips_a_host_without_assets
+    app = Struct.new(:config).new(Object.new)
+
+    assert_nil find_initializer("recording_studio_notifications_push.assets").block.call(app)
+    refute app.config.respond_to?(:assets)
+  end
+
+  def test_importmap_initializer_appends_the_engine_importmap
+    paths = []
+    importmap = Object.new
+    importmap.define_singleton_method(:paths) { paths }
+    config = Object.new
+    config.define_singleton_method(:importmap) { importmap }
+    app = Object.new
+    app.define_singleton_method(:config) { config }
+
+    find_initializer("recording_studio_notifications_push.importmap").block.call(app)
+
+    assert_includes paths.map(&:to_s),
+                    RecordingStudioNotificationsPush::Engine.root.join("config/importmap.rb").to_s
+  end
+
+  def test_importmap_initializer_skips_a_host_without_importmap
+    app = Struct.new(:config).new(Object.new)
+
+    assert_nil find_initializer("recording_studio_notifications_push.importmap").block.call(app)
+  end
+
+  def test_pwa_registrar_follows_whether_the_pwa_gem_can_register_an_extension
+    missing = Module.new
+    present = Module.new
+    present.define_singleton_method(:register_service_worker_extension) { |*| }
+
+    with_pwa(nil) do
+      assert_nil RecordingStudioNotificationsPush::Engine.pwa_registrar
+    end
+    with_pwa(missing) do
+      assert_nil RecordingStudioNotificationsPush::Engine.pwa_registrar
+    end
+    with_pwa(present) do
+      assert_same present, RecordingStudioNotificationsPush::Engine.pwa_registrar
+    end
+  end
+
   def test_engine_loads_only_english_locale_files
     locale_dir = RecordingStudioNotificationsPush::Engine.root.join("config/locales")
     loaded = I18n.load_path.select { |path| path.to_s.start_with?(locale_dir.to_s) }
@@ -127,6 +186,16 @@ class EngineTest < Minitest::Test
   end
 
   private
+
+  def with_pwa(value)
+    had = Object.const_defined?(:RecordingStudioPwa, false)
+    saved = Object.send(:remove_const, :RecordingStudioPwa) if had
+    Object.const_set(:RecordingStudioPwa, value) if value
+    yield
+  ensure
+    Object.send(:remove_const, :RecordingStudioPwa) if Object.const_defined?(:RecordingStudioPwa, false)
+    Object.const_set(:RecordingStudioPwa, saved) if had
+  end
 
   def find_initializer(name)
     RecordingStudioNotificationsPush::Engine.initializers.find { |entry| entry.name == name }

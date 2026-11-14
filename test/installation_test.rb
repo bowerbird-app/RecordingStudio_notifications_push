@@ -126,6 +126,53 @@ class InstallationTest < Minitest::Test
     )
   end
 
+  def test_registration_requires_a_recipient_and_a_firebase_installation_id
+    error = assert_raises(ArgumentError) do
+      RecordingStudioNotificationsPush::Installation.upsert!(
+        recipient: nil,
+        firebase_installation_id: "fid-1"
+      )
+    end
+    assert_match(/recipient is required/, error.message)
+
+    error = assert_raises(ArgumentError) do
+      RecordingStudioNotificationsPush::Installation.upsert!(
+        recipient: Object.new,
+        firebase_installation_id: " "
+      )
+    end
+    assert_match(/firebase_installation_id is required/, error.message)
+  end
+
+  def test_label_from_user_agent_names_common_browsers_and_systems
+    expectations = {
+      edge_on_windows => "Edge on Windows",
+      firefox_on_linux => "Firefox on Linux",
+      safari_on_ipad => "Safari on iPad",
+      safari_on_ipod => "Safari on iPhone",
+      chrome_on_android => "Chrome on Android",
+      unknown_browser_on_linux => "Browser on Linux",
+      chrome_on_chrome_os => "Chrome on device"
+    }
+
+    expectations.each do |user_agent, label|
+      assert_equal label, RecordingStudioNotificationsPush::Installation.label_from_user_agent(user_agent)
+    end
+    assert_nil RecordingStudioNotificationsPush::Installation.label_from_user_agent(nil)
+    assert_nil RecordingStudioNotificationsPush::Installation.label_from_user_agent("  ")
+    assert_equal "Firefox",
+                 RecordingStudioNotificationsPush::Installation.browser_name_from_user_agent(firefox_on_linux)
+    assert_equal "Linux", RecordingStudioNotificationsPush::Installation.os_name_from_user_agent(firefox_on_linux)
+  end
+
+  def test_display_label_ignores_a_raw_user_agent_and_falls_back_to_browser
+    raw = installation_with(label: "a" * 49, user_agent: nil, platform: "web")
+    unnamed = installation_with(label: nil, user_agent: nil, platform: nil)
+
+    assert_equal "web", raw.display_label
+    assert_equal "Browser", unnamed.display_label
+  end
+
   def test_list_icon_follows_the_device
     phone = installation_with(
       label: "Safari on iPhone",
@@ -152,6 +199,37 @@ class InstallationTest < Minitest::Test
     recording.define_singleton_method(:user_agent) { user_agent }
     recording.define_singleton_method(:platform) { platform }
     recording
+  end
+
+  def edge_on_windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " \
+      "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+  end
+
+  def firefox_on_linux
+    "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0"
+  end
+
+  def safari_on_ipad
+    "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 " \
+      "(KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+  end
+
+  def safari_on_ipod
+    "Mozilla/5.0 (iPod touch; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 " \
+      "Version/17.0 Mobile/15E148 Safari/604.1"
+  end
+
+  def chrome_on_android
+    "Mozilla/5.0 (Linux; Android 14; Pixel) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36"
+  end
+
+  def unknown_browser_on_linux
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+  end
+
+  def chrome_on_chrome_os
+    "Mozilla/5.0 (X11; CrOS x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
   end
 
   def chrome_mac_user_agent

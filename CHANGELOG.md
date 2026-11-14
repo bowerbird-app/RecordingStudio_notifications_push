@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.3
 
 ### Changed
 
@@ -13,6 +13,16 @@
 - The dummy app sets `config.allow_unauthorized_writes` so Recording Studio
   6.5 still accepts seed and declaration writes. The dummy installs Trashable
   `purge_at` on `recording_studio_recordings`.
+- The migrations generator gives each copied migration its own timestamp.
+  Copying more than one migration in the same second no longer reuses the
+  first timestamp.
+
+### Upgrade notes
+
+- Bump to `0.8.3`. No schema change.
+- `bin/rails generate recording_studio_notifications_push:migrations` still
+  skips an installations migration that is already in the host app. Each new
+  file it copies gets a distinct timestamp.
 
 ## 0.8.2
 
