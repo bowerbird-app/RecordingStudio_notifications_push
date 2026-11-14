@@ -21,6 +21,15 @@ class PublicApiTest < Minitest::Test
     assert_same returned, RecordingStudioNotificationsPush.config
   end
 
+  def test_register_raises_when_the_parent_gem_cannot_register_a_channel
+    RecordingStudioNotifications.stub(:respond_to?, false) do
+      error = assert_raises(RecordingStudioNotificationsPush::ConfigurationError) do
+        RecordingStudioNotificationsPush.register!
+      end
+      assert_match(/register_channel/, error.message)
+    end
+  end
+
   def test_register_delegates_push_adapter_to_parent_registry
     registration = nil
     implementation = lambda do |channel, adapter|

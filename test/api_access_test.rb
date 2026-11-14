@@ -55,6 +55,47 @@ class ApiAccessTest < Minitest::Test
     end
   end
 
+  def test_admin_root_comes_from_the_loaded_admin_configuration
+    recording = Object.new
+    configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(
+      ->(_resolver_context) { recording },
+      nil
+    )
+    admin = Module.new
+    admin.define_singleton_method(:configuration) { configuration }
+
+    with_constant(:RecordingStudioAdmin, admin) do
+      assert RecordingStudioNotificationsPush::Api::Access.admin_loaded?
+      assert_same recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+    end
+  end
+
+  def test_can_view_follows_an_accessible_grant_on_the_admin_root
+    recording = Object.new
+    actor = Object.new
+    context = view_context(actor)
+    seen = nil
+
+    with_admin_resolvers(site: ->(_resolver_context) { recording }) do
+      without_constant(:RecordingStudioAccessible) do
+        refute RecordingStudioNotificationsPush::Api::Access.can_view?(context)
+      end
+
+      allow = lambda { |actor:, recording:, role:|
+        seen = [actor, recording, role]
+        true
+      }
+      with_constant(:RecordingStudioAccessible, accessible_module(allow)) do
+        assert RecordingStudioNotificationsPush::Api::Access.can_view?(context)
+      end
+      assert_equal [actor, recording, :view], seen
+
+      with_constant(:RecordingStudioAccessible, accessible_module(->(**) { false })) do
+        refute RecordingStudioNotificationsPush::Api::Access.can_view?(context)
+      end
+    end
+  end
+
   def test_can_view_lets_name_error_propagate
     access_api = RecordingStudioNotificationsPush::Api::Access
     configuration = -> { raise NameError, "RecordingStudioAdmin is not loaded" }
@@ -70,6 +111,30 @@ class ApiAccessTest < Minitest::Test
 
   def view_context(actor)
     ViewContext.new(Grant.new(actor))
+  end
+
+  def accessible_module(decision)
+    mod = Module.new
+    mod.define_singleton_method(:authorized?, &decision)
+    mod
+  end
+
+  def with_constant(name, value)
+    had = Object.const_defined?(name, false)
+    saved = Object.send(:remove_const, name) if had
+    Object.const_set(name, value)
+    yield
+  ensure
+    Object.send(:remove_const, name) if Object.const_defined?(name, false)
+    Object.const_set(name, saved) if had
+  end
+
+  def without_constant(name)
+    had = Object.const_defined?(name, false)
+    saved = Object.send(:remove_const, name) if had
+    yield
+  ensure
+    Object.const_set(name, saved) if had && !Object.const_defined?(name, false)
   end
 
   def with_admin_resolvers(access: nil, site: nil, &block)

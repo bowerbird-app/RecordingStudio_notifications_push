@@ -27,5 +27,6 @@ class HttpTest < Minitest::Test
     assert RecordingStudioNotificationsPush::Http.absolute_https?("https://example.com/open")
     refute RecordingStudioNotificationsPush::Http.absolute_https?("/x")
     refute RecordingStudioNotificationsPush::Http.absolute_https?("http://example.com/open")
+    refute RecordingStudioNotificationsPush::Http.absolute_https?("https://[")
   end
 end

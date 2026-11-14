@@ -105,6 +105,27 @@ class ConfigurationTest < Minitest::Test
     end
   end
 
+  def test_missing_credentials_key_falls_back_to_env
+    ENV["FIREBASE_PROJECT_ID"] = "env-project"
+    ENV["FIREBASE_VAPID_PUBLIC_KEY"] = "env-vapid"
+
+    credentials = Object.new
+    credentials.define_singleton_method(:dig) do |_namespace, _key|
+      raise ActiveSupport::EncryptedFile::MissingKeyError.new(
+        key_path: "config/master.key",
+        env_key: "RAILS_MASTER_KEY"
+      )
+    end
+    application = Object.new
+    application.define_singleton_method(:credentials) { credentials }
+    configuration = RecordingStudioNotificationsPush::Configuration.new
+
+    Rails.stub(:application, application) do
+      assert_equal "env-project", configuration.firebase_project_id
+      assert_equal "env-vapid", configuration.vapid_public_key
+    end
+  end
+
   def test_falls_back_to_env_when_credentials_are_blank
     ENV["FIREBASE_PROJECT_ID"] = "env-project"
     ENV["FIREBASE_VAPID_PUBLIC_KEY"] = "env-vapid"

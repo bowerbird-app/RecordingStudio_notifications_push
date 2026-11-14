@@ -57,9 +57,6 @@ module RecordingStudioNotificationsPush
 
           copy_file source_path, destination_path
           say "  create  #{destination_path}", :green
-
-          # Small delay to ensure unique timestamps
-          sleep 0.1
         end
 
         say "\nRun 'bin/rails db:migrate' to apply the migrations.", :green
@@ -72,9 +69,7 @@ module RecordingStudioNotificationsPush
       end
 
       def next_migration_number
-        ActiveRecord::Migration.next_migration_number(
-          Time.now.utc.strftime("%Y%m%d%H%M%S")
-        )
+        self.class.next_migration_number(File.join(destination_root, "db/migrate"))
       end
     end
   end

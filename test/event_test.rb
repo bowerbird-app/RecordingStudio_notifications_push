@@ -121,6 +121,44 @@ class EventTest < Minitest::Test
     end
   end
 
+  def test_wrap_returns_the_same_event_when_there_is_no_delivery
+    event = RecordingStudioNotificationsPush::Event.wrap(Notification.new(id: "1", title: "T"))
+
+    assert_same event, RecordingStudioNotificationsPush::Event.wrap(event)
+    assert_equal "T", event.title
+  end
+
+  def test_reads_a_hash_notification_and_freezes_its_metadata
+    event = RecordingStudioNotificationsPush::Event.wrap(
+      {
+        "id" => "9",
+        "title" => "From the hash",
+        :body => "Body",
+        "url" => "/hash",
+        "recipient" => "user-9",
+        "metadata" => { "icon" => "/i.png", "tags" => ["a"], "nested" => { "list" => ["b"] } }
+      }
+    )
+
+    assert_equal "9", event.id
+    assert_equal "From the hash", event.title
+    assert_equal "Body", event.body
+    assert_equal "/hash", event.url
+    assert_equal "user-9", event.recipient
+    assert_equal "/i.png", event.icon
+    assert_raises(FrozenError) { event.metadata["tags"] << "z" }
+    assert_raises(FrozenError) { event.metadata["nested"]["list"] << "c" }
+  end
+
+  def test_metadata_that_is_not_a_hash_is_empty
+    event = RecordingStudioNotificationsPush::Event.wrap(
+      Notification.new(id: "1", title: "T", metadata: 1)
+    )
+
+    assert_equal({}, event.metadata)
+    assert event.metadata.frozen?
+  end
+
   def test_drops_urls_with_control_characters
     event = RecordingStudioNotificationsPush::Event.wrap(
       Notification.new(id: "1", title: "T", url: "/safe\n", metadata: { icon: "/icon\u0000.png" })
