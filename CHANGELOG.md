@@ -20,6 +20,8 @@
   including a new root. It does not set `allow_unauthorized_writes`.
 - The dummy installs Recording Studio 7's `root_recording_id` on events.
 - Seed lookups of existing children use `Recording.kept`.
+- Development and dummy locks move Puma to `8.1.0` and the dummy lock moves
+  msgpack to `1.8.7`, past the published advisories.
 
 ### Upgrade notes
 
