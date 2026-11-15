@@ -116,10 +116,10 @@ GIT
 PATH
   remote: ../..
   specs:
-    recording_studio_notifications_push (0.8.3)
+    recording_studio_notifications_push (0.8.4)
       flat_pack (>= 0.1.341, < 1.0)
       rails (~> 8.1.0)
-      recording_studio (~> 6.0, >= 6.1.0)
+      recording_studio (>= 6.1.0, < 8.0)
       recording_studio_metrics (>= 0.3.0, < 1.0)
       recording_studio_notifications (>= 0.14.7, < 1)
 
@@ -728,7 +728,7 @@ CHECKSUMS
   recording_studio_metrics (0.8.0)
   recording_studio_notifications (0.15.0)
   recording_studio_notifications_email (0.5.2)
-  recording_studio_notifications_push (0.8.3)
+  recording_studio_notifications_push (0.8.4)
   recording_studio_pwa (0.8.2)
   recording_studio_root_switchable (0.15.0)
   recording_studio_trashable (0.14.0)

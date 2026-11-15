@@ -1,5 +1,11 @@
 # Migration notes
 
+## 0.8.4
+
+### Host app steps
+
+1. Bump to `0.8.4`. No schema change. Requires `recording_studio` `>= 6.1.0`, `< 8.0`.
+
 ## 0.8.3
 
 ### Host app steps

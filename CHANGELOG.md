@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.4
+
+### Changed
+
+- Allow recording_studio < 8.0 (core 7 phase 1).
+
+### Upgrade notes
+
+- Bump to `0.8.4`. No schema change. Runtime dependency `recording_studio` stays `>= 6.1.0` and now allows `< 8.0`.
+
 ## 0.8.3
 
 ### Changed
