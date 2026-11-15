@@ -4,6 +4,14 @@ require "test_helper"
 require "devise/test/integration_helpers"
 
 class DummyPushWiringTest < ActiveSupport::TestCase
+  test "dummy writes require a present actor" do
+    refute RecordingStudio.configuration.allow_unauthorized_writes
+    authorizer = RecordingStudio.configuration.authorize_write
+
+    assert authorizer.call(actor: User.new, root_recording: nil)
+    refute authorizer.call(actor: nil, root_recording: nil)
+  end
+
   test "dummy app loads root switchable config and controller support" do
     assert_equal [ "all_workspaces" ], RecordingStudioRootSwitchable.configuration.scopes.keys
     assert_equal "flat_pack_sidebar", RecordingStudioRootSwitchable.configuration.layout

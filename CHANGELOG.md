@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.9.0
+
+### Changed
+
+- Runtime dependency `recording_studio` is `>= 7.0`, `< 8.0`.
+- Runtime dependency `recording_studio_notifications` is `>= 0.18.0`, `< 1.0`.
+- Runtime dependency `recording_studio_metrics` is `>= 0.9.0`, `< 1.0`.
+- `flat_pack` stays `>= 0.1.341`, `< 1.0`.
+- Development and dummy apps pin Recording Studio `v7.0.0`, notifications
+  `v0.18.0`, Metrics `v0.9.0`, Accessible `v0.44.0`, and Trashable `v0.17.0`.
+  Dummy also pins Root Switchable `v0.16.0` and Internationalization `v0.3.0`.
+- Notifications email moves to `v0.5.3` and PWA to `v0.8.3` (`>= 0.8.0`,
+  `< 1.0`). Those tags accept Recording Studio 7. Cache stays `v0.6.3`.
+  FlatPack stays `v0.1.357`.
+- Roots are created with `RecordingStudio.create_root_recording!(recordable, actor:)`.
+  `root_recording_for` only finds a root.
+- The dummy sets `config.authorize_write` so a present actor may write,
+  including a new root. It does not set `allow_unauthorized_writes`.
+- The dummy installs Recording Studio 7's `root_recording_id` on events.
+- Seed lookups of existing children use `Recording.kept`.
+- Development and dummy locks move Puma to `8.1.0` and the dummy lock moves
+  msgpack to `1.8.7`, past the published advisories.
+
+### Upgrade notes
+
+- Bump to `0.9.0`. No migration in this gem.
+- Requires `recording_studio` `>= 7.0`, `< 8.0`,
+  `recording_studio_notifications` `>= 0.18.0`, `< 1.0`, and
+  `recording_studio_metrics` `>= 0.9.0`, `< 1.0`.
+- Recording Studio 7 stores `root_recording_id` on events. Run core migration
+  `add_root_recording_id_to_recording_studio_events` if that column is missing.
+- `root_recording_for` only finds a root. Create one with
+  `RecordingStudio.create_root_recording!(recordable, actor:)`.
+- Set `config.authorize_write` and pass an actor on writes. Do not set
+  `allow_unauthorized_writes`.
+
 ## 0.8.4
 
 ### Changed

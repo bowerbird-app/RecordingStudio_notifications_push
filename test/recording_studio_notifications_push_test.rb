@@ -13,16 +13,14 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_kind_of Class, ::RecordingStudioNotificationsPush::Engine
   end
 
-  def test_recording_studio_allows_core_7_from_the_6_1_floor
+  def test_recording_studio_requires_core_7
     dependency = Gem::Specification.find_by_name("recording_studio_notifications_push")
                                    .runtime_dependencies
                                    .find { |item| item.name == "recording_studio" }
 
-    assert_equal Gem::Requirement.new(">= 6.1.0", "< 8.0"), dependency.requirement
-    assert dependency.requirement.satisfied_by?(Gem::Version.new("6.1.0"))
-    assert dependency.requirement.satisfied_by?(Gem::Version.new("6.3.0"))
+    assert_equal Gem::Requirement.new(">= 7.0", "< 8.0"), dependency.requirement
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("6.7.0"))
     assert dependency.requirement.satisfied_by?(Gem::Version.new("7.0.0"))
-    refute dependency.requirement.satisfied_by?(Gem::Version.new("6.0.9"))
     refute dependency.requirement.satisfied_by?(Gem::Version.new("8.0.0"))
   end
 
@@ -42,7 +40,21 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
                                    .runtime_dependencies
                                    .find { |item| item.name == "recording_studio_notifications" }
 
-    assert_equal Gem::Requirement.new(">= 0.14.7", "< 1"), dependency.requirement
+    assert_equal Gem::Requirement.new(">= 0.18.0", "< 1.0"), dependency.requirement
+    assert dependency.requirement.satisfied_by?(Gem::Version.new("0.18.0"))
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("0.17.0"))
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("1.0.0"))
+  end
+
+  def test_metrics_dependency_floor_matches_the_tested_line
+    dependency = Gem::Specification.find_by_name("recording_studio_notifications_push")
+                                   .runtime_dependencies
+                                   .find { |item| item.name == "recording_studio_metrics" }
+
+    assert_equal Gem::Requirement.new(">= 0.9.0", "< 1.0"), dependency.requirement
+    assert dependency.requirement.satisfied_by?(Gem::Version.new("0.9.0"))
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("0.8.0"))
+    refute dependency.requirement.satisfied_by?(Gem::Version.new("1.0.0"))
   end
 
   def test_runtime_dependencies_come_from_the_loaded_gem
