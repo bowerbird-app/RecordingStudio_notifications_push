@@ -21,9 +21,9 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     )
     Current.actor = @staff
     @workspace = Workspace.create!(name: "Metrics #{SecureRandom.hex(4)}")
-    @root = RecordingStudio.root_recording_for(@workspace)
+    @root = RecordingStudio.create_root_recording!(@workspace, actor: @staff)
     @admin_workspace = Workspace.create!(name: "Admin metrics #{SecureRandom.hex(4)}")
-    @admin_root = RecordingStudio.root_recording_for(@admin_workspace)
+    @admin_root = RecordingStudio.create_root_recording!(@admin_workspace, actor: @staff)
     bootstrap_owner!(@admin_root, @staff)
     bootstrap_owner!(@root, @staff)
     seed_installations!
@@ -102,7 +102,7 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
 
   test "authorization uses the site admin resolver" do
     other_workspace = Workspace.create!(name: "Other metrics #{SecureRandom.hex(4)}")
-    other_root = RecordingStudio.root_recording_for(other_workspace)
+    other_root = RecordingStudio.create_root_recording!(other_workspace, actor: @staff)
     refute RecordingStudioAccessible.authorized?(actor: @staff, recording: other_root, role: :view)
 
     with_admin_resolvers(access: ->(_resolver_context) { other_root }, site: ->(_resolver_context) { @admin_root }) do

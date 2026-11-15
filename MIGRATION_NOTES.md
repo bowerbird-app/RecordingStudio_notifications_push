@@ -1,5 +1,19 @@
 # Migration notes
 
+## 0.9.0
+
+### Host app steps
+
+1. Bump to `0.9.0`. No migration in this gem. Requires `recording_studio`
+   `>= 7.0`, `< 8.0`, `recording_studio_notifications` `>= 0.18.0`, `< 1.0`,
+   and `recording_studio_metrics` `>= 0.9.0`, `< 1.0`.
+2. Recording Studio 7 stores `root_recording_id` on events. Run core migration
+   `add_root_recording_id_to_recording_studio_events` if that column is missing.
+3. `root_recording_for` only finds a root. Create one with
+   `RecordingStudio.create_root_recording!(recordable, actor:)`.
+4. Set `config.authorize_write` and pass an actor on writes. Do not set
+   `allow_unauthorized_writes`.
+
 ## 0.8.4
 
 ### Host app steps

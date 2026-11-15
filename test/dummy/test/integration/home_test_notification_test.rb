@@ -67,8 +67,8 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
   test "home inbox matches the bell: active rows for the current root, plus rootless" do
     source = Workspace.create!(name: "Inbox Source #{SecureRandom.hex(4)}")
     other = Workspace.create!(name: "Inbox Other #{SecureRandom.hex(4)}")
-    source_root = RecordingStudio.root_recording_for(source)
-    other_root = RecordingStudio.root_recording_for(other)
+    source_root = RecordingStudio.create_root_recording!(source, actor: @user)
+    other_root = RecordingStudio.create_root_recording!(other, actor: @user)
     grant_owner!(@user, source_root)
     grant_owner!(@user, other_root)
 
@@ -96,8 +96,8 @@ class HomeTestNotificationTest < ActionDispatch::IntegrationTest
   test "home inbox authorizes before it keeps eight rows" do
     source = Workspace.create!(name: "Inbox Limit Source #{SecureRandom.hex(4)}")
     other = Workspace.create!(name: "Inbox Limit Other #{SecureRandom.hex(4)}")
-    source_root = RecordingStudio.root_recording_for(source)
-    other_root = RecordingStudio.root_recording_for(other)
+    source_root = RecordingStudio.create_root_recording!(source, actor: @user)
+    other_root = RecordingStudio.create_root_recording!(other, actor: @user)
     grant_owner!(@user, source_root)
     grant_owner!(@user, other_root)
 

@@ -185,22 +185,22 @@ over locale defaults, including `nil`.
 Parent gems are not on RubyGems. Resolve them from these GitHub tags:
 
 ```ruby
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v6.7.0"
-gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.32.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.0.0"
+gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.44.0"
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
-    tag: "v0.14.0",
+    tag: "v0.17.0",
     require: false
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.15.0"
+    tag: "v0.18.0"
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
-    tag: "v0.5.2"
+    tag: "v0.5.3"
 gem "recording_studio_pwa", ">= 0.8.0", "< 1.0",
     github: "bowerbird-app/RecordingStudio_PWA",
-    tag: "v0.8.2"
-gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.8.0"
+    tag: "v0.8.3"
+gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.9.0"
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.357"
 ```
 

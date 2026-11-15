@@ -27,7 +27,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     sign_in user
 
     workspace = Workspace.create!(name: "Dropdown Workspace")
-    grant_owner!(user, RecordingStudio.root_recording_for(workspace))
+    grant_owner!(user, RecordingStudio.create_root_recording!(workspace, actor: user))
 
     get root_path
 
@@ -54,7 +54,7 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
     sign_in user
 
     workspace = Workspace.create!(name: "Switch Page Workspace")
-    grant_owner!(user, RecordingStudio.root_recording_for(workspace))
+    grant_owner!(user, RecordingStudio.create_root_recording!(workspace, actor: user))
 
     get "/recording_studio_root_switchable/v1/root_switch?scope=all_workspaces"
 
@@ -72,8 +72,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     source_workspace = Workspace.create!(name: "Source Workspace")
     target_workspace = Workspace.create!(name: "Target Workspace")
-    target_root_recording = RecordingStudio.root_recording_for(target_workspace)
-    grant_owner!(user, RecordingStudio.root_recording_for(source_workspace))
+    target_root_recording = RecordingStudio.create_root_recording!(target_workspace, actor: user)
+    grant_owner!(user, RecordingStudio.create_root_recording!(source_workspace, actor: user))
     grant_owner!(user, target_root_recording)
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
@@ -97,8 +97,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     source_workspace = Workspace.create!(name: "Fallback Source Workspace")
     target_workspace = Workspace.create!(name: "Fallback Target Workspace")
-    target_root_recording = RecordingStudio.root_recording_for(target_workspace)
-    grant_owner!(user, RecordingStudio.root_recording_for(source_workspace))
+    target_root_recording = RecordingStudio.create_root_recording!(target_workspace, actor: user)
+    grant_owner!(user, RecordingStudio.create_root_recording!(source_workspace, actor: user))
     grant_owner!(user, target_root_recording)
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
@@ -122,8 +122,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     visible = Workspace.create!(name: "Visible Workspace #{SecureRandom.hex(4)}")
     hidden = Workspace.create!(name: "Hidden Workspace #{SecureRandom.hex(4)}")
-    grant_owner!(user, RecordingStudio.root_recording_for(visible))
-    RecordingStudio.root_recording_for(hidden)
+    grant_owner!(user, RecordingStudio.create_root_recording!(visible, actor: user))
+    RecordingStudio.create_root_recording!(hidden, actor: user)
 
     get "/recording_studio_root_switchable/v1/root_switch?scope=all_workspaces"
 
@@ -142,8 +142,8 @@ class RootSwitchDropdownTest < ActionDispatch::IntegrationTest
 
     visible = Workspace.create!(name: "Allowed Workspace #{SecureRandom.hex(4)}")
     hidden = Workspace.create!(name: "Blocked Workspace #{SecureRandom.hex(4)}")
-    grant_owner!(user, RecordingStudio.root_recording_for(visible))
-    hidden_root = RecordingStudio.root_recording_for(hidden)
+    grant_owner!(user, RecordingStudio.create_root_recording!(visible, actor: user))
+    hidden_root = RecordingStudio.create_root_recording!(hidden, actor: user)
 
     patch "/recording_studio_root_switchable/v1/root_switch", params: {
       scope: "all_workspaces",
