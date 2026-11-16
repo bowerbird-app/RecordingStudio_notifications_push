@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.9.1
+
+### Fixed
+
+- Staff authorization for push-device metrics reads
+  `RecordingStudioAccessible.admin_root` when `admin_root_resolver` is set,
+  then Admin's `access_recording_resolver`. It no longer calls
+  `site_admin_recording_resolver`, which Admin 2.15.0 removed.
+- A raising `access_recording_resolver` still propagates. It is not turned
+  into a silent deny.
+
+### Changed
+
+- Development and dummy apps pin Recording Studio `v7.3.0`, Admin `v2.17.0`,
+  Accessible `v0.45.0`, notifications `v0.19.0`, and Logs `v0.8.0`.
+  Metrics stays `v0.9.0`, Trashable `v0.17.0`, notifications email `v0.5.3`,
+  PWA `v0.8.3`, Cache `v0.6.3`, Root Switchable `v0.16.0`,
+  Internationalization `v0.3.0`, and FlatPack `v0.1.357`.
+- The dummy installs Recording Studio 7.2's events timeline index
+  (`index_rs_events_on_timeline`).
+
+### Upgrade notes
+
+- Bump to `0.9.1`. No migration in this gem. No channel, token, or retry
+  change.
+- Set `RecordingStudioAccessible.configuration.admin_root_resolver` to the
+  admin root. Admin 2.15.0 removed `site_admin_recording_resolver`.
+- When `admin_root_resolver` is unset, push still uses Admin's
+  `access_recording_resolver`.
+- Run core migration `add_recording_studio_events_timeline_index` if that
+  index is missing. This gem does not ship it.
+
 ## 0.9.0
 
 ### Changed

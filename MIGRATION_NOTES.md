@@ -1,5 +1,19 @@
 # Migration notes
 
+## 0.9.1
+
+### Host app steps
+
+1. Bump to `0.9.1`. No migration in this gem. Device tokens, retry, and who
+   receives a push stay the same.
+2. Set `RecordingStudioAccessible.configuration.admin_root_resolver` to the
+   admin root. Admin 2.15.0 removed `site_admin_recording_resolver`. Push
+   reads `RecordingStudioAccessible.admin_root` when that resolver is set.
+3. When `admin_root_resolver` is unset, push still uses Admin's
+   `access_recording_resolver`. A raising access resolver still propagates.
+4. Run core migration `add_recording_studio_events_timeline_index` if
+   `index_rs_events_on_timeline` is missing. This gem does not ship it.
+
 ## 0.9.0
 
 ### Host app steps

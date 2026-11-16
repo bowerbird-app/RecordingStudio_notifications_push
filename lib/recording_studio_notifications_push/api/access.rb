@@ -18,10 +18,25 @@ module RecordingStudioNotificationsPush
       end
 
       def admin_root_recording
+        return accessible_admin_root if accessible_admin_root_configured?
+
+        admin_access_recording
+      end
+
+      def accessible_admin_root_configured?
+        defined?(::RecordingStudioAccessible) &&
+          ::RecordingStudioAccessible.respond_to?(:admin_root) &&
+          ::RecordingStudioAccessible.configuration.admin_root_resolver
+      end
+
+      def accessible_admin_root
+        ::RecordingStudioAccessible.admin_root(context: {})
+      end
+
+      def admin_access_recording
         return unless admin_loaded?
 
-        config = admin_configuration
-        resolver = config.site_admin_recording_resolver || config.access_recording_resolver
+        resolver = admin_configuration.access_recording_resolver
         return unless resolver
 
         resolver.call(ResolverContext.new(nil))

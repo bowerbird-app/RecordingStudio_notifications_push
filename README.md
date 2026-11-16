@@ -185,15 +185,17 @@ over locale defaults, including `nil`.
 Parent gems are not on RubyGems. Resolve them from these GitHub tags:
 
 ```ruby
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.0.0"
-gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.44.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.3.0"
+gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.45.0"
+gem "recording_studio_admin", github: "bowerbird-app/RecordingStudio_admin", tag: "v2.17.0", require: false
+gem "recording_studio_logs", github: "bowerbird-app/RecordingStudio_logs", tag: "v0.8.0", require: false
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
     tag: "v0.17.0",
     require: false
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.18.0"
+    tag: "v0.19.0"
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
     tag: "v0.5.3"
@@ -219,9 +221,10 @@ RecordingStudioMetrics::Api.register!(api: :operations)
 | `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/active` |
 | `GET` | `/recording_studio_api/apis/operations/v1/metrics/push_devices/new_over_time` |
 
-Staff with AdminRoot `:view` can read them. The admin recording is
-`site_admin_recording_resolver`, or `access_recording_resolver` when the site
-resolver is unset. If the resolver raises, the metric is denied. A public
+Staff with view access on the admin root can read them. When
+`RecordingStudioAccessible.configuration.admin_root_resolver` is set, push
+asks `RecordingStudioAccessible.admin_root`. Otherwise it calls Admin's
+`access_recording_resolver`. A raising access resolver propagates. A public
 token or a non-admin operations token is denied. `active` uses the existing `Installation.active`
 scope (`disabled_at` nil). `by_platform` groups the `platform` column.
 `new_over_time` is a `created_at` series. It takes `from`, `to`, and
