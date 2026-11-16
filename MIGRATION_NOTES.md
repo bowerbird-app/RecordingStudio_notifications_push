@@ -1,5 +1,19 @@
 # Migration notes
 
+## 0.10.0
+
+### Host app steps
+
+1. Bump to `0.10.0`. No migration in this gem. Device tokens, retry, and who
+   receives a push stay the same.
+2. Requires `recording_studio` `>= 7.3.0`, `< 8.0`,
+   `recording_studio_notifications` `>= 0.19.0`, `< 2.0`,
+   `recording_studio_metrics` `>= 0.9.0`, `< 2.0`,
+   `flat_pack` `>= 0.1.0`, `< 2.0`, and `rails` `>= 8.1.0`, `< 9.0`.
+3. Admin 2.16 removed `site_admin_recording_resolver`. Push reads
+   `RecordingStudioAccessible.admin_root` when `admin_root_resolver` is set.
+   Otherwise it calls Admin's `access_recording_resolver`.
+
 ## 0.9.1
 
 ### Host app steps
