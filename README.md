@@ -197,25 +197,37 @@ Parent gems are not on RubyGems. Resolve them from these GitHub tags:
 
 ```ruby
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.3.0"
-gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.45.0"
+gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.45.1"
 gem "recording_studio_admin", ">= 2.16.0", "< 3.0",
-    github: "bowerbird-app/RecordingStudio_admin", tag: "v2.17.0", require: false
+    github: "bowerbird-app/RecordingStudio_admin", tag: "v2.18.0", require: false
 gem "recording_studio_logs", github: "bowerbird-app/RecordingStudio_logs", tag: "v0.8.0", require: false
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
-    tag: "v0.17.0",
+    tag: "v1.0.1",
     require: false
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.19.0"
+    tag: "v0.19.1"
+gem "recording_studio_api",
+    github: "bowerbird-app/RecordingStudio_api",
+    tag: "v1.2.1",
+    require: false
+gem "recording_studio_moveable",
+    github: "bowerbird-app/RecordingStudio_moveable",
+    tag: "v6.0.0",
+    require: false
+gem "recording_studio_icons",
+    github: "bowerbird-app/RecordingStudio_icons",
+    tag: "v0.4.0",
+    require: false
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
-    tag: "v0.5.3"
+    tag: "v0.5.4"
 gem "recording_studio_pwa", ">= 0.8.0", "< 1.0",
     github: "bowerbird-app/RecordingStudio_PWA",
-    tag: "v0.8.3"
+    tag: "v0.9.1"
 gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.9.0"
-gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.357"
+gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.377"
 ```
 
 ## Operations metrics
