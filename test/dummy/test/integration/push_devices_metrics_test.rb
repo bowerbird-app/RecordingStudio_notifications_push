@@ -100,12 +100,34 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     end
   end
 
-  test "authorization uses the site admin resolver" do
+  test "authorization prefers the accessible admin root" do
     other_workspace = Workspace.create!(name: "Other metrics #{SecureRandom.hex(4)}")
     other_root = RecordingStudio.create_root_recording!(other_workspace, actor: @staff)
     refute RecordingStudioAccessible.authorized?(actor: @staff, recording: other_root, role: :view)
 
-    with_admin_resolvers(access: ->(_resolver_context) { other_root }, site: ->(_resolver_context) { @admin_root }) do
+    with_admin_resolvers(access: ->(_resolver_context) { other_root }) do
+      with_accessible_admin_root(@admin_root) do
+        assert metrics_authorize.call(staff_context)
+      end
+    end
+  end
+
+  test "authorization falls back to the admin access resolver" do
+    with_admin_resolvers(access: ->(_resolver_context) { @admin_root }) do
+      with_accessible_admin_root(nil, configured: false) do
+        assert metrics_authorize.call(staff_context)
+      end
+    end
+  end
+
+  test "authorization does not call site_admin_recording_resolver" do
+    configuration = Object.new
+    configuration.define_singleton_method(:access_recording_resolver) { ->(_resolver_context) { @admin_root } }
+    configuration.define_singleton_method(:site_admin_recording_resolver) do
+      raise "site_admin_recording_resolver was called"
+    end
+
+    with_admin_configuration(configuration) do
       assert metrics_authorize.call(staff_context)
     end
   end
@@ -130,12 +152,25 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     RecordingStudioAccessible.authorized?(actor: @staff, recording: @admin_root, role: :view)
   end
 
-  def with_admin_resolvers(access: nil, site: nil)
-    configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(site, access)
+  def with_admin_resolvers(access: nil, &block)
+    configuration = Struct.new(:access_recording_resolver).new(access)
+    with_admin_configuration(configuration, &block)
+  end
+
+  def with_admin_configuration(configuration)
     access_api = RecordingStudioNotificationsPush::Api::Access
     access_api.stub(:admin_loaded?, true) do
       access_api.stub(:admin_configuration, configuration) { yield }
     end
+  end
+
+  def with_accessible_admin_root(recording, configured: true)
+    accessible = RecordingStudioAccessible.configuration
+    original = accessible.admin_root_resolver
+    accessible.admin_root_resolver = configured ? ->(*) { recording } : nil
+    yield
+  ensure
+    accessible.admin_root_resolver = original
   end
 
   def execute(identifier, **params)

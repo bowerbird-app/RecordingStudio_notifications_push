@@ -16,17 +16,33 @@ class ApiAccessTest < Minitest::Test
     assert_nil RecordingStudioNotificationsPush::Api::Access.admin_root_recording
   end
 
-  def test_admin_root_prefers_the_site_resolver
-    site_recording = Object.new
+  def test_admin_root_prefers_accessible_admin_root
+    admin_root = Object.new
     access_called = false
     access_resolver = lambda { |_resolver_context|
       access_called = true
       Object.new
     }
 
-    with_admin_resolvers(site: ->(_resolver_context) { site_recording }, access: access_resolver) do
-      assert_same site_recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
-      refute access_called
+    with_admin_resolvers(access: access_resolver) do
+      with_accessible_admin_root(admin_root) do
+        assert_same admin_root, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+        refute access_called
+      end
+    end
+  end
+
+  def test_admin_root_uses_nil_when_the_accessible_resolver_returns_nil
+    access_called = false
+
+    with_admin_resolvers(access: lambda { |_resolver_context|
+      access_called = true
+      Object.new
+    }) do
+      with_accessible_admin_root(nil) do
+        assert_nil RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+        refute access_called
+      end
     end
   end
 
@@ -34,7 +50,32 @@ class ApiAccessTest < Minitest::Test
     access_recording = Object.new
 
     with_admin_resolvers(access: ->(_resolver_context) { access_recording }) do
-      assert_same access_recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+      with_accessible_admin_root(nil, configured: false) do
+        assert_same access_recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+      end
+    end
+  end
+
+  def test_admin_root_never_calls_site_admin_recording_resolver
+    recording = Object.new
+    configuration = Object.new
+    configuration.define_singleton_method(:access_recording_resolver) { ->(_resolver_context) { recording } }
+    configuration.define_singleton_method(:site_admin_recording_resolver) do
+      raise "site_admin_recording_resolver was called"
+    end
+
+    with_admin_configuration(configuration) do
+      assert_same recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+    end
+  end
+
+  def test_admin_root_reads_a_configuration_without_site_admin_recording_resolver
+    recording = Object.new
+    configuration = Struct.new(:access_recording_resolver).new(->(_resolver_context) { recording })
+    refute configuration.respond_to?(:site_admin_recording_resolver)
+
+    with_admin_configuration(configuration) do
+      assert_same recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
     end
   end
 
@@ -57,10 +98,7 @@ class ApiAccessTest < Minitest::Test
 
   def test_admin_root_comes_from_the_loaded_admin_configuration
     recording = Object.new
-    configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(
-      ->(_resolver_context) { recording },
-      nil
-    )
+    configuration = Struct.new(:access_recording_resolver).new(->(_resolver_context) { recording })
     admin = Module.new
     admin.define_singleton_method(:configuration) { configuration }
 
@@ -76,7 +114,7 @@ class ApiAccessTest < Minitest::Test
     context = view_context(actor)
     seen = nil
 
-    with_admin_resolvers(site: ->(_resolver_context) { recording }) do
+    with_admin_resolvers(access: ->(_resolver_context) { recording }) do
       without_constant(:RecordingStudioAccessible) do
         refute RecordingStudioNotificationsPush::Api::Access.can_view?(context)
       end
@@ -137,11 +175,23 @@ class ApiAccessTest < Minitest::Test
     Object.const_set(name, saved) if had && !Object.const_defined?(name, false)
   end
 
-  def with_admin_resolvers(access: nil, site: nil, &block)
-    configuration = Struct.new(:site_admin_recording_resolver, :access_recording_resolver).new(site, access)
+  def with_admin_resolvers(access: nil, &block)
+    configuration = Struct.new(:access_recording_resolver).new(access)
+    with_admin_configuration(configuration, &block)
+  end
+
+  def with_admin_configuration(configuration)
     access_api = RecordingStudioNotificationsPush::Api::Access
     access_api.stub(:admin_loaded?, true) do
-      access_api.stub(:admin_configuration, configuration, &block)
+      access_api.stub(:admin_configuration, configuration) { yield }
     end
+  end
+
+  def with_accessible_admin_root(recording, configured: true)
+    configuration = Struct.new(:admin_root_resolver).new(configured ? -> { recording } : nil)
+    accessible = Module.new
+    accessible.define_singleton_method(:configuration) { configuration }
+    accessible.define_singleton_method(:admin_root) { |context: {}| recording }
+    with_constant(:RecordingStudioAccessible, accessible) { yield }
   end
 end
