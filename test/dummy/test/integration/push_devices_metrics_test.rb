@@ -86,7 +86,7 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
   test "a nil admin resolver denies a granted actor" do
     assert staff_can_view_admin_root?
 
-    with_admin_resolvers(access: ->(_resolver_context) {}) do
+    with_admin_resolvers(access: ->(_resolver_context) { }) do
       refute metrics_authorize.call(staff_context)
     end
   end
@@ -120,9 +120,29 @@ class PushDevicesMetricsTest < ActiveSupport::TestCase
     end
   end
 
+  test "staff authorization uses the Admin 2.17 access resolver" do
+    require "recording_studio_admin/version"
+    require "recording_studio_admin/configuration"
+    assert_operator Gem::Version.new(RecordingStudioAdmin::VERSION), :>=, Gem::Version.new("2.16.0")
+
+    configuration = RecordingStudioAdmin::Configuration.new
+    refute configuration.respond_to?(:site_admin_recording_resolver)
+    configuration.access_recording_resolver = ->(_resolver_context) { @admin_root }
+
+    with_admin_configuration(configuration) do
+      with_accessible_admin_root(nil, configured: false) do
+        assert metrics_authorize.call(staff_context)
+        refute metrics_authorize.call(GrantContext.new(Grant.new(@outsider)))
+      end
+    end
+  ensure
+    Object.send(:remove_const, :RecordingStudioAdmin) if Object.const_defined?(:RecordingStudioAdmin, false)
+  end
+
   test "authorization does not call site_admin_recording_resolver" do
+    admin_root = @admin_root
     configuration = Object.new
-    configuration.define_singleton_method(:access_recording_resolver) { ->(_resolver_context) { @admin_root } }
+    configuration.define_singleton_method(:access_recording_resolver) { ->(_resolver_context) { admin_root } }
     configuration.define_singleton_method(:site_admin_recording_resolver) do
       raise "site_admin_recording_resolver was called"
     end

@@ -69,6 +69,24 @@ class ApiAccessTest < Minitest::Test
     end
   end
 
+  def test_admin_root_uses_the_admin_2_17_configuration_class
+    require "recording_studio_admin/version"
+    require "recording_studio_admin/configuration"
+    assert_operator Gem::Version.new(RecordingStudioAdmin::VERSION), :>=, Gem::Version.new("2.16.0")
+
+    configuration = RecordingStudioAdmin::Configuration.new
+    refute configuration.respond_to?(:site_admin_recording_resolver)
+
+    recording = Object.new
+    configuration.access_recording_resolver = ->(_resolver_context) { recording }
+
+    with_admin_configuration(configuration) do
+      assert_same recording, RecordingStudioNotificationsPush::Api::Access.admin_root_recording
+    end
+  ensure
+    Object.send(:remove_const, :RecordingStudioAdmin) if Object.const_defined?(:RecordingStudioAdmin, false)
+  end
+
   def test_admin_root_reads_a_configuration_without_site_admin_recording_resolver
     recording = Object.new
     configuration = Struct.new(:access_recording_resolver).new(->(_resolver_context) { recording })

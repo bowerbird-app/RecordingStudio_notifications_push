@@ -6,11 +6,11 @@ source "https://rubygems.org"
 gemspec
 
 # Parent gems are not published to RubyGems; resolve from GitHub.
-gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.0.0"
+gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.3.0"
 gem "recording_studio_metrics", github: "bowerbird-app/RecordingStudio_metrics", tag: "v0.9.0"
 gem "recording_studio_notifications",
     github: "bowerbird-app/RecordingStudio_notifications",
-    tag: "v0.18.0"
+    tag: "v0.19.0"
 
 email_path = ENV.fetch("RECORDING_STUDIO_NOTIFICATIONS_EMAIL_PATH", nil)
 if email_path && !email_path.strip.empty?
@@ -24,7 +24,15 @@ end
 gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.357"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
-    tag: "v0.44.0"
+    tag: "v0.45.0"
+gem "recording_studio_admin",
+    github: "bowerbird-app/RecordingStudio_admin",
+    tag: "v2.17.0",
+    require: false
+gem "recording_studio_logs",
+    github: "bowerbird-app/RecordingStudio_logs",
+    tag: "v0.8.0",
+    require: false
 gem "recording_studio_pwa", ">= 0.8.0", "< 1.0",
     github: "bowerbird-app/RecordingStudio_PWA",
     tag: "v0.8.3"
