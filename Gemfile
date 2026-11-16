@@ -25,7 +25,7 @@ gem "flat_pack", github: "bowerbird-app/flatpack", tag: "v0.1.357"
 gem "recording_studio_accessible",
     github: "bowerbird-app/RecordingStudio_accessible",
     tag: "v0.45.0"
-gem "recording_studio_admin",
+gem "recording_studio_admin", ">= 2.16.0", "< 3.0",
     github: "bowerbird-app/RecordingStudio_admin",
     tag: "v2.17.0",
     require: false

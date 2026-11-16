@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.10.0
+
+### Changed
+
+- Runtime dependencies use a tested minor floor and an upper cap.
+  `recording_studio` is `>= 7.3.0`, `< 8.0`.
+  `recording_studio_notifications` is `>= 0.19.0`, `< 2.0`.
+  `recording_studio_metrics` is `>= 0.9.0`, `< 2.0`.
+  `flat_pack` is `>= 0.1.0`, `< 2.0`.
+  `rails` is `>= 8.1.0`, `< 9.0`.
+- Development and dummy apps require Recording Studio Admin `>= 2.16.0`,
+  `< 3.0`, resolved at `v2.17.0`. Staff metrics still read the admin root from
+  `RecordingStudioAccessible.admin_root` when `admin_root_resolver` is set,
+  then Admin's `access_recording_resolver`.
+
+### Upgrade notes
+
+- Bump to `0.10.0`. No migration in this gem. No channel, token, or retry
+  change.
+- Requires `recording_studio` `>= 7.3.0`, `< 8.0`,
+  `recording_studio_notifications` `>= 0.19.0`, `< 2.0`,
+  `recording_studio_metrics` `>= 0.9.0`, `< 2.0`,
+  `flat_pack` `>= 0.1.0`, `< 2.0`, and `rails` `>= 8.1.0`, `< 9.0`.
+- Hosts on Admin 2.16 or newer keep working. Push does not call
+  `site_admin_recording_resolver`. Set
+  `RecordingStudioAccessible.configuration.admin_root_resolver`, or leave it
+  unset and set Admin's `access_recording_resolver`.
+
 ## 0.9.1
 
 ### Fixed

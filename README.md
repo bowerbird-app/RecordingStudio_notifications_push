@@ -20,6 +20,17 @@ This channel does **not** implement rollups / `deliver_rollup`.
 
 ## Installation
 
+Runtime dependencies, from the versions this gem is tested with:
+
+- `recording_studio` `>= 7.3.0`, `< 8.0`
+- `recording_studio_notifications` `>= 0.19.0`, `< 2.0`
+- `recording_studio_metrics` `>= 0.9.0`, `< 2.0`
+- `flat_pack` `>= 0.1.0`, `< 2.0`
+- `rails` `>= 8.1.0`, `< 9.0`
+
+Admin is optional. When it is loaded, staff metrics use Admin `>= 2.16.0`,
+`< 3.0` (`access_recording_resolver`).
+
 ```ruby
 gem "recording_studio_notifications"
 gem "recording_studio_notifications_push"
@@ -187,7 +198,8 @@ Parent gems are not on RubyGems. Resolve them from these GitHub tags:
 ```ruby
 gem "recording_studio", github: "bowerbird-app/RecordingStudio", tag: "v7.3.0"
 gem "recording_studio_accessible", github: "bowerbird-app/RecordingStudio_accessible", tag: "v0.45.0"
-gem "recording_studio_admin", github: "bowerbird-app/RecordingStudio_admin", tag: "v2.17.0", require: false
+gem "recording_studio_admin", ">= 2.16.0", "< 3.0",
+    github: "bowerbird-app/RecordingStudio_admin", tag: "v2.17.0", require: false
 gem "recording_studio_logs", github: "bowerbird-app/RecordingStudio_logs", tag: "v0.8.0", require: false
 gem "recording_studio_trashable",
     github: "bowerbird-app/RecordingStudio_trashable",
