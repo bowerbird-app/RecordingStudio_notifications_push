@@ -175,23 +175,23 @@ class ApiAccessTest < Minitest::Test
     Object.const_set(name, saved) if had && !Object.const_defined?(name, false)
   end
 
-  def with_admin_resolvers(access: nil, &block)
+  def with_admin_resolvers(access: nil, &)
     configuration = Struct.new(:access_recording_resolver).new(access)
-    with_admin_configuration(configuration, &block)
+    with_admin_configuration(configuration, &)
   end
 
-  def with_admin_configuration(configuration)
+  def with_admin_configuration(configuration, &)
     access_api = RecordingStudioNotificationsPush::Api::Access
     access_api.stub(:admin_loaded?, true) do
-      access_api.stub(:admin_configuration, configuration) { yield }
+      access_api.stub(:admin_configuration, configuration, &)
     end
   end
 
-  def with_accessible_admin_root(recording, configured: true)
+  def with_accessible_admin_root(recording, configured: true, &)
     configuration = Struct.new(:admin_root_resolver).new(configured ? -> { recording } : nil)
     accessible = Module.new
     accessible.define_singleton_method(:configuration) { configuration }
-    accessible.define_singleton_method(:admin_root) { |context: {}| recording }
-    with_constant(:RecordingStudioAccessible, accessible) { yield }
+    accessible.define_singleton_method(:admin_root) { |**| recording }
+    with_constant(:RecordingStudioAccessible, accessible, &)
   end
 end
