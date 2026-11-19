@@ -1,5 +1,17 @@
 # Migration notes
 
+## 0.11.0
+
+### Host app steps
+
+1. Bump to `0.11.0`. No migration in this gem. Device tokens, retry, and who
+   receives a push stay the same.
+2. Hosts MUST run the Recording Studio 7.4, 7.5 and 7.7 migrations if they
+   have not.
+3. flat_pack 0.2.0 is supported; hosts moving to 0.2 must remove the manual
+   `flat_pack/heroicons` importmap pin and any `flat-pack--icon` controller
+   registration.
+
 ## 0.10.0
 
 ### Host app steps
