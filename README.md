@@ -212,13 +212,13 @@ gem "recording_studio_api", "~> 1.21",
     github: "bowerbird-app/RecordingStudio_api",
     tag: "v1.21.2",
     require: false
-gem "recording_studio_moveable", "~> 6.1",
-    github: "bowerbird-app/RecordingStudio_moveable",
-    tag: "v6.1.0",
-    require: false
 gem "recording_studio_icons", "~> 0.5",
     github: "bowerbird-app/RecordingStudio_icons",
     tag: "v0.5.0",
+    require: false
+gem "recording_studio_moveable", "~> 6.1",
+    github: "bowerbird-app/RecordingStudio_moveable",
+    tag: "v6.1.0",
     require: false
 gem "recording_studio_notifications_email",
     github: "bowerbird-app/RecordingStudio_notifications_email",
