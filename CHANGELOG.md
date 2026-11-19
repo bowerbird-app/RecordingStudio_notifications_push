@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.11.0
+
+### Changed
+
+- Development and dummy apps pin Recording Studio `v7.8.0` (`~> 7.8`),
+  FlatPack `v0.2.0` (`~> 0.2`), Accessible `v0.58.0` (`~> 0.58`),
+  Admin `v2.20.0` (`~> 2.20`), Logs `v0.9.0` (`~> 0.9`),
+  Metrics `v0.10.0` (`~> 0.10`), notifications `v0.21.0` (`~> 0.21`),
+  PWA `v0.10.0` (`~> 0.10`), and Trashable `v1.3.0` (`~> 1.3`).
+- The root Gemfile pins API `v1.21.2` (`~> 1.21`), Moveable `v6.1.0`
+  (`~> 6.1`), and Icons `v0.5.0` (`~> 0.5`). Notifications 0.21 needs API,
+  API needs Moveable, and Moveable needs Icons. The dummy moves to the same
+  tags. Dummy also pins Cache `v0.8.0` (`~> 0.8`) and Root Switchable
+  `v0.17.0` (`~> 0.17`).
+- Internationalization stays `v0.3.0`. Notifications email stays `v0.5.3`
+  on the root Gemfile and `v0.5.4` on the dummy. `view_component` stays
+  `4.20.0`.
+- Compare [v0.10.0...v0.11.0](https://github.com/bowerbird-app/RecordingStudio_notifications_push/compare/v0.10.0...v0.11.0).
+
+### Upgrade notes
+
+- Bump to `0.11.0`. No migration in this gem. No channel, token, or retry
+  change.
+- Hosts MUST run the Recording Studio 7.4, 7.5 and 7.7 migrations if they
+  have not.
+- flat_pack 0.2.0 is supported; hosts moving to 0.2 must remove the manual
+  `flat_pack/heroicons` importmap pin and any `flat-pack--icon` controller
+  registration.
+
 ## 0.10.0
 
 ### Changed

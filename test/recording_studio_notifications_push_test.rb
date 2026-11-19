@@ -19,6 +19,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_equal Gem::Requirement.new(">= 7.3.0", "< 8.0"), dependency.requirement
     refute dependency.requirement.satisfied_by?(Gem::Version.new("7.2.0"))
     assert dependency.requirement.satisfied_by?(Gem::Version.new("7.3.0"))
+    assert dependency.requirement.satisfied_by?(Gem::Version.new("7.8.0"))
     refute dependency.requirement.satisfied_by?(Gem::Version.new("8.0.0"))
   end
 
@@ -28,6 +29,7 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     assert_equal Gem::Requirement.new(">= 0.1.0", "< 2.0"), flat_pack.requirement
     assert flat_pack.requirement.satisfied_by?(Gem::Version.new("0.1.0"))
     assert flat_pack.requirement.satisfied_by?(Gem::Version.new("0.1.357"))
+    assert flat_pack.requirement.satisfied_by?(Gem::Version.new("0.2.0"))
     assert flat_pack.requirement.satisfied_by?(Gem::Version.new("1.9.0"))
     refute flat_pack.requirement.satisfied_by?(Gem::Version.new("2.0.0"))
   end
@@ -76,14 +78,46 @@ class RecordingStudioNotificationsPushTest < Minitest::Test
     refute_includes dependencies.map(&:name), "recording_studio_internationalization"
   end
 
-  def test_development_admin_dependency_covers_2_16
-    dependency = Bundler.definition.dependencies.find { |item| item.name == "recording_studio_admin" }
+  def test_development_gemfiles_pin_the_swept_minors
+    root = File.read(File.expand_path("../Gemfile", __dir__))
+    dummy = File.read(File.expand_path("dummy/Gemfile", __dir__))
 
-    assert_equal Gem::Requirement.new(">= 2.16.0", "< 3.0"), dependency.requirement
-    refute dependency.requirement.satisfied_by?(Gem::Version.new("2.15.0"))
-    assert dependency.requirement.satisfied_by?(Gem::Version.new("2.16.0"))
-    assert dependency.requirement.satisfied_by?(Gem::Version.new("2.17.0"))
-    refute dependency.requirement.satisfied_by?(Gem::Version.new("3.0.0"))
+    {
+      "recording_studio" => "~> 7.8",
+      "flat_pack" => "~> 0.2",
+      "recording_studio_accessible" => "~> 0.58",
+      "recording_studio_admin" => "~> 2.20",
+      "recording_studio_logs" => "~> 0.9",
+      "recording_studio_metrics" => "~> 0.10",
+      "recording_studio_notifications" => "~> 0.21",
+      "recording_studio_pwa" => "~> 0.10",
+      "recording_studio_trashable" => "~> 1.3",
+      "recording_studio_api" => "~> 1.21",
+      "recording_studio_moveable" => "~> 6.1",
+      "recording_studio_icons" => "~> 0.5"
+    }.each do |name, requirement|
+      line = %(gem "#{name}", "#{requirement}")
+      assert_includes root, line, line
+      assert_includes dummy, line, line
+    end
+
+    assert_includes dummy, 'gem "recording_studio_cache", "~> 0.8"'
+    assert_includes dummy, 'gem "recording_studio_root_switchable", "~> 0.17"'
+    assert_includes root, 'gem "view_component", "4.20.0"'
+    assert_includes dummy, 'gem "view_component", "4.20.0"'
+    assert_includes root, 'tag: "v0.5.3"'
+    assert_includes dummy, 'tag: "v0.5.4"'
+    assert_includes dummy, 'tag: "v0.3.0"'
+
+    admin = Bundler.definition.dependencies.find { |item| item.name == "recording_studio_admin" }
+    assert_equal Gem::Requirement.new("~> 2.20"), admin.requirement
+  end
+
+  def test_dummy_importmap_does_not_pin_flat_pack_heroicons
+    importmap = File.read(File.expand_path("dummy/config/importmap.rb", __dir__))
+
+    refute_includes importmap, "flat_pack/heroicons"
+    refute_includes importmap, "flat-pack--icon"
   end
 
   private
